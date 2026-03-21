@@ -1,3 +1,8 @@
+// Onboarding state
+let onboardingStep = 'name'; // 'name', 'phone', 'done'
+let userName = '';
+let userPhone = '';
+
 function toggleBot() {
     const windowDiv = document.getElementById('bot-window');
     if (!windowDiv) return;
@@ -9,6 +14,11 @@ function toggleBot() {
         // keep the latest messages visible when opened
         const messages = document.getElementById('bot-messages');
         if (messages) messages.scrollTop = messages.scrollHeight;
+
+        // Start onboarding if not done
+        if (onboardingStep === 'name') {
+            appendMessage('Coach Dinesh', 'Hello! May I have your name?');
+        }
     }
 }
 
@@ -22,6 +32,37 @@ async function sendMessage() {
     appendMessage('User', userText);
     input.value = '';
 
+    // Handle onboarding
+    if (onboardingStep === 'name') {
+        userName = userText;
+        console.log('User Name:', userName);
+        onboardingStep = 'phone';
+        appendMessage('Coach Dinesh', `Nice to meet you, ${userName}! May I have your telephone number?`);
+        return;
+    }
+
+    if (onboardingStep === 'phone') {
+        if (userText.toLowerCase() === 'skip') {
+            console.log('User Phone: Skipped');
+            onboardingStep = 'done';
+            appendMessage('Coach Dinesh', `Alright, ${userName}. Let's start our conversation! How can I help you today?`);
+            return;
+        }
+
+        // Simple phone validation: at least 10 digits
+        const phoneRegex = /^\d{10,15}$/;
+        if (phoneRegex.test(userText.replace(/\D/g, ''))) {
+            userPhone = userText;
+            console.log('User Phone:', userPhone);
+            onboardingStep = 'done';
+            appendMessage('Coach Dinesh', `Thank you, ${userName}! Your number is ${userPhone}. Let's start our conversation! How can I help you today?`);
+        } else {
+            appendMessage('Coach Dinesh', 'That doesn\'t look like a valid phone number. Would you like to type it again or type "skip" to continue without it?');
+        }
+        return;
+    }
+
+    // Normal conversation
     try {
         // 2. Fetch from your Node server
         const response = await fetch('/chat', {
