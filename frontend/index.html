@@ -58,7 +58,7 @@ navigate complex organisations and build high-performing teams.
 
 </p>
 
-<a class="btn" href="#contact">
+<a class="btn" href="#" onclick="openBot(); return false;">
 Start a Conversation
 </a>
 
@@ -290,11 +290,17 @@ Schedule a Conversation
 </section>
 
 <div id="coach-bot-container">
-    <button id="bot-launcher" onclick="toggleBot()">💬 Ask Coach</button>
+    <button id="bot-launcher" onclick="toggleBot()" aria-label="Open Coach Dinesh chat">
+        <img id="bot-launcher-avatar" src="images/hero-dinesh-small.png" alt="Coach Dinesh">
+        <span id="bot-launcher-text">Ask Dinesh</span>
+    </button>
     
     <div id="bot-window">
         <div id="bot-header">
-            Coach Dinesh AI <small>Trusted leadership coaching in chat</small>
+            <div id="bot-header-profile">
+                <img id="bot-header-avatar" src="images/hero-dinesh-small.png" alt="Coach Dinesh">
+                <div id="bot-header-text">Coach Dinesh AI <small>Trusted leadership coaching in chat</small></div>
+            </div>
             <button id="bot-close-button" aria-label="Close chat" onclick="toggleBot()">×</button>
         </div>
         <div id="bot-messages"></div>

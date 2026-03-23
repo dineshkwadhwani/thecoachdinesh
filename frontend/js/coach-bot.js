@@ -4,14 +4,30 @@ let userName = '';
 let userPhone = '';
 
 // Conversation limit
-let conversationCount = parseInt(localStorage.getItem('conversationCount') || '0');
+function getOrCreateBrowserId() {
+    const existingId = localStorage.getItem('coachBotBrowserId');
+    if (existingId) return existingId;
+
+    const newId = `browser-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem('coachBotBrowserId', newId);
+    return newId;
+}
+
+const browserId = getOrCreateBrowserId();
+const conversationStorageKey = `conversationCount:${browserId}`;
+let conversationCount = parseInt(localStorage.getItem(conversationStorageKey) || '0');
 
 function toggleBot() {
     const windowDiv = document.getElementById('bot-window');
+    const launcherButton = document.getElementById('bot-launcher');
     if (!windowDiv) return;
 
     windowDiv.classList.toggle('open');
     const isOpen = windowDiv.classList.contains('open');
+
+    if (launcherButton) {
+        launcherButton.style.display = isOpen ? 'none' : 'inline-flex';
+    }
 
     if (isOpen) {
         // keep the latest messages visible when opened
@@ -22,6 +38,27 @@ function toggleBot() {
         if (onboardingStep === 'name') {
             appendMessage('Coach Dinesh', 'Hello! May I have your name?');
         }
+    }
+}
+
+function openBot() {
+    const windowDiv = document.getElementById('bot-window');
+    const launcherButton = document.getElementById('bot-launcher');
+    if (!windowDiv) return;
+
+    if (!windowDiv.classList.contains('open')) {
+        windowDiv.classList.add('open');
+    }
+
+    if (launcherButton) {
+        launcherButton.style.display = 'none';
+    }
+
+    const messages = document.getElementById('bot-messages');
+    if (messages) messages.scrollTop = messages.scrollHeight;
+
+    if (onboardingStep === 'name') {
+        appendMessage('Coach Dinesh', 'Hello! May I have your name?');
     }
 }
 
@@ -142,7 +179,7 @@ async function sendMessage() {
     }
 
     conversationCount++;
-    localStorage.setItem('conversationCount', conversationCount.toString());
+    localStorage.setItem(conversationStorageKey, conversationCount.toString());
 
     try {
         // 2. Fetch from your Node server

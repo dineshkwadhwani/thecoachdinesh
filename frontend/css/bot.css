@@ -8,13 +8,39 @@
 }
 
 #bot-launcher {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fffe;
+    color: #2f9f95;
+    border: 6px solid #b7e6e2;
+    padding: 8px 18px 8px 8px;
+    border-radius: 999px;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#bot-launcher:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.28);
+}
+
+#bot-launcher-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+    border: 2px solid #ffffff;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.22);
+}
+
+#bot-launcher-text {
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    line-height: 1;
 }
 
 #bot-window {
@@ -54,13 +80,34 @@
 
 #bot-header {
     position: relative;
+    display: flex;
+    align-items: center;
     background: linear-gradient(135deg, #1d4ed8, #3b82f6);
     color: #ffffff;
-    padding: 12px 14px;
-    text-align: center;
+    padding: 10px 44px 10px 12px;
+    text-align: left;
     font-size: 16px;
     font-weight: 600;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#bot-header-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#bot-header-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+}
+
+#bot-header-text {
+    line-height: 1.25;
 }
 
 #bot-header small {
@@ -128,14 +175,21 @@
     filter: brightness(1.1);
 }
 
-#bot-launcher {
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: 0 5px 14px rgba(37, 99, 235, 0.42);
+@media (max-width: 600px) {
+    #bot-launcher {
+        border-width: 5px;
+        padding: 7px 14px 7px 7px;
+        gap: 10px;
+    }
+
+    #bot-launcher-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    #bot-launcher-text {
+        font-size: 16px;
+    }
 }
 
 
