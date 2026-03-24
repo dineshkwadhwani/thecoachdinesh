@@ -12,6 +12,10 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use(cors()); 
 app.use(express.json());
 
+app.get('/ping', (req, res) => {
+  res.status(200).send('Coach is awake!');
+});
+
 // 2. SERVE THE HOME PAGE
 // When someone goes to http://localhost:3000, send them your index.html
 app.get('/', (req, res) => {
