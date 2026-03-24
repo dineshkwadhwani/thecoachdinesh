@@ -26,7 +26,7 @@ function toggleBot() {
     const isOpen = windowDiv.classList.contains('open');
 
     if (launcherButton) {
-        launcherButton.style.display = isOpen ? 'none' : 'inline-flex';
+        launcherButton.classList.toggle('is-hidden', isOpen);
     }
 
     if (isOpen) {
@@ -51,7 +51,7 @@ function openBot() {
     }
 
     if (launcherButton) {
-        launcherButton.style.display = 'none';
+        launcherButton.classList.add('is-hidden');
     }
 
     const messages = document.getElementById('bot-messages');
@@ -243,9 +243,26 @@ function setupEnterKeySend() {
     });
 }
 
+function initializeBotVisibility() {
+    const windowDiv = document.getElementById('bot-window');
+    const launcherButton = document.getElementById('bot-launcher');
+
+    if (!windowDiv || !launcherButton) return;
+
+    launcherButton.style.display = '';
+    launcherButton.style.visibility = '';
+
+    const isOpen = windowDiv.classList.contains('open');
+    launcherButton.classList.toggle('is-hidden', isOpen);
+}
+
 // Ensure the input is wired after DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupEnterKeySend);
+    document.addEventListener('DOMContentLoaded', function() {
+        setupEnterKeySend();
+        initializeBotVisibility();
+    });
 } else {
     setupEnterKeySend();
+    initializeBotVisibility();
 }

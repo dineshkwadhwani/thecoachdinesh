@@ -81,6 +81,7 @@ nav .brand-link {
   align-items:center;
   gap:60px;
   padding:0 10%;
+  padding-top:120px;
 }
 
 .hero h1{
@@ -201,6 +202,7 @@ footer{
   .nav-links.active { transform: scale(1); height: auto; }
   .nav-links a { margin: 10px 0; font-size: 16px; display: block; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 
+  .hero { padding-top: 80px; }
   .story { grid-template-columns: 1fr; gap: 24px; }
   .story-card { padding: 24px; }
   .timeline { border-left: none; border-top: 2px solid rgba(255,255,255,.1); padding-left: 0; padding-top: 18px; }
