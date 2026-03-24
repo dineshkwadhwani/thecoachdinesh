@@ -174,7 +174,7 @@ async function sendMessage() {
     // Normal conversation
     if (conversationCount >= 7) {
         console.log('Conversation limit. ', conversationCount);
-        appendMessage('Coach Dinesh', `Thank you for our conversation, ${userName}! To continue, please set up a time with me. Call me at (91) 9767676738.`);
+        appendMessage('Coach Dinesh', `We can only have limited conversations here. Thank you for our conversation, ${userName}! To continue, please set up a time with me. Call me at (91) 9767676738.`);
         return;
     }
 
