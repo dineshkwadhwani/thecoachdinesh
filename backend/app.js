@@ -35,6 +35,7 @@ function normalizeLeadershipQuizConfig(rawConfig = {}) {
 function loadLeadershipQuizData() {
     const questionsPath = path.join(__dirname, 'questions.json');
     const configPath = path.join(__dirname, 'quiz-config.json');
+    const messagesPath = path.join(__dirname, 'messages.json');
 
     const questionsData = fs.readFileSync(questionsPath, 'utf-8');
     const questions = JSON.parse(questionsData);
@@ -43,6 +44,7 @@ function loadLeadershipQuizData() {
     let configByQuiz = {
         [REFLECT_YOUR_STYLE_KEY]: DEFAULT_LEADERSHIP_QUIZ_CONFIG
     };
+    let messagesByQuiz = {};
 
     if (fs.existsSync(configPath)) {
         const configData = fs.readFileSync(configPath, 'utf-8');
@@ -54,7 +56,13 @@ function loadLeadershipQuizData() {
         };
     }
 
-    return { questions, quizConfig, configByQuiz };
+    if (fs.existsSync(messagesPath)) {
+        const messagesData = fs.readFileSync(messagesPath, 'utf-8');
+        const rawMessages = JSON.parse(messagesData);
+        messagesByQuiz = rawMessages && typeof rawMessages === 'object' ? rawMessages : {};
+    }
+
+    return { questions, quizConfig, configByQuiz, messagesByQuiz };
 }
 
 function createLeadKey(email, mobile) {
@@ -206,10 +214,11 @@ app.post('/notify-onboarding', async (req, res) => {
 // 4. GET LEADERSHIP QUIZ QUESTIONS
 app.get('/get-questions', (req, res) => {
     try {
-        const { questions, configByQuiz } = loadLeadershipQuizData();
+        const { questions, configByQuiz, messagesByQuiz } = loadLeadershipQuizData();
         res.json({
             ...questions,
-            config: configByQuiz
+            config: configByQuiz,
+            messages: messagesByQuiz
         });
     } catch (error) {
         console.error('Error loading questions:', error.message);
@@ -388,8 +397,9 @@ Style breakdown: ${styleBreakdownText}`;
         });
         saveReportHistory(history);
 
-        // Log in the required format
-        const logMessage = `[REPORT_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Mobile: ${normalizedMobile} | Email: ${email} | QuizType: ${normalizedQuizType} | DominantStyle: ${dominantStyleName} | SecondaryStyle: ${secondaryStyleName || 'None'} | Report: ${aiReport}`;
+        // Log in the required format (summary only, not full report)
+        const reportSummary = String(aiReport || '').replace(/\s+/g, ' ').trim().slice(0, 220);
+        const logMessage = `[REPORT_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Mobile: ${normalizedMobile} | Email: ${email} | QuizType: ${normalizedQuizType} | DominantStyle: ${dominantStyleName} | SecondaryStyle: ${secondaryStyleName || 'None'} | ReportSummary: ${reportSummary}`;
         console.log(logMessage);
 
         // Send Telegram notification

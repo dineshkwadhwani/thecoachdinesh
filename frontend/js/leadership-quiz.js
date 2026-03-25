@@ -5,8 +5,27 @@ const DEFAULT_QUIZ_CONFIG = {
     deepQuestionCount: 25
 };
 const QUIZ_CONFIG_KEY = 'reflectYourStyle';
+const QUIZ_MESSAGES_KEY = 'reflectYourStyle';
+const DEFAULT_QUIZ_MESSAGES = {
+    report: {
+        quickConsultation: 'This is a small sumamry report to get you started. If you want more details, do a deep indepth report. Alternatively, I will be happy to provide voluntary consultance if you need one. Send me a whatsapp.',
+        deepConsultation: 'I will be happy to provide one session of you a voluntary consultation in case you would like to talk to me. Send me a whatsapp message and we can schedule a time.'
+    }
+};
 
 let quizConfig = { ...DEFAULT_QUIZ_CONFIG };
+let quizMessages = JSON.parse(JSON.stringify(DEFAULT_QUIZ_MESSAGES));
+
+function normalizeQuizMessages(rawMessages = {}) {
+    const reportMessages = rawMessages && typeof rawMessages.report === 'object' ? rawMessages.report : {};
+
+    return {
+        report: {
+            quickConsultation: String(reportMessages.quickConsultation || DEFAULT_QUIZ_MESSAGES.report.quickConsultation),
+            deepConsultation: String(reportMessages.deepConsultation || DEFAULT_QUIZ_MESSAGES.report.deepConsultation)
+        }
+    };
+}
 
 function createInitialQuizState() {
     return {
@@ -128,6 +147,7 @@ async function loadQuestionsAndInit() {
         const data = await response.json();
         const allQuestions = Array.isArray(data.reflectYourStyle) ? data.reflectYourStyle : [];
         quizConfig = normalizeQuizConfig(data.config && data.config[QUIZ_CONFIG_KEY]);
+        quizMessages = normalizeQuizMessages(data.messages && data.messages[QUIZ_MESSAGES_KEY]);
         const quickQuestionCount = quizConfig.quickQuestionCount;
 
         if (allQuestions.length < quickQuestionCount) {
@@ -445,23 +465,45 @@ function displayReport(reportData) {
            </div>`
         : '';
 
-    const deepTestCta = quizState.quizType === 'quick'
-        ? `<div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd;">
-                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                    <button class="btn" onclick="startInDepthTest()">Deep Executive Analysis</button>
-                    <button class="btn btn-secondary" onclick="closeLeadershipQuiz()">Close</button>
-                </div>
-           </div>`
-        : `<div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; display:flex; justify-content:flex-end;">
-                <button class="btn btn-secondary" onclick="closeLeadershipQuiz()">Close</button>
-           </div>`;
+    const participantName = escapeHtml(reportData.name || quizState.userName);
+    const whatsappMessage = quizState.quizType === 'quick'
+        ? `Hey Coach, my name is ${participantName}. I completed the quick summary report and want to discuss next steps.`
+        : `Hey Coach, my name is ${participantName}. I want to talk.`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
+    const deepActionButton = quizState.quizType === 'quick'
+        ? `<button class="btn" onclick="startInDepthTest()">Deep Executive Analysis</button>`
+        : '';
+
+    const consultationBody = quizState.quizType === 'quick'
+        ? quizMessages.report.quickConsultation
+        : quizMessages.report.deepConsultation;
+
+    const closeButton = quizState.quizType === 'deep'
+        ? `<button class="btn btn-secondary" onclick="closeLeadershipQuiz()">Close</button>`
+        : '';
+
+    const reportFooter = `
+        <div class="report-signoff">
+            <img src="images/signature.png" alt="Dinesh Wadhwani Signature" class="signature-image" onerror="this.style.display='none'">
+            <p class="signature-name">Dinesh Wadhwani</p>
+        </div>
+        <div class="consultation-message">
+            <p>Dear ${participantName},</p>
+            <p>${consultationBody}</p>
+        </div>
+        <div class="report-actions-row">
+            ${deepActionButton}
+            <a class="btn whatsapp-btn" href="${whatsappUrl}" target="_blank" rel="noopener noreferrer">Send WhatsApp</a>
+            ${closeButton}
+        </div>
+    `;
 
     document.getElementById('report-content').innerHTML = `
         <div>
             ${styleSummary}
             <p><strong>Analysis:</strong></p>
             ${formattedReport}
-            ${deepTestCta}
+            ${reportFooter}
         </div>
     `;
     displayStep('report');
