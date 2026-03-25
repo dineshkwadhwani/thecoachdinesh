@@ -175,15 +175,23 @@ async function sendTelegramMessage(text) {
     }
 
     const telegramApiUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const response = await fetch(telegramApiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chat_id: telegramChatId,
-            text
-        })
-    });
+    let response;
+    try {
+        response = await fetch(telegramApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
+            body: JSON.stringify({
+                chat_id: telegramChatId,
+                text
+            })
+        });
+    } finally {
+        clearTimeout(timeoutId);
+    }
 
     if (!response.ok) {
         const errorBody = await response.text();
@@ -411,12 +419,14 @@ Style breakdown: ${styleBreakdownText}`;
         }
 
         // Return the report to frontend
+        console.log(`[REPORT_SEND] Sending response to frontend for ${name} (${normalizedQuizType})`);
         res.json({
             name,
             dominantStyle: dominantStyleName,
             secondaryStyle: secondaryStyleName,
             report: aiReport
         });
+        console.log(`[REPORT_DONE] Response sent successfully for ${name}`);
 
     } catch (error) {
         console.error('Leadership analysis error:', error.message);
