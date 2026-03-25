@@ -48,10 +48,10 @@
 }
 
 .modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
+    position: sticky;
+    top: 0;
+    margin-left: auto;
+    background: white;
     border: none;
     font-size: 28px;
     cursor: pointer;
@@ -63,6 +63,7 @@
     align-items: center;
     justify-content: center;
     transition: color 0.2s;
+    z-index: 10;
 }
 
 .modal-close:hover {
@@ -205,6 +206,7 @@
 .btn-secondary {
     background: #f0f0f0;
     color: #333;
+    border: 1px solid #ddd;
 }
 
 .btn-secondary:hover {

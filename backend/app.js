@@ -119,9 +119,10 @@ app.get('/get-questions', (req, res) => {
 // 5. ANALYZE LEADERSHIP STYLE
 app.post('/analyze-leadership', async (req, res) => {
     try {
-        const { name, email, answers } = req.body;
+        const { name, email, answers, quizType } = req.body;
+        const answerCount = Array.isArray(answers) ? answers.length : 0;
 
-        if (!name || !email || !answers || answers.length !== 10) {
+        if (!name || !email || !Array.isArray(answers) || ![10, 25].includes(answerCount)) {
             return res.status(400).json({ error: 'Invalid request data' });
         }
 
@@ -151,11 +152,11 @@ app.post('/analyze-leadership', async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: `You are an executive leadership coach providing personalized feedback. Analyze these 10 leadership assessment answers for ${name}. The answer choices represent: A=Visionary, B=Coaching, C=Democratic, D=Pacesetter. Provide a 150-200 word report in second person that:\n1) Identifies your dominant leadership style and explains what it means\n2) Describes your strengths in this style\n3) Suggests areas where you can grow and develop\n4) Ends with: "Contact Coach Dinesh for your full 25-question Executive Assessment to go deeper into your leadership impact."\n\nUse "you" and "your" throughout. Be warm, encouraging, and actionable.`
+                    content: `You are an executive leadership coach providing personalized feedback. Analyze these ${answerCount} leadership assessment answers for ${name}. The answer choices represent: A=Visionary, B=Coaching, C=Democratic, D=Pacesetter. Provide a 150-220 word report in second person that:\n1) Identifies your dominant leadership style and explains what it means\n2) Describes your strengths in this style\n3) Suggests areas where you can grow and develop\n4) Ends with exactly: "Want a much deeper evaluation. Take a indepth test across multiple scenarios."\n\nUse "you" and "your" throughout. Be warm, encouraging, and actionable.`
                 },
                 {
                     role: "user",
-                    content: `Analyze these answers (A-D represent answer choices): ${answersText}\n\nName: ${name}\nDominant Style Indicated: ${dominantStyleName}`
+                    content: `Analyze these answers (A-D represent answer choices): ${answersText}\n\nName: ${name}\nQuiz type: ${quizType || 'quick'}\nDominant Style Indicated: ${dominantStyleName}`
                 }
             ],
             model: "llama-3.3-70b-versatile",

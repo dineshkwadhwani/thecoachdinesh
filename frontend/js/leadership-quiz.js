@@ -1,18 +1,23 @@
 // Leadership Quiz Modal Logic
 
-const QUIZ_QUESTION_COUNT = 10;
+const QUICK_QUESTION_COUNT = 10;
+const DEEP_QUESTION_COUNT = 25;
 
 let quizState = {
     currentStep: 'name',
     userName: '',
     userEmail: '',
     currentQuestion: 0,
+    questionCount: QUICK_QUESTION_COUNT,
+    quizType: 'quick',
     answers: [],
-    questions: []
+    questions: [],
+    allQuestions: []
 };
 
 // Open the quiz modal
 function openLeadershipQuiz() {
+    console.log('[QUIZ] openLeadershipQuiz called');
     const modal = document.getElementById('leadership-quiz-modal');
     modal.style.display = 'flex';
     loadQuestionsAndInit();
@@ -28,13 +33,17 @@ function closeLeadershipQuiz() {
         userName: '',
         userEmail: '',
         currentQuestion: 0,
+        questionCount: QUICK_QUESTION_COUNT,
+        quizType: 'quick',
         answers: [],
-        questions: []
+        questions: [],
+        allQuestions: []
     };
 }
 
 // Load questions from backend and initialize
 async function loadQuestionsAndInit() {
+    console.log('[QUIZ] loadQuestionsAndInit called');
     try {
         const response = await fetch('/get-questions', {
             method: 'GET',
@@ -43,12 +52,20 @@ async function loadQuestionsAndInit() {
         const data = await response.json();
         const allQuestions = Array.isArray(data.reflectYourStyle) ? data.reflectYourStyle : [];
 
-        if (allQuestions.length < QUIZ_QUESTION_COUNT) {
-            throw new Error(`Not enough questions in pool. Expected at least ${QUIZ_QUESTION_COUNT}.`);
+        if (allQuestions.length < QUICK_QUESTION_COUNT) {
+            throw new Error(`Not enough questions in pool. Expected at least ${QUICK_QUESTION_COUNT}.`);
         }
 
-        quizState.questions = getBalancedRandomQuestions(allQuestions, QUIZ_QUESTION_COUNT);
+        quizState.allQuestions = allQuestions;
+        quizState.quizType = 'quick';
+        quizState.questionCount = QUICK_QUESTION_COUNT;
+        quizState.currentQuestion = 0;
+        quizState.answers = [];
+        quizState.userEmail = '';
+
+        quizState.questions = getBalancedRandomQuestions(allQuestions, QUICK_QUESTION_COUNT);
         console.log('Questions loaded:', quizState.questions);
+        console.log('[QUIZ] Init complete. quizType:', quizState.quizType, 'questionCount:', quizState.questionCount);
         displayStep('name');
     } catch (error) {
         console.error('Failed to load questions:', error);
@@ -66,6 +83,10 @@ function shuffleQuestions(questions) {
     }
 
     return shuffled;
+}
+
+function getRandomQuestions(pool, count) {
+    return shuffleQuestions(pool).slice(0, count);
 }
 
 // Split the pool into equal bands by position and pick evenly from each band.
@@ -96,6 +117,7 @@ function getBalancedRandomQuestions(pool, count) {
 
 // Display a specific step
 function displayStep(step) {
+    console.log('[QUIZ] displayStep:', step, '| quizType:', quizState.quizType, '| questionCount:', quizState.questionCount, '| answers so far:', quizState.answers.length);
     // Hide all steps
     document.getElementById('step-name').style.display = 'none';
     document.getElementById('step-questions').style.display = 'none';
@@ -114,7 +136,7 @@ function displayStep(step) {
         progressText = 'Step 1 of 4: Identify Yourself';
     } else if (step === 'questions') {
         progressPercent = 50;
-        progressText = `Step 2 of 4: Question ${quizState.currentQuestion + 1} of ${QUIZ_QUESTION_COUNT}`;
+        progressText = `Step 2 of 4: Question ${quizState.currentQuestion + 1} of ${quizState.questionCount}`;
     } else if (step === 'email') {
         progressPercent = 75;
         progressText = 'Step 3 of 4: Share Your Email';
@@ -132,6 +154,15 @@ function displayStep(step) {
     
     if (step === 'questions') {
         displayQuestion();
+    }
+
+    if (step === 'email') {
+        const submitBtn = document.querySelector('#step-email .btn');
+        console.log('[QUIZ] Resetting submit button. Found:', submitBtn, 'disabled was:', submitBtn && submitBtn.disabled);
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Get My Report';
+        }
     }
     
     quizState.currentStep = step;
@@ -163,11 +194,11 @@ function displayQuestion() {
     const questionNum = quizState.currentQuestion + 1;
     
     // Update progress text
-    document.getElementById('progress-text').textContent = `Step 2 of 4: Question ${questionNum} of ${QUIZ_QUESTION_COUNT}`;
+    document.getElementById('progress-text').textContent = `Step 2 of 4: Question ${questionNum} of ${quizState.questionCount}`;
     
     // Update question number and progress
-    document.getElementById('question-number').textContent = `Question ${questionNum} of ${QUIZ_QUESTION_COUNT}`;
-    const fillPercent = (questionNum / QUIZ_QUESTION_COUNT) * 100;
+    document.getElementById('question-number').textContent = `Question ${questionNum} of ${quizState.questionCount}`;
+    const fillPercent = (questionNum / quizState.questionCount) * 100;
     document.getElementById('question-progress-fill').style.width = fillPercent + '%';
     
     // Display question
@@ -197,7 +228,7 @@ function displayQuestion() {
     
     // Update button visibility
     document.getElementById('prev-btn').style.display = quizState.currentQuestion === 0 ? 'none' : 'block';
-    document.getElementById('next-btn').textContent = quizState.currentQuestion === (QUIZ_QUESTION_COUNT - 1) ? 'See Results' : 'Next Question';
+    document.getElementById('next-btn').textContent = quizState.currentQuestion === (quizState.questionCount - 1) ? 'See Results' : 'Next Question';
 }
 
 // Select an answer
@@ -221,7 +252,7 @@ function quizNextQuestion() {
     
     quizState.currentQuestion++;
     
-    if (quizState.currentQuestion >= QUIZ_QUESTION_COUNT) {
+    if (quizState.currentQuestion >= quizState.questionCount) {
         displayStep('email');
     } else {
         displayQuestion();
@@ -237,7 +268,8 @@ function quizPrevQuestion() {
 }
 
 // Submit quiz and get analysis
-async function quizSubmit() {
+async function quizSubmit(evt) {
+    console.log('[QUIZ] quizSubmit called. quizType:', quizState.quizType, 'answers:', quizState.answers.length, 'questionCount:', quizState.questionCount);
     const emailInput = document.getElementById('user-email-input').value.trim();
     if (!emailInput) {
         alert('Please enter your email');
@@ -252,18 +284,21 @@ async function quizSubmit() {
     quizState.userEmail = emailInput;
     
     // Show loading state
-    const submitBtn = event.target;
+    const submitBtn = (evt && evt.target) || document.getElementById('submit-report-btn');
+    console.log('[QUIZ] submitBtn found:', submitBtn);
     submitBtn.disabled = true;
     submitBtn.textContent = 'Generating your report...';
     
     try {
+        console.log('[QUIZ] Sending fetch to /analyze-leadership. Payload size:', quizState.answers.length, 'answers');
         const response = await fetch('/analyze-leadership', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 name: quizState.userName,
                 email: quizState.userEmail,
-                answers: quizState.answers
+                answers: quizState.answers,
+                quizType: quizState.quizType
             })
         });
         
@@ -273,6 +308,7 @@ async function quizSubmit() {
         
         const data = await response.json();
         
+        console.log('[QUIZ] Got response from server:', data.dominantStyle);
         // Display report
         displayReport({
             dominantStyle: data.dominantStyle,
@@ -290,14 +326,64 @@ async function quizSubmit() {
 // Display the generated report
 function displayReport(reportData) {
     document.getElementById('report-title').textContent = `Your Leadership Style: ${reportData.dominantStyle}`;
+
+    const cleanedReport = (reportData.report || '')
+        .replace(/Contact Coach Dinesh for your full 25-question Executive Assessment to go deeper into your leadership impact\.?/gi, '')
+        .trim();
+
+    const deepTestCta = quizState.quizType === 'quick'
+        ? `<div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd;">
+                <p style="font-style: italic; margin-bottom: 12px;">Want a much deeper evaluation. Take a indepth test across multiple scenarios.</p>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <button class="btn" onclick="startInDepthTest()">Deep Executive Analysis</button>
+                    <button class="btn btn-secondary" onclick="closeLeadershipQuiz()">Close</button>
+                </div>
+           </div>`
+        : `<div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; display:flex; justify-content:flex-end;">
+                <button class="btn btn-secondary" onclick="closeLeadershipQuiz()">Close</button>
+           </div>`;
+
     document.getElementById('report-content').innerHTML = `
         <div>
             <p><strong>Analysis:</strong></p>
-            <p>${reportData.report}</p>
-            <p style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; font-style: italic;">
-                Thank you for taking this assessment. Check your email for the complete report.
-            </p>
+            <p>${cleanedReport}</p>
+            ${deepTestCta}
         </div>
     `;
     displayStep('report');
+}
+
+function startInDepthTest() {
+    console.log('[QUIZ] startInDepthTest called. allQuestions pool size:', quizState.allQuestions.length);
+    if (!Array.isArray(quizState.allQuestions) || quizState.allQuestions.length < DEEP_QUESTION_COUNT) {
+        alert(`Not enough questions for in-depth test. Need at least ${DEEP_QUESTION_COUNT}.`);
+        return;
+    }
+
+    const quickQuestionKeys = new Set(
+        (quizState.questions || []).map(question => question.id ?? question.question)
+    );
+    const remainingQuestions = quizState.allQuestions.filter(
+        question => !quickQuestionKeys.has(question.id ?? question.question)
+    );
+
+    console.log('[QUIZ] deep test pool after excluding quick questions:', remainingQuestions.length);
+    if (remainingQuestions.length < DEEP_QUESTION_COUNT) {
+        alert(`Not enough unique questions left for in-depth test. Need ${DEEP_QUESTION_COUNT}, found ${remainingQuestions.length}.`);
+        return;
+    }
+
+    quizState.quizType = 'deep';
+    quizState.questionCount = DEEP_QUESTION_COUNT;
+    quizState.currentQuestion = 0;
+    quizState.answers = [];
+    quizState.userEmail = '';
+    quizState.questions = getRandomQuestions(remainingQuestions, DEEP_QUESTION_COUNT);
+
+    const emailInput = document.getElementById('user-email-input');
+    if (emailInput) {
+        emailInput.value = '';
+    }
+
+    displayStep('questions');
 }

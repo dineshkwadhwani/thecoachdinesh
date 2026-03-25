@@ -333,14 +333,13 @@ Schedule a Conversation
             <h2>Analyzing your results...</h2>
             <p>Where should we send your full leadership report?</p>
             <input type="email" id="user-email-input" placeholder="Enter your email" />
-            <button class="btn" onclick="quizSubmit()">Get My Report</button>
+            <button class="btn" id="submit-report-btn" onclick="quizSubmit(event)">Get My Report</button>
         </div>
         
         <!-- Step 4: Report Display -->
         <div class="quiz-step" id="step-report" style="display: none;">
             <h2 id="report-title"></h2>
             <div class="report-content" id="report-content"></div>
-            <button class="btn" onclick="closeLeadershipQuiz()">Close</button>
         </div>
     </div>
 </div>
