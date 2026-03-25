@@ -1,5 +1,6 @@
+const path = require('path');
 const OpenAI = require('openai');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const groq = new OpenAI({
     apiKey: process.env.GROQ_API_KEY,

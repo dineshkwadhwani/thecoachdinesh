@@ -106,6 +106,25 @@ nav .brand-link {
   box-shadow:0 15px 40px rgba(0,0,0,.4);
 }
 
+.btn-small{
+  padding:8px 16px;
+  border-radius:6px;
+  background:linear-gradient(135deg,#3b82f6,#6366f1);
+  color:white;
+  text-decoration:none;
+  font-weight:500;
+  font-size:14px;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+  transition:all 0.2s;
+}
+
+.btn-small:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(0,0,0,.3);
+}
+
 .hero img{
   width:100%;
   border-radius:20px;

@@ -1,0 +1,104 @@
+{
+  "leadershipAssessment": [
+    {
+      "id": 1,
+      "question": "When a crisis hits the team, your first instinct is to:",
+      "options": {
+        "A": "Describe the big-picture goal to keep people inspired.",
+        "B": "Sit down with individuals to see how they are coping.",
+        "C": "Call a meeting to gather everyone's input on the solution.",
+        "D": "Jump in and show them exactly how to fix it by doing it yourself."
+      }
+    },
+    {
+      "id": 2,
+      "question": "How do you prefer to give feedback?",
+      "options": {
+        "A": "By reminding them how their work fits into the long-term mission.",
+        "B": "By asking them how they think they can improve their own skills.",
+        "C": "By discussing it openly as a group to reach a consensus.",
+        "D": "By pointing out high-performance gaps and demanding immediate results."
+      }
+    },
+    {
+      "id": 3,
+      "question": "Your team is stuck on a complex strategic decision. You:",
+      "options": {
+        "A": "Provide a clear 'North Star' and let them find the path.",
+        "B": "Use it as a 'teachable moment' to build their problem-solving skills.",
+        "C": "Facilitate a brainstorm where every voice has equal weight.",
+        "D": "Set a tight deadline and provide the specific data they must use."
+      }
+    },
+    {
+      "id": 4,
+      "question": "What does 'Success' look like to you at the end of a project?",
+      "options": {
+        "A": "We realized a bold new vision that didn't exist before.",
+        "B": "Every team member grew personally and professionally.",
+        "C": "The team feels a deep sense of ownership and agreement.",
+        "D": "We hit every KPI ahead of schedule with zero errors."
+      }
+    },
+    {
+      "id": 5,
+      "question": "A high-potential employee is underperforming. Your approach is:",
+      "options": {
+        "A": "Re-align them with the 'Why' behind their role.",
+        "B": "Spend 1-on-1 time helping them unlock their own roadblocks.",
+        "C": "Ask the team how they can support this person.",
+        "D": "Give them a 'stretch goal' and hold them strictly accountable."
+      }
+    },
+    {
+      "id": 6,
+      "question": "In a meeting, you find yourself doing mostly:",
+      "options": {
+        "A": "Painting a picture of the future.",
+        "B": "Asking open-ended questions.",
+        "C": "Listening and summarizing the group's thoughts.",
+        "D": "Giving directions and setting the tempo."
+      }
+    },
+    {
+      "id": 7,
+      "question": "When planning for next year, you focus most on:",
+      "options": {
+        "A": "Innovative ideas and market disruption.",
+        "B": "Succession planning and talent development.",
+        "C": "Building a culture of collaboration and trust.",
+        "D": "Operational excellence and efficiency gains."
+      }
+    },
+    {
+      "id": 8,
+      "question": "Your team would describe your leadership 'Presence' as:",
+      "options": {
+        "A": "Inspiring and Charismatic.",
+        "B": "Supportive and Empathic.",
+        "C": "Inclusive and Fair.",
+        "D": "Intense and Result-Oriented."
+      }
+    },
+    {
+      "id": 9,
+      "question": "How do you handle 'Systems Thinking' in your organization?",
+      "options": {
+        "A": "I look for how the brand image impacts the market system.",
+        "B": "I look at how the human relationships affect the workflow.",
+        "C": "I look at how democratic participation improves the whole system.",
+        "D": "I look for bottlenecks in the execution chain."
+      }
+    },
+    {
+      "id": 10,
+      "question": "Your ultimate goal as a leader is to:",
+      "options": {
+        "A": "Be a catalyst for change.",
+        "B": "Be a developer of people.",
+        "C": "Be a builder of communities.",
+        "D": "Be a driver of performance."
+      }
+    }
+  ]
+}
