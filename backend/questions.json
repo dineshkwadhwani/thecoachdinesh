@@ -1,104 +1,54 @@
 {
-  "leadershipAssessment": [
-    {
-      "id": 1,
-      "question": "When a crisis hits the team, your first instinct is to:",
-      "options": {
-        "A": "Describe the big-picture goal to keep people inspired.",
-        "B": "Sit down with individuals to see how they are coping.",
-        "C": "Call a meeting to gather everyone's input on the solution.",
-        "D": "Jump in and show them exactly how to fix it by doing it yourself."
-      }
-    },
-    {
-      "id": 2,
-      "question": "How do you prefer to give feedback?",
-      "options": {
-        "A": "By reminding them how their work fits into the long-term mission.",
-        "B": "By asking them how they think they can improve their own skills.",
-        "C": "By discussing it openly as a group to reach a consensus.",
-        "D": "By pointing out high-performance gaps and demanding immediate results."
-      }
-    },
-    {
-      "id": 3,
-      "question": "Your team is stuck on a complex strategic decision. You:",
-      "options": {
-        "A": "Provide a clear 'North Star' and let them find the path.",
-        "B": "Use it as a 'teachable moment' to build their problem-solving skills.",
-        "C": "Facilitate a brainstorm where every voice has equal weight.",
-        "D": "Set a tight deadline and provide the specific data they must use."
-      }
-    },
-    {
-      "id": 4,
-      "question": "What does 'Success' look like to you at the end of a project?",
-      "options": {
-        "A": "We realized a bold new vision that didn't exist before.",
-        "B": "Every team member grew personally and professionally.",
-        "C": "The team feels a deep sense of ownership and agreement.",
-        "D": "We hit every KPI ahead of schedule with zero errors."
-      }
-    },
-    {
-      "id": 5,
-      "question": "A high-potential employee is underperforming. Your approach is:",
-      "options": {
-        "A": "Re-align them with the 'Why' behind their role.",
-        "B": "Spend 1-on-1 time helping them unlock their own roadblocks.",
-        "C": "Ask the team how they can support this person.",
-        "D": "Give them a 'stretch goal' and hold them strictly accountable."
-      }
-    },
-    {
-      "id": 6,
-      "question": "In a meeting, you find yourself doing mostly:",
-      "options": {
-        "A": "Painting a picture of the future.",
-        "B": "Asking open-ended questions.",
-        "C": "Listening and summarizing the group's thoughts.",
-        "D": "Giving directions and setting the tempo."
-      }
-    },
-    {
-      "id": 7,
-      "question": "When planning for next year, you focus most on:",
-      "options": {
-        "A": "Innovative ideas and market disruption.",
-        "B": "Succession planning and talent development.",
-        "C": "Building a culture of collaboration and trust.",
-        "D": "Operational excellence and efficiency gains."
-      }
-    },
-    {
-      "id": 8,
-      "question": "Your team would describe your leadership 'Presence' as:",
-      "options": {
-        "A": "Inspiring and Charismatic.",
-        "B": "Supportive and Empathic.",
-        "C": "Inclusive and Fair.",
-        "D": "Intense and Result-Oriented."
-      }
-    },
-    {
-      "id": 9,
-      "question": "How do you handle 'Systems Thinking' in your organization?",
-      "options": {
-        "A": "I look for how the brand image impacts the market system.",
-        "B": "I look at how the human relationships affect the workflow.",
-        "C": "I look at how democratic participation improves the whole system.",
-        "D": "I look for bottlenecks in the execution chain."
-      }
-    },
-    {
-      "id": 10,
-      "question": "Your ultimate goal as a leader is to:",
-      "options": {
-        "A": "Be a catalyst for change.",
-        "B": "Be a developer of people.",
-        "C": "Be a builder of communities.",
-        "D": "Be a driver of performance."
-      }
-    }
+  "reflectYourStyle": [
+    { "id": 1, "question": "When a crisis hits the team, your first instinct is to:", "options": { "A": "Describe the big-picture goal to keep people inspired.", "B": "Sit down with individuals to see how they are coping.", "C": "Call a meeting to gather everyone's input on the solution.", "D": "Jump in and show them exactly how to fix it by doing it yourself." } },
+    { "id": 2, "question": "How do you prefer to give feedback?", "options": { "A": "By reminding them how their work fits into the long-term mission.", "B": "By asking them how they think they can improve their own skills.", "C": "By discussing it openly as a group to reach a consensus.", "D": "By pointing out high-performance gaps and demanding immediate results." } },
+    { "id": 3, "question": "Your team is stuck on a complex strategic decision. You:", "options": { "A": "Provide a clear 'North Star' and let them find the path.", "B": "Use it as a 'teachable moment' to build their problem-solving skills.", "C": "Facilitate a brainstorm where every voice has equal weight.", "D": "Set a tight deadline and provide the specific data they must use." } },
+    { "id": 4, "question": "What does 'Success' look like to you at the end of a project?", "options": { "A": "We realized a bold new vision that didn't exist before.", "B": "Every team member grew personally and professionally.", "C": "The team feels a deep sense of ownership and agreement.", "D": "We hit every KPI ahead of schedule with zero errors." } },
+    { "id": 5, "question": "A high-potential employee is underperforming. Your approach is:", "options": { "A": "Re-align them with the 'Why' behind their role.", "B": "Spend 1-on-1 time helping them unlock their own roadblocks.", "C": "Ask the team how they can support this person.", "D": "Give them a 'stretch goal' and hold them strictly accountable." } },
+    { "id": 6, "question": "In a meeting, you find yourself doing mostly:", "options": { "A": "Painting a picture of the future.", "B": "Asking open-ended questions.", "C": "Listening and summarizing the group's thoughts.", "D": "Giving directions and setting the tempo." } },
+    { "id": 7, "question": "When planning for next year, you focus most on:", "options": { "A": "Innovative ideas and market disruption.", "B": "Succession planning and talent development.", "C": "Building a culture of collaboration and trust.", "D": "Operational excellence and efficiency gains." } },
+    { "id": 8, "question": "Your team would describe your leadership 'Presence' as:", "options": { "A": "Inspiring and Charismatic.", "B": "Supportive and Empathic.", "C": "Inclusive and Fair.", "D": "Intense and Result-Oriented." } },
+    { "id": 9, "question": "How do you handle 'Systems Thinking' in your organization?", "options": { "A": "I look for how the brand image impacts the market system.", "B": "I look at how the human relationships affect the workflow.", "C": "I look at how democratic participation improves the whole system.", "D": "I look for bottlenecks in the execution chain." } },
+    { "id": 10, "question": "Your ultimate goal as a leader is to:", "options": { "A": "Be a catalyst for change.", "B": "Be a developer of people.", "C": "Be a builder of communities.", "D": "Be a driver of performance." } },
+    { "id": 11, "question": "When a team member disagrees with you, you:", "options": { "A": "Explain the long-term benefits of your vision.", "B": "Ask them to explain their perspective to help them learn.", "C": "Seek a middle ground that everyone can live with.", "D": "State that the decision is final to maintain momentum." } },
+    { "id": 12, "question": "How do you define accountability?", "options": { "A": "Living up to the organization's core values.", "B": "Taking responsibility for one's own professional growth.", "C": "Being answerable to the rest of the team.", "D": "Meeting specific, pre-defined metrics and targets." } },
+    { "id": 13, "question": "What is the best way to motivate a discouraged team?", "options": { "A": "Tell a compelling story about the impact of their work.", "B": "Have 1-on-1 heart-to-hearts to build confidence.", "C": "Hold a group session to let everyone vent and regroup.", "D": "Set a small, easy-to-win goal to get a 'quick victory'." } },
+    { "id": 14, "question": "During a strategic pivot, you focus on:", "options": { "A": "Finding the 'New North' for the organization.", "B": "Ensuring no one feels left behind by the change.", "C": "Getting a vote on the new direction.", "D": "The speed of the transition to avoid lag." } },
+    { "id": 15, "question": "Your approach to delegation is:", "options": { "A": "Give them the goal, not the instructions.", "B": "Give them tasks that will challenge their current skills.", "C": "Give the task to whoever the group thinks is best.", "D": "Give precise instructions and a strict deadline." } },
+    { "id": 16, "question": "When you enter a room, you want people to feel:", "options": { "A": "Ready for a big challenge.", "B": "Heard and understood.", "C": "Like they are part of a team.", "D": "Ready to get to work immediately." } },
+    { "id": 17, "question": "In a performance review, you spend the most time on:", "options": { "A": "Discussing the person's future potential.", "B": "Asking what they want to learn next.", "C": "Discussing team dynamics and relationships.", "D": "Reviewing hard data and last quarter's results." } },
+    { "id": 18, "question": "How do you handle 'office politics'?", "options": { "A": "I ignore it and focus on the mission.", "B": "I help people coach their way through the tension.", "C": "I bring everyone together to discuss it openly.", "D": "I shut it down if it interferes with output." } },
+    { "id": 19, "question": "What is the most important part of a meeting?", "options": { "A": "The closing 'Inspirational' summary.", "B": "The chance for individual growth.", "C": "The moment of consensus.", "D": "The action items and deadlines." } },
+    { "id": 20, "question": "When you need to hire someone, you look for:", "options": { "A": "Shared vision and 'spark'.", "B": "Willingness to learn and be coached.", "C": "Ability to collaborate and fit the culture.", "D": "A proven track record of high-speed results." } },
+    { "id": 21, "question": "If you have to let someone go, you focus on:", "options": { "A": "Ensuring it's the right move for the brand's future.", "B": "Treating them with dignity and helping their transition.", "C": "Discussing the impact on the team's morale.", "D": "Following the legal and performance protocol perfectly." } },
+    { "id": 22, "question": "How do you handle information sharing?", "options": { "A": "I share what is necessary to maintain the vision.", "B": "I share what will help people grow.", "C": "I share everything to maintain transparency.", "D": "I share what is needed to get the job done." } },
+    { "id": 23, "question": "Your view on 'Risk' is:", "options": { "A": "Necessary to achieve the impossible.", "B": "A great way for people to learn from mistakes.", "C": "Something to be discussed as a group.", "D": "Something to be calculated and minimized." } },
+    { "id": 24, "question": "When someone does a great job, you:", "options": { "A": "Publicly highlight how they embody the mission.", "B": "Private 1-on-1 praise focusing on their growth.", "C": "Ask the team to celebrate them together.", "D": "Give them a reward and a bigger challenge." } },
+    { "id": 25, "question": "You believe leadership is mostly about:", "options": { "A": "Inspiration.", "B": "Development.", "C": "Consensus.", "D": "Execution." } },
+    { "id": 26, "question": "How do you respond to a missed deadline?", "options": { "A": "Ask if the goal is still worth pursuing.", "B": "Ask what skills the person needs to improve.", "C": "Ask the team how they can help catch up.", "D": "Express disappointment and demand a fix." } },
+    { "id": 27, "question": "When a new technology arrives, you:", "options": { "A": "Imagine how it changes the whole industry.", "B": "Ask who wants to learn it first.", "C": "Discuss as a group if it fits the workflow.", "D": "Analyze if it increases speed and ROI." } },
+    { "id": 28, "question": "In a crisis, your communication style is:", "options": { "A": "Visionary and bold.", "B": "Calm and supportive.", "C": "Open and listening.", "D": "Direct and command-based." } },
+    { "id": 29, "question": "When a team is 'drifting', you:", "options": { "A": "Remind them of the 'Why'.", "B": "Coach the individuals who are lagging.", "C": "Hold a 'Reset' meeting for everyone.", "D": "Increase the frequency of reporting." } },
+    { "id": 30, "question": "How do you view your role in the organization?", "options": { "A": "The Architect.", "B": "The Gardener.", "C": "The Facilitator.", "D": "The Engine." } },
+    { "id": 31, "question": "You think personal growth is:", "options": { "A": "Driven by a clear future goal.", "B": "The core of the professional journey.", "C": "Enhanced by team collaboration.", "D": "Measured by performance outcomes." } },
+    { "id": 32, "question": "When you have a 'gut feeling', you:", "options": { "A": "Follow it and bring the team along.", "B": "Test it by coaching others to see it.", "C": "Propose it to the team for debate.", "D": "Look for data to prove or disprove it." } },
+    { "id": 33, "question": "What is the biggest waste of time?", "options": { "A": "Staying the same.", "B": "Stunted potential.", "C": "Hidden agendas.", "D": "Inefficiency." } },
+    { "id": 34, "question": "When someone is 'stuck', you ask:", "options": { "A": "Where do you want to go?", "B": "What are you afraid of?", "C": "What does the team need?", "D": "What is the next step?" } },
+    { "id": 35, "question": "Your ideal team culture is:", "options": { "A": "Disruptive and bold.", "B": "Safe and developmental.", "C": "Transparent and fair.", "D": "Fast and flawless." } },
+    { "id": 36, "question": "How do you manage your time?", "options": { "A": "I focus on the high-impact future stuff.", "B": "I focus on people and coaching.", "C": "I focus on coordination and alignment.", "D": "I focus on the schedule and tasks." } },
+    { "id": 37, "question": "When you disagree with your boss, you:", "options": { "A": "Offer a more compelling vision.", "B": "Try to coach them to see your view.", "C": "Discuss it with peers first.", "D": "Present data to show why they are wrong." } },
+    { "id": 38, "question": "What is your best leadership habit?", "options": { "A": "Storytelling.", "B": "Listening.", "C": "Inclusive planning.", "D": "Setting high bars." } },
+    { "id": 39, "question": "When a project ends, you first think of:", "options": { "A": "The next big thing.", "B": "Who learned what.", "C": "How the team feels.", "D": "The final numbers." } },
+    { "id": 40, "question": "How do you define 'Leadership Presence'?", "options": { "A": "Being the most inspiring person in the room.", "B": "Being the most observant person in the room.", "C": "Being the most approachable person in the room.", "D": "Being the most competent person in the room." } },
+    { "id": 41, "question": "If you could change one thing in business, it would be:", "options": { "A": "A lack of imagination.", "B": "The waste of talent.", "C": "The siloed communication.", "D": "The slow pace of change." } },
+    { "id": 42, "question": "How do you start your day?", "options": { "A": "Thinking about the 5-year goal.", "B": "Thinking about the people I'll meet.", "C": "Checking in with the team.", "D": "Reviewing my to-do list." } },
+    { "id": 43, "question": "In a high-pressure situation, you:", "options": { "A": "Focus on the 'big win'.", "B": "Focus on keeping the team calm.", "C": "Focus on group consensus.", "D": "Focus on the execution steps." } },
+    { "id": 44, "question": "When delegating power, you:", "options": { "A": "Trust them with the vision.", "B": "Guide them as they handle it.", "C": "Distribute it among the group.", "D": "Grant it based on performance." } },
+    { "id": 45, "question": "You handle failure by:", "options": { "A": "Pivoting the vision.", "B": "Reflecting on the growth.", "C": "Discussing it with the team.", "D": "Doing a post-mortem on the data." } },
+    { "id": 46, "question": "What is the best way to earn respect?", "options": { "A": "Being a pioneer.", "B": "Being a mentor.", "C": "Being a collaborator.", "D": "Being a top performer." } },
+    { "id": 47, "question": "When you're overwhelmed, you:", "options": { "A": "Step back and look at the big picture.", "B": "Ask for coaching from a peer.", "C": "Delegate and align with the team.", "D": "Work harder and faster." } },
+    { "id": 48, "question": "What motivates you most?", "options": { "A": "Innovation.", "B": "Impact.", "C": "Involvement.", "D": "Achievement." } },
+    { "id": 49, "question": "Your leadership 'legacy' will be:", "options": { "A": "The vision I realized.", "B": "The people I grew.", "C": "The culture I built.", "D": "The results I delivered." } },
+    { "id": 50, "question": "Finally, you view leadership as a:", "options": { "A": "Calling.", "B": "Service.", "C": "Duty.", "D": "Skill." } }
   ]
 }

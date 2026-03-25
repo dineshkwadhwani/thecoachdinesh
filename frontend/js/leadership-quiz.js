@@ -1,5 +1,7 @@
 // Leadership Quiz Modal Logic
 
+const QUIZ_QUESTION_COUNT = 10;
+
 let quizState = {
     currentStep: 'name',
     userName: '',
@@ -39,7 +41,13 @@ async function loadQuestionsAndInit() {
             headers: { 'Content-Type': 'application/json' }
         });
         const data = await response.json();
-        quizState.questions = data.leadershipAssessment;
+        const allQuestions = Array.isArray(data.reflectYourStyle) ? data.reflectYourStyle : [];
+
+        if (allQuestions.length < QUIZ_QUESTION_COUNT) {
+            throw new Error(`Not enough questions in pool. Expected at least ${QUIZ_QUESTION_COUNT}.`);
+        }
+
+        quizState.questions = getBalancedRandomQuestions(allQuestions, QUIZ_QUESTION_COUNT);
         console.log('Questions loaded:', quizState.questions);
         displayStep('name');
     } catch (error) {
@@ -47,6 +55,43 @@ async function loadQuestionsAndInit() {
         alert('Failed to load quiz. Please try again.');
         closeLeadershipQuiz();
     }
+}
+
+function shuffleQuestions(questions) {
+    const shuffled = [...questions];
+
+    for (let index = shuffled.length - 1; index > 0; index--) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    }
+
+    return shuffled;
+}
+
+// Split the pool into equal bands by position and pick evenly from each band.
+// This ensures coverage across the full question bank regardless of tagging.
+function getBalancedRandomQuestions(pool, count) {
+    const bandCount = 4;
+    const basePerBand = Math.floor(count / bandCount);   // 2 for count=10
+    const remainder = count % bandCount;                  // 2 extra slots
+
+    const bandSize = Math.ceil(pool.length / bandCount);
+    const bands = [];
+    for (let i = 0; i < bandCount; i++) {
+        bands.push(shuffleQuestions(pool.slice(i * bandSize, (i + 1) * bandSize)));
+    }
+
+    const selected = [];
+
+    for (let i = 0; i < bandCount; i++) {
+        const quota = basePerBand + (i < remainder ? 1 : 0);
+        if (bands[i].length < quota) {
+            throw new Error(`Band ${i + 1} has too few questions (${bands[i].length}) for quota ${quota}.`);
+        }
+        selected.push(...bands[i].slice(0, quota));
+    }
+
+    return shuffleQuestions(selected);
 }
 
 // Display a specific step
@@ -69,7 +114,7 @@ function displayStep(step) {
         progressText = 'Step 1 of 4: Identify Yourself';
     } else if (step === 'questions') {
         progressPercent = 50;
-        progressText = `Step 2 of 4: Question ${quizState.currentQuestion + 1} of 10`;
+        progressText = `Step 2 of 4: Question ${quizState.currentQuestion + 1} of ${QUIZ_QUESTION_COUNT}`;
     } else if (step === 'email') {
         progressPercent = 75;
         progressText = 'Step 3 of 4: Share Your Email';
@@ -118,11 +163,11 @@ function displayQuestion() {
     const questionNum = quizState.currentQuestion + 1;
     
     // Update progress text
-    document.getElementById('progress-text').textContent = `Step 2 of 4: Question ${questionNum} of 10`;
+    document.getElementById('progress-text').textContent = `Step 2 of 4: Question ${questionNum} of ${QUIZ_QUESTION_COUNT}`;
     
     // Update question number and progress
-    document.getElementById('question-number').textContent = `Question ${questionNum} of 10`;
-    const fillPercent = (questionNum / 10) * 100;
+    document.getElementById('question-number').textContent = `Question ${questionNum} of ${QUIZ_QUESTION_COUNT}`;
+    const fillPercent = (questionNum / QUIZ_QUESTION_COUNT) * 100;
     document.getElementById('question-progress-fill').style.width = fillPercent + '%';
     
     // Display question
@@ -152,7 +197,7 @@ function displayQuestion() {
     
     // Update button visibility
     document.getElementById('prev-btn').style.display = quizState.currentQuestion === 0 ? 'none' : 'block';
-    document.getElementById('next-btn').textContent = quizState.currentQuestion === 9 ? 'See Results' : 'Next Question';
+    document.getElementById('next-btn').textContent = quizState.currentQuestion === (QUIZ_QUESTION_COUNT - 1) ? 'See Results' : 'Next Question';
 }
 
 // Select an answer
@@ -176,7 +221,7 @@ function quizNextQuestion() {
     
     quizState.currentQuestion++;
     
-    if (quizState.currentQuestion >= 10) {
+    if (quizState.currentQuestion >= QUIZ_QUESTION_COUNT) {
         displayStep('email');
     } else {
         displayQuestion();

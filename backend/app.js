@@ -10,10 +10,22 @@ const OpenAI = require('openai');
 const { askDinesh } = require('./coachService');
 
 const app = express();
+const pageCacheDurationMs = 15 * 60 * 1000;
+
+function setPageCacheHeaders(res) {
+    res.setHeader('Cache-Control', 'public, max-age=900, must-revalidate');
+    res.setHeader('Expires', new Date(Date.now() + pageCacheDurationMs).toUTCString());
+}
 
 // 1. SERVE STATIC FILES
 // This tells Express to serve your CSS, JS, and Images from the frontend folder
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '../frontend'), {
+    index: false,
+    maxAge: '15m',
+    setHeaders: (res) => {
+        setPageCacheHeaders(res);
+    }
+}));
 
 app.use(cors()); 
 app.use(express.json());
@@ -25,6 +37,7 @@ app.get('/ping', (req, res) => {
 // 2. SERVE THE HOME PAGE
 // When someone goes to http://localhost:3000, send them your index.html
 app.get('/', (req, res) => {
+    setPageCacheHeaders(res);
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
