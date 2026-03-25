@@ -136,6 +136,31 @@
     border-color: #4a90e2;
 }
 
+.phone-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#user-country-code-input {
+    flex: 0 0 170px;
+    padding: 12px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    background: white;
+}
+
+#user-country-code-input:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+#user-mobile-input {
+    margin-bottom: 0;
+}
+
 .question-header {
     display: flex;
     justify-content: space-between;
@@ -229,6 +254,50 @@
     margin-bottom: 15px;
 }
 
+.executive-report-summary {
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    border: 1px solid #d9e7f5;
+    border-radius: 10px;
+}
+
+.executive-report-summary p {
+    margin: 0 0 8px;
+    color: #2d3a45;
+}
+
+.executive-report-summary p:last-child {
+    margin-bottom: 0;
+}
+
+.executive-report-section {
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    background: #ffffff;
+    border: 1px solid #e5edf5;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(55, 84, 120, 0.06);
+}
+
+.executive-report-section h3 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #4a6f91;
+    font-family: 'Inter', sans-serif;
+}
+
+.executive-report-section p {
+    margin: 0 0 10px;
+    color: #2f3b46;
+}
+
+.executive-report-section p:last-child {
+    margin-bottom: 0;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     .modal-content {
@@ -256,6 +325,14 @@
     
     .quiz-actions {
         flex-direction: column;
+    }
+
+    .phone-input-row {
+        flex-direction: column;
+    }
+
+    #user-country-code-input {
+        flex: 1 1 auto;
     }
     
     .quiz-actions .btn {

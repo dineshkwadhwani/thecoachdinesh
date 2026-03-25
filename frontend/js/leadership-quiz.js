@@ -1,19 +1,30 @@
 // Leadership Quiz Modal Logic
 
-const QUICK_QUESTION_COUNT = 10;
-const DEEP_QUESTION_COUNT = 25;
-
-let quizState = {
-    currentStep: 'name',
-    userName: '',
-    userEmail: '',
-    currentQuestion: 0,
-    questionCount: QUICK_QUESTION_COUNT,
-    quizType: 'quick',
-    answers: [],
-    questions: [],
-    allQuestions: []
+const DEFAULT_QUIZ_CONFIG = {
+    quickQuestionCount: 10,
+    deepQuestionCount: 25
 };
+const QUIZ_CONFIG_KEY = 'reflectYourStyle';
+
+let quizConfig = { ...DEFAULT_QUIZ_CONFIG };
+
+function createInitialQuizState() {
+    return {
+        currentStep: 'name',
+        userName: '',
+        countryCode: '+91',
+        userMobileNumber: '',
+        userEmail: '',
+        currentQuestion: 0,
+        questionCount: quizConfig.quickQuestionCount,
+        quizType: 'quick',
+        answers: [],
+        questions: [],
+        allQuestions: []
+    };
+}
+
+let quizState = createInitialQuizState();
 
 // Open the quiz modal
 function openLeadershipQuiz() {
@@ -28,16 +39,81 @@ function closeLeadershipQuiz() {
     const modal = document.getElementById('leadership-quiz-modal');
     modal.style.display = 'none';
     // Reset state
-    quizState = {
-        currentStep: 'name',
-        userName: '',
-        userEmail: '',
-        currentQuestion: 0,
-        questionCount: QUICK_QUESTION_COUNT,
-        quizType: 'quick',
-        answers: [],
-        questions: [],
-        allQuestions: []
+    quizState = createInitialQuizState();
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function renderDeepExecutiveReport(reportText) {
+    const sectionTitles = [
+        'Name',
+        'Dominant Style',
+        'Secondary Style',
+        'Comparison With Earlier Report',
+        'Style Interpretation',
+        'Strengths',
+        'Risks And Blind Spots',
+        'Development Priorities'
+    ];
+    const headingPattern = new RegExp(`^(${sectionTitles.join('|')})(:)?\\s*$`);
+    const lines = String(reportText || '').split(/\r?\n/);
+    const sections = [];
+    let currentSection = null;
+
+    lines.forEach(line => {
+        const trimmedLine = line.trim();
+        const headingMatch = trimmedLine.match(headingPattern);
+
+        if (headingMatch) {
+            currentSection = {
+                title: headingMatch[1],
+                paragraphs: []
+            };
+            sections.push(currentSection);
+            return;
+        }
+
+        if (!trimmedLine) {
+            return;
+        }
+
+        if (!currentSection) {
+            currentSection = {
+                title: 'Executive Summary',
+                paragraphs: []
+            };
+            sections.push(currentSection);
+        }
+
+        currentSection.paragraphs.push(trimmedLine);
+    });
+
+    return sections.map(section => `
+        <section class="executive-report-section">
+            <h3>${escapeHtml(section.title)}</h3>
+            ${section.paragraphs.map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join('')}
+        </section>
+    `).join('');
+}
+
+function normalizeQuizConfig(rawConfig = {}) {
+    const quickQuestionCount = Number.parseInt(rawConfig.quickQuestionCount, 10);
+    const deepQuestionCount = Number.parseInt(rawConfig.deepQuestionCount, 10);
+
+    return {
+        quickQuestionCount: Number.isInteger(quickQuestionCount) && quickQuestionCount > 0
+            ? quickQuestionCount
+            : DEFAULT_QUIZ_CONFIG.quickQuestionCount,
+        deepQuestionCount: Number.isInteger(deepQuestionCount) && deepQuestionCount > 0
+            ? deepQuestionCount
+            : DEFAULT_QUIZ_CONFIG.deepQuestionCount
     };
 }
 
@@ -51,21 +127,23 @@ async function loadQuestionsAndInit() {
         });
         const data = await response.json();
         const allQuestions = Array.isArray(data.reflectYourStyle) ? data.reflectYourStyle : [];
+        quizConfig = normalizeQuizConfig(data.config && data.config[QUIZ_CONFIG_KEY]);
+        const quickQuestionCount = quizConfig.quickQuestionCount;
 
-        if (allQuestions.length < QUICK_QUESTION_COUNT) {
-            throw new Error(`Not enough questions in pool. Expected at least ${QUICK_QUESTION_COUNT}.`);
+        if (allQuestions.length < quickQuestionCount) {
+            throw new Error(`Not enough questions in pool. Expected at least ${quickQuestionCount}.`);
         }
 
         quizState.allQuestions = allQuestions;
         quizState.quizType = 'quick';
-        quizState.questionCount = QUICK_QUESTION_COUNT;
+        quizState.questionCount = quickQuestionCount;
         quizState.currentQuestion = 0;
         quizState.answers = [];
         quizState.userEmail = '';
 
-        quizState.questions = getBalancedRandomQuestions(allQuestions, QUICK_QUESTION_COUNT);
+        quizState.questions = getBalancedRandomQuestions(allQuestions, quickQuestionCount);
         console.log('Questions loaded:', quizState.questions);
-        console.log('[QUIZ] Init complete. quizType:', quizState.quizType, 'questionCount:', quizState.questionCount);
+        console.log('[QUIZ] Init complete. config:', quizConfig, 'quizType:', quizState.quizType, 'questionCount:', quizState.questionCount);
         displayStep('name');
     } catch (error) {
         console.error('Failed to load questions:', error);
@@ -172,11 +250,28 @@ function displayStep(step) {
 function quizNextStep(from) {
     if (from === 'name') {
         const nameInput = document.getElementById('user-name-input').value.trim();
+        const countryCodeInput = document.getElementById('user-country-code-input').value;
+        const mobileInputRaw = document.getElementById('user-mobile-input').value.trim();
+        const mobileDigits = mobileInputRaw.replace(/\D/g, '');
+
         if (!nameInput) {
             alert('Please enter your name');
             return;
         }
+
+        if (!countryCodeInput) {
+            alert('Please select a country code');
+            return;
+        }
+
+        if (!/^\d{7,15}$/.test(mobileDigits)) {
+            alert('Please enter a valid mobile number (7 to 15 digits).');
+            return;
+        }
+
         quizState.userName = nameInput;
+        quizState.countryCode = countryCodeInput;
+        quizState.userMobileNumber = mobileDigits;
         quizState.currentQuestion = 0;
         quizState.answers = [];
         displayStep('questions');
@@ -296,6 +391,7 @@ async function quizSubmit(evt) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 name: quizState.userName,
+                mobile: `${quizState.countryCode}${quizState.userMobileNumber}`,
                 email: quizState.userEmail,
                 answers: quizState.answers,
                 quizType: quizState.quizType
@@ -307,11 +403,13 @@ async function quizSubmit(evt) {
         }
         
         const data = await response.json();
-        
+
         console.log('[QUIZ] Got response from server:', data.dominantStyle);
         // Display report
         displayReport({
+            name: data.name || quizState.userName,
             dominantStyle: data.dominantStyle,
+            secondaryStyle: data.secondaryStyle,
             report: data.report
         });
         
@@ -325,15 +423,30 @@ async function quizSubmit(evt) {
 
 // Display the generated report
 function displayReport(reportData) {
-    document.getElementById('report-title').textContent = `Your Leadership Style: ${reportData.dominantStyle}`;
+    document.getElementById('report-title').textContent = quizState.quizType === 'deep'
+        ? `${reportData.name || quizState.userName}: Leadership Style, Deep Analysis`
+        : `Your Leadership Style: ${reportData.dominantStyle}`;
 
     const cleanedReport = (reportData.report || '')
         .replace(/Contact Coach Dinesh for your full 25-question Executive Assessment to go deeper into your leadership impact\.?/gi, '')
+        .replace(/Want a much deeper evaluation\. Take a indepth test across multiple scenarios\.?/gi, '')
         .trim();
+    const formattedReport = quizState.quizType === 'deep'
+        ? renderDeepExecutiveReport(cleanedReport)
+        : cleanedReport
+            .split(/\n{2,}/)
+            .map(paragraph => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+            .join('');
+    const styleSummary = quizState.quizType === 'deep'
+        ? `<div class="executive-report-summary">
+                <p><strong>Name:</strong> ${escapeHtml(reportData.name || quizState.userName)}</p>
+                <p><strong>Dominant Style:</strong> ${escapeHtml(reportData.dominantStyle)}</p>
+                <p><strong>Secondary Style:</strong> ${escapeHtml(reportData.secondaryStyle || 'Not significant enough to call out')}</p>
+           </div>`
+        : '';
 
     const deepTestCta = quizState.quizType === 'quick'
         ? `<div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd;">
-                <p style="font-style: italic; margin-bottom: 12px;">Want a much deeper evaluation. Take a indepth test across multiple scenarios.</p>
                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                     <button class="btn" onclick="startInDepthTest()">Deep Executive Analysis</button>
                     <button class="btn btn-secondary" onclick="closeLeadershipQuiz()">Close</button>
@@ -345,8 +458,9 @@ function displayReport(reportData) {
 
     document.getElementById('report-content').innerHTML = `
         <div>
+            ${styleSummary}
             <p><strong>Analysis:</strong></p>
-            <p>${cleanedReport}</p>
+            ${formattedReport}
             ${deepTestCta}
         </div>
     `;
@@ -355,8 +469,10 @@ function displayReport(reportData) {
 
 function startInDepthTest() {
     console.log('[QUIZ] startInDepthTest called. allQuestions pool size:', quizState.allQuestions.length);
-    if (!Array.isArray(quizState.allQuestions) || quizState.allQuestions.length < DEEP_QUESTION_COUNT) {
-        alert(`Not enough questions for in-depth test. Need at least ${DEEP_QUESTION_COUNT}.`);
+    const deepQuestionCount = quizConfig.deepQuestionCount;
+
+    if (!Array.isArray(quizState.allQuestions) || quizState.allQuestions.length < deepQuestionCount) {
+        alert(`Not enough questions for in-depth test. Need at least ${deepQuestionCount}.`);
         return;
     }
 
@@ -368,17 +484,17 @@ function startInDepthTest() {
     );
 
     console.log('[QUIZ] deep test pool after excluding quick questions:', remainingQuestions.length);
-    if (remainingQuestions.length < DEEP_QUESTION_COUNT) {
-        alert(`Not enough unique questions left for in-depth test. Need ${DEEP_QUESTION_COUNT}, found ${remainingQuestions.length}.`);
+    if (remainingQuestions.length < deepQuestionCount) {
+        alert(`Not enough unique questions left for in-depth test. Need ${deepQuestionCount}, found ${remainingQuestions.length}.`);
         return;
     }
 
     quizState.quizType = 'deep';
-    quizState.questionCount = DEEP_QUESTION_COUNT;
+    quizState.questionCount = deepQuestionCount;
     quizState.currentQuestion = 0;
     quizState.answers = [];
     quizState.userEmail = '';
-    quizState.questions = getRandomQuestions(remainingQuestions, DEEP_QUESTION_COUNT);
+    quizState.questions = getRandomQuestions(remainingQuestions, deepQuestionCount);
 
     const emailInput = document.getElementById('user-email-input');
     if (emailInput) {

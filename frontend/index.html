@@ -307,8 +307,34 @@ Schedule a Conversation
         <!-- Step 1: Name Input -->
         <div class="quiz-step" id="step-name">
             <h2>Let's start with your name</h2>
-            <p>What should we call you?</p>
+            <p>What should we call you? Please share your mobile number too.</p>
             <input type="text" id="user-name-input" placeholder="Enter your name" />
+            <div class="phone-input-row">
+                <select id="user-country-code-input" aria-label="Country code">
+                    <option value="+1">+1 (US/Canada)</option>
+                    <option value="+7">+7 (Russia)</option>
+                    <option value="+20">+20 (Egypt)</option>
+                    <option value="+27">+27 (South Africa)</option>
+                    <option value="+33">+33 (France)</option>
+                    <option value="+34">+34 (Spain)</option>
+                    <option value="+39">+39 (Italy)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+49">+49 (Germany)</option>
+                    <option value="+52">+52 (Mexico)</option>
+                    <option value="+55">+55 (Brazil)</option>
+                    <option value="+61">+61 (Australia)</option>
+                    <option value="+65">+65 (Singapore)</option>
+                    <option value="+81">+81 (Japan)</option>
+                    <option value="+82">+82 (South Korea)</option>
+                    <option value="+91" selected>+91 (India)</option>
+                    <option value="+92">+92 (Pakistan)</option>
+                    <option value="+94">+94 (Sri Lanka)</option>
+                    <option value="+966">+966 (Saudi Arabia)</option>
+                    <option value="+971">+971 (UAE)</option>
+                    <option value="+974">+974 (Qatar)</option>
+                </select>
+                <input type="tel" id="user-mobile-input" placeholder="Mobile number" inputmode="numeric" autocomplete="tel-national" />
+            </div>
             <button class="btn" onclick="quizNextStep('name')">Continue</button>
         </div>
         

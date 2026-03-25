@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coach Dinesh | Leadership Reports Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(74, 144, 226, 0.16), transparent 28%),
+        linear-gradient(180deg, #f5f8fb 0%, #eef3f8 100%);
+    color: #24313d;
+}
+
+.admin-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 56px 24px 72px;
+}
+
+.admin-hero {
+    margin-bottom: 28px;
+}
+
+.eyebrow {
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #4a6f91;
+}
+
+.admin-hero h1 {
+    margin: 0 0 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(34px, 5vw, 54px);
+    line-height: 1.05;
+    color: #17212b;
+}
+
+.hero-copy {
+    max-width: 720px;
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #4d5e6f;
+}
+
+.search-panel {
+    padding: 24px;
+    border: 1px solid rgba(96, 124, 150, 0.18);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 60px rgba(38, 61, 89, 0.08);
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 14px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field-group label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #4a6177;
+}
+
+.field-group input,
+.field-group select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: 1px solid #cfd9e4;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 15px;
+    color: #23313d;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-group input:focus,
+.field-group select:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.14);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.btn-primary {
+    border: none;
+    border-radius: 999px;
+    padding: 14px 22px;
+    background: linear-gradient(135deg, #1d5da8 0%, #4a90e2 100%);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 14px 26px rgba(29, 93, 168, 0.22);
+}
+
+.btn-primary:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.status-message {
+    min-height: 24px;
+    margin: 16px 0 0;
+    color: #4a6177;
+}
+
+.status-message.error {
+    color: #b33b3b;
+}
+
+.tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: 1px solid #cfd9e4;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a6177;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.tab-btn:hover {
+    background: #edf4fb;
+}
+
+.tab-btn-active {
+    background: linear-gradient(135deg, #1d5da8 0%, #4a90e2 100%);
+    color: #fff;
+    border-color: transparent;
+}
+
+.browse-all-panel {
+    padding: 20px 24px;
+    border: 1px solid rgba(96,124,150,0.18);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.88);
+    box-shadow: 0 18px 60px rgba(38,61,89,0.08);
+}
+
+.results-panel {
+    display: grid;
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.empty-state,
+.report-card {
+    border: 1px solid rgba(96, 124, 150, 0.16);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 50px rgba(38, 61, 89, 0.08);
+}
+
+.empty-state {
+    padding: 24px;
+    color: #526577;
+}
+
+.report-card {
+    overflow: hidden;
+}
+
+.report-card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px 22px 16px;
+    background: linear-gradient(180deg, rgba(244, 248, 252, 0.96) 0%, rgba(255, 255, 255, 0.96) 100%);
+    border-bottom: 1px solid #e6edf4;
+}
+
+.report-card-header h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    font-family: 'Playfair Display', serif;
+    color: #17212b;
+}
+
+.report-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.meta-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: #edf4fb;
+    color: #39536d;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.report-card-body {
+    padding: 22px;
+}
+
+.executive-report-summary {
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    border: 1px solid #d9e7f5;
+    border-radius: 10px;
+}
+
+.executive-report-summary p {
+    margin: 0 0 8px;
+    color: #2d3a45;
+}
+
+.executive-report-summary p:last-child {
+    margin-bottom: 0;
+}
+
+.executive-report-section {
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    background: #ffffff;
+    border: 1px solid #e5edf5;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(55, 84, 120, 0.06);
+}
+
+.executive-report-section h3 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #4a6f91;
+    font-family: 'Inter', sans-serif;
+}
+
+.executive-report-section p {
+    margin: 0 0 10px;
+    color: #2f3b46;
+    line-height: 1.7;
+}
+
+.executive-report-section p:last-child {
+    margin-bottom: 0;
+}
+
+.simple-report p {
+    margin: 0 0 14px;
+    line-height: 1.7;
+    color: #304150;
+}
+
+.simple-report p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+    .admin-shell {
+        padding: 32px 16px 48px;
+    }
+
+    .search-panel,
+    .report-card-body,
+    .report-card-header {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .field-row,
+    .report-card-header {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+}
+</style>
+</head>
+<body>
+    <main class="admin-shell">
+        <section class="admin-hero">
+            <p class="eyebrow">Internal Tool</p>
+            <h1>Leadership Reports Admin</h1>
+            <p class="hero-copy">Look up previously generated quick and deep assessments using the lead's email address and mobile number.</p>
+        </section>
+
+        <div class="tab-bar">
+            <button class="tab-btn tab-btn-active" id="tab-search" onclick="switchTab('search')">Search by Lead</button>
+            <button class="tab-btn" id="tab-all" onclick="switchTab('all')">Browse All Leads</button>
+        </div>
+
+        <section class="search-panel" id="panel-search">
+            <form id="report-search-form" class="search-form">
+                <div class="field-group field-group-wide">
+                    <label for="admin-email-input">Email</label>
+                    <input type="email" id="admin-email-input" placeholder="name@example.com" autocomplete="email" required>
+                </div>
+
+                <div class="field-row">
+                    <div class="field-group field-group-code">
+                        <label for="admin-country-code-input">Country Code</label>
+                        <select id="admin-country-code-input" aria-label="Country code">
+                            <option value="+1">+1 (US/Canada)</option>
+                            <option value="+7">+7 (Russia)</option>
+                            <option value="+20">+20 (Egypt)</option>
+                            <option value="+27">+27 (South Africa)</option>
+                            <option value="+33">+33 (France)</option>
+                            <option value="+34">+34 (Spain)</option>
+                            <option value="+39">+39 (Italy)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+49">+49 (Germany)</option>
+                            <option value="+52">+52 (Mexico)</option>
+                            <option value="+55">+55 (Brazil)</option>
+                            <option value="+61">+61 (Australia)</option>
+                            <option value="+65">+65 (Singapore)</option>
+                            <option value="+81">+81 (Japan)</option>
+                            <option value="+82">+82 (South Korea)</option>
+                            <option value="+91" selected>+91 (India)</option>
+                            <option value="+92">+92 (Pakistan)</option>
+                            <option value="+94">+94 (Sri Lanka)</option>
+                            <option value="+966">+966 (Saudi Arabia)</option>
+                            <option value="+971">+971 (UAE)</option>
+                            <option value="+974">+974 (Qatar)</option>
+                        </select>
+                    </div>
+
+                    <div class="field-group field-group-number">
+                        <label for="admin-mobile-input">Mobile Number</label>
+                        <input type="tel" id="admin-mobile-input" placeholder="Enter mobile number" inputmode="numeric" autocomplete="tel-national" required>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="admin-search-btn">Load Reports</button>
+                </div>
+            </form>
+
+            <p id="status-message" class="status-message" aria-live="polite"></p>
+        </section>
+
+        <section id="panel-all" class="browse-all-panel" style="display:none;">
+            <button class="btn-primary" id="load-all-btn" onclick="loadAllReports()">Load All Leads</button>
+            <p id="all-status-message" class="status-message" aria-live="polite"></p>
+        </section>
+
+        <section id="results-panel" class="results-panel"></section>
+    </main>
+
+<script>
+const ADMIN_DEEP_SECTION_TITLES = [
+    'Name',
+    'Dominant Style',
+    'Secondary Style',
+    'Comparison With Earlier Report',
+    'Style Interpretation',
+    'Strengths',
+    'Risks And Blind Spots',
+    'Development Priorities'
+];
+
+function adminEscapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function normalizeAdminMobile(countryCode, rawMobile) {
+    const mobileDigits = String(rawMobile || '').replace(/\D/g, '');
+    if (!/^\d{7,15}$/.test(mobileDigits)) {
+        throw new Error('Please enter a valid mobile number with 7 to 15 digits.');
+    }
+
+    return `${countryCode}${mobileDigits}`;
+}
+
+function renderAdminDeepReport(reportText) {
+    const headingPattern = new RegExp(`^(${ADMIN_DEEP_SECTION_TITLES.join('|')})(:)?\\s*$`);
+    const lines = String(reportText || '').split(/\r?\n/);
+    const sections = [];
+    let currentSection = null;
+
+    lines.forEach(line => {
+        const trimmedLine = line.trim();
+        const headingMatch = trimmedLine.match(headingPattern);
+
+        if (headingMatch) {
+            currentSection = {
+                title: headingMatch[1],
+                paragraphs: []
+            };
+            sections.push(currentSection);
+            return;
+        }
+
+        if (!trimmedLine) {
+            return;
+        }
+
+        if (!currentSection) {
+            currentSection = {
+                title: 'Executive Summary',
+                paragraphs: []
+            };
+            sections.push(currentSection);
+        }
+
+        currentSection.paragraphs.push(trimmedLine);
+    });
+
+    return sections.map(section => `
+        <section class="executive-report-section">
+            <h3>${adminEscapeHtml(section.title)}</h3>
+            ${section.paragraphs.map(paragraph => `<p>${adminEscapeHtml(paragraph)}</p>`).join('')}
+        </section>
+    `).join('');
+}
+
+function renderSimpleReport(reportText) {
+    return `
+        <div class="simple-report">
+            ${String(reportText || '')
+                .split(/\n{2,}/)
+                .map(paragraph => `<p>${adminEscapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+                .join('')}
+        </div>
+    `;
+}
+
+function formatTimestamp(timestamp) {
+    if (!timestamp) {
+        return 'Unknown time';
+    }
+
+    const date = new Date(timestamp);
+    return Number.isNaN(date.getTime()) ? timestamp : date.toLocaleString();
+}
+
+function renderReportCard(report) {
+    const isDeepReport = report.quizType === 'deep';
+    const reportBody = isDeepReport
+        ? renderAdminDeepReport(report.report)
+        : renderSimpleReport(report.report);
+    const summaryBlock = isDeepReport
+        ? `
+            <div class="executive-report-summary">
+                <p><strong>Name:</strong> ${adminEscapeHtml(report.name)}</p>
+                <p><strong>Dominant Style:</strong> ${adminEscapeHtml(report.dominantStyle)}</p>
+                <p><strong>Secondary Style:</strong> ${adminEscapeHtml(report.secondaryStyle || 'Not significant enough to call out')}</p>
+            </div>
+        `
+        : '';
+
+    return `
+        <article class="report-card">
+            <div class="report-card-header">
+                <div>
+                    <h2>${adminEscapeHtml(report.name || 'Leadership Report')}</h2>
+                    <div class="report-meta">
+                        <span class="meta-pill">${adminEscapeHtml(report.quizType || 'unknown')}</span>
+                        <span class="meta-pill">Dominant: ${adminEscapeHtml(report.dominantStyle || 'Unknown')}</span>
+                        <span class="meta-pill">Secondary: ${adminEscapeHtml(report.secondaryStyle || 'None')}</span>
+                    </div>
+                </div>
+                <div class="report-meta">
+                    <span class="meta-pill">${adminEscapeHtml(formatTimestamp(report.timestamp))}</span>
+                </div>
+            </div>
+            <div class="report-card-body">
+                ${summaryBlock}
+                ${reportBody}
+            </div>
+        </article>
+    `;
+}
+
+function setStatus(message, isError) {
+    const statusNode = document.getElementById('status-message');
+    statusNode.textContent = message || '';
+    statusNode.classList.toggle('error', Boolean(isError));
+}
+
+function renderResults(reports) {
+    const resultsPanel = document.getElementById('results-panel');
+
+    if (!Array.isArray(reports) || reports.length === 0) {
+        resultsPanel.innerHTML = `
+            <div class="empty-state">
+                <strong>No stored reports found.</strong>
+                <p>Try a different email or mobile combination.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const sortedReports = [...reports].sort((firstReport, secondReport) => {
+        return new Date(secondReport.timestamp).getTime() - new Date(firstReport.timestamp).getTime();
+    });
+
+    resultsPanel.innerHTML = sortedReports.map(renderReportCard).join('');
+}
+
+async function handleAdminSearch(event) {
+    event.preventDefault();
+
+    const searchButton = document.getElementById('admin-search-btn');
+    const email = document.getElementById('admin-email-input').value.trim();
+    const countryCode = document.getElementById('admin-country-code-input').value;
+    const rawMobile = document.getElementById('admin-mobile-input').value.trim();
+
+    try {
+        const normalizedMobile = normalizeAdminMobile(countryCode, rawMobile);
+
+        searchButton.disabled = true;
+        searchButton.textContent = 'Loading...';
+        setStatus('Loading stored reports...', false);
+
+        const response = await fetch(`/leadership-reports?email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(normalizedMobile)}`);
+
+        if (!response.ok) {
+            const errorPayload = await response.json().catch(() => ({}));
+            throw new Error(errorPayload.error || 'Failed to load reports.');
+        }
+
+        const data = await response.json();
+        renderResults(data.reports || []);
+        setStatus(`Loaded ${Array.isArray(data.reports) ? data.reports.length : 0} report(s).`, false);
+    } catch (error) {
+        document.getElementById('results-panel').innerHTML = '';
+        setStatus(error.message, true);
+    } finally {
+        searchButton.disabled = false;
+        searchButton.textContent = 'Load Reports';
+    }
+}
+
+document.getElementById('report-search-form').addEventListener('submit', handleAdminSearch);
+
+let currentTab = 'search';
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('panel-search').style.display = tab === 'search' ? '' : 'none';
+    document.getElementById('panel-all').style.display = tab === 'all' ? '' : 'none';
+    document.getElementById('results-panel').innerHTML = '';
+    document.getElementById('tab-search').classList.toggle('tab-btn-active', tab === 'search');
+    document.getElementById('tab-all').classList.toggle('tab-btn-active', tab === 'all');
+    setStatus('', false);
+}
+
+async function loadAllReports() {
+    const loadAllBtn = document.getElementById('load-all-btn');
+    const allStatusMsg = document.getElementById('all-status-message');
+
+    loadAllBtn.disabled = true;
+    loadAllBtn.textContent = 'Loading...';
+    allStatusMsg.textContent = 'Fetching all stored reports...';
+    allStatusMsg.classList.remove('error');
+
+    try {
+        const response = await fetch('/leadership-reports/all');
+
+        if (!response.ok) {
+            const errorPayload = await response.json().catch(() => ({}));
+            throw new Error(errorPayload.error || `Server error ${response.status}`);
+        }
+
+        const data = await response.json();
+        renderResults(data.reports || []);
+        allStatusMsg.textContent = `Loaded ${(data.reports || []).length} report(s) across all leads.`;
+    } catch (error) {
+        document.getElementById('results-panel').innerHTML = '';
+        allStatusMsg.textContent = error.message;
+        allStatusMsg.classList.add('error');
+    } finally {
+        loadAllBtn.disabled = false;
+        loadAllBtn.textContent = 'Load All Leads';
+    }
+}
+</script>
+</body>
+</html>

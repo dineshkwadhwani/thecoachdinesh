@@ -11,6 +11,106 @@ const { askDinesh } = require('./coachService');
 
 const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
+const REFLECT_YOUR_STYLE_KEY = 'reflectYourStyle';
+const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
+const DEFAULT_LEADERSHIP_QUIZ_CONFIG = {
+    quickQuestionCount: 10,
+    deepQuestionCount: 25
+};
+
+function normalizeLeadershipQuizConfig(rawConfig = {}) {
+    const quickQuestionCount = Number.parseInt(rawConfig.quickQuestionCount, 10);
+    const deepQuestionCount = Number.parseInt(rawConfig.deepQuestionCount, 10);
+
+    return {
+        quickQuestionCount: Number.isInteger(quickQuestionCount) && quickQuestionCount > 0
+            ? quickQuestionCount
+            : DEFAULT_LEADERSHIP_QUIZ_CONFIG.quickQuestionCount,
+        deepQuestionCount: Number.isInteger(deepQuestionCount) && deepQuestionCount > 0
+            ? deepQuestionCount
+            : DEFAULT_LEADERSHIP_QUIZ_CONFIG.deepQuestionCount
+    };
+}
+
+function loadLeadershipQuizData() {
+    const questionsPath = path.join(__dirname, 'questions.json');
+    const configPath = path.join(__dirname, 'quiz-config.json');
+
+    const questionsData = fs.readFileSync(questionsPath, 'utf-8');
+    const questions = JSON.parse(questionsData);
+
+    let quizConfig = DEFAULT_LEADERSHIP_QUIZ_CONFIG;
+    let configByQuiz = {
+        [REFLECT_YOUR_STYLE_KEY]: DEFAULT_LEADERSHIP_QUIZ_CONFIG
+    };
+
+    if (fs.existsSync(configPath)) {
+        const configData = fs.readFileSync(configPath, 'utf-8');
+        const rawConfig = JSON.parse(configData);
+        quizConfig = normalizeLeadershipQuizConfig(rawConfig[REFLECT_YOUR_STYLE_KEY]);
+        configByQuiz = {
+            ...rawConfig,
+            [REFLECT_YOUR_STYLE_KEY]: quizConfig
+        };
+    }
+
+    return { questions, quizConfig, configByQuiz };
+}
+
+function createLeadKey(email, mobile) {
+    return `${String(email || '').trim().toLowerCase()}::${String(mobile || '').trim()}`;
+}
+
+function loadReportHistory() {
+    if (!fs.existsSync(REPORT_HISTORY_PATH)) {
+        return { leads: {} };
+    }
+
+    try {
+        const historyData = fs.readFileSync(REPORT_HISTORY_PATH, 'utf-8');
+        const parsedHistory = JSON.parse(historyData);
+
+        return parsedHistory && typeof parsedHistory === 'object' && parsedHistory.leads
+            ? parsedHistory
+            : { leads: {} };
+    } catch (error) {
+        console.error('Error loading report history:', error.message);
+        return { leads: {} };
+    }
+}
+
+function saveReportHistory(history) {
+    fs.writeFileSync(REPORT_HISTORY_PATH, JSON.stringify(history, null, 2));
+}
+
+function getLatestStoredReport(history, email, mobile, quizType) {
+    const leadKey = createLeadKey(email, mobile);
+    const leadEntry = history.leads[leadKey];
+
+    if (!leadEntry || !Array.isArray(leadEntry.reports)) {
+        return null;
+    }
+
+    const matchingReports = leadEntry.reports.filter(reportEntry => reportEntry.quizType === quizType);
+    return matchingReports.length > 0 ? matchingReports[matchingReports.length - 1] : null;
+}
+
+function appendStoredReport(history, reportEntry) {
+    const leadKey = createLeadKey(reportEntry.email, reportEntry.mobile);
+    const existingLead = history.leads[leadKey] || {
+        name: reportEntry.name,
+        email: reportEntry.email,
+        mobile: reportEntry.mobile,
+        reports: []
+    };
+
+    existingLead.name = reportEntry.name;
+    existingLead.email = reportEntry.email;
+    existingLead.mobile = reportEntry.mobile;
+    existingLead.reports.push(reportEntry);
+
+    history.leads[leadKey] = existingLead;
+}
 
 function setPageCacheHeaders(res) {
     res.setHeader('Cache-Control', 'public, max-age=900, must-revalidate');
@@ -106,23 +206,75 @@ app.post('/notify-onboarding', async (req, res) => {
 // 4. GET LEADERSHIP QUIZ QUESTIONS
 app.get('/get-questions', (req, res) => {
     try {
-        const questionsPath = path.join(__dirname, 'questions.json');
-        const questionsData = fs.readFileSync(questionsPath, 'utf-8');
-        const questions = JSON.parse(questionsData);
-        res.json(questions);
+        const { questions, configByQuiz } = loadLeadershipQuizData();
+        res.json({
+            ...questions,
+            config: configByQuiz
+        });
     } catch (error) {
         console.error('Error loading questions:', error.message);
         res.status(500).json({ error: 'Failed to load questions' });
     }
 });
 
+app.get('/leadership-reports/all', (req, res) => {
+    try {
+        const history = loadReportHistory();
+        const allLeads = Object.values(history.leads || {});
+        const allReports = allLeads.flatMap(lead =>
+            (lead.reports || []).map(reportEntry => ({
+                ...reportEntry,
+                name: lead.name,
+                email: lead.email,
+                mobile: lead.mobile
+            }))
+        ).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+        res.json({ reports: allReports, total: allReports.length });
+    } catch (error) {
+        console.error('Error retrieving all leadership reports:', error.message);
+        res.status(500).json({ error: 'Failed to retrieve reports' });
+    }
+});
+
+app.get('/leadership-reports', (req, res) => {
+    try {
+        const email = String(req.query.email || '').trim();
+        const mobile = String(req.query.mobile || '').replace(/\s+/g, '');
+
+        if (!email || !/^\+\d{7,15}$/.test(mobile)) {
+            return res.status(400).json({ error: 'email and valid mobile are required' });
+        }
+
+        const history = loadReportHistory();
+        const leadKey = createLeadKey(email, mobile);
+        const leadEntry = history.leads[leadKey];
+
+        res.json({
+            reports: leadEntry && Array.isArray(leadEntry.reports) ? leadEntry.reports : []
+        });
+    } catch (error) {
+        console.error('Error retrieving leadership reports:', error.message);
+        res.status(500).json({ error: 'Failed to retrieve leadership reports' });
+    }
+});
+
 // 5. ANALYZE LEADERSHIP STYLE
 app.post('/analyze-leadership', async (req, res) => {
     try {
-        const { name, email, answers, quizType } = req.body;
+        const { quizConfig } = loadLeadershipQuizData();
+        const { name, mobile, email, answers, quizType } = req.body;
         const answerCount = Array.isArray(answers) ? answers.length : 0;
+        const normalizedMobile = typeof mobile === 'string' ? mobile.replace(/\s+/g, '') : '';
+        const isValidMobile = /^\+\d{7,15}$/.test(normalizedMobile);
+        const validAnswerCounts = [...new Set([quizConfig.quickQuestionCount, quizConfig.deepQuestionCount])];
+        const normalizedQuizType = quizType === 'deep' ? 'deep' : 'quick';
+        const history = loadReportHistory();
+        const previousQuickReport = normalizedQuizType === 'deep'
+            ? getLatestStoredReport(history, email, normalizedMobile, 'quick')
+            : null;
 
-        if (!name || !email || !Array.isArray(answers) || ![10, 25].includes(answerCount)) {
+        if (!name || !email || !isValidMobile || !Array.isArray(answers) || !validAnswerCounts.includes(answerCount)) {
             return res.status(400).json({ error: 'Invalid request data' });
         }
 
@@ -135,13 +287,72 @@ app.post('/analyze-leadership', async (req, res) => {
         // Map to leadership styles
         // A = Visionary, B = Coaching, C = Democratic, D = Pacesetter
         const styleMap = { A: 'Visionary', B: 'Coaching', C: 'Democratic', D: 'Pacesetter' };
-        const dominantStyle = Object.keys(styleCounts).reduce((a, b) => 
-            styleCounts[a] > styleCounts[b] ? a : b
-        );
+        const rankedStyles = Object.entries(styleCounts)
+            .sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]);
+        const dominantStyle = rankedStyles[0][0];
         const dominantStyleName = styleMap[dominantStyle];
+        const secondaryStyle = rankedStyles[1] && rankedStyles[1][1] > 0 ? rankedStyles[1][0] : null;
+        const secondaryStyleName = secondaryStyle ? styleMap[secondaryStyle] : null;
 
         // Build prompt for Groq AI
         const answersText = answers.map((ans, i) => `Q${i+1}: ${ans}`).join(' | ');
+        const styleBreakdownText = rankedStyles
+            .map(([styleKey, count]) => `${styleMap[styleKey]}=${count}`)
+            .join(', ');
+        const previousReportContext = normalizedQuizType === 'deep' && previousQuickReport
+            ? `Previous quick report summary: ${previousQuickReport.report}\nPrevious dominant style: ${previousQuickReport.dominantStyle || 'Not provided'}\nPrevious secondary style: ${previousQuickReport.secondaryStyle || 'Not provided'}`
+            : 'Previous quick report summary: Not available';
+
+        const systemPrompt = normalizedQuizType === 'deep'
+            ? `You are an executive leadership coach creating a professional, detailed, and insightful leadership assessment. Analyze these ${answerCount} answers for ${name}. The answer choices represent: A=Visionary, B=Coaching, C=Democratic, D=Pacesetter.
+
+Write a 350-500 word report in clear professional language using "you" and "your" throughout. Make the tone polished, credible, and practical.
+
+Your report must:
+1) Open by naming the person as ${name}
+2) Clearly state the dominant leadership style
+3) Mention the secondary leadership style if one exists and explain how it complements or creates tension with the dominant style
+4) If a previous quick report is available, compare this deeper analysis with it and explain whether it confirms, sharpens, or changes the earlier picture
+5) Explain what this leadership style means in practice and how leaders with this style typically operate
+6) Include balanced pros and cons of the dominant style
+7) Include literature-informed perspective using generally accepted leadership ideas and established leadership language, without inventing fake citations or specific books unless you are certain
+8) Provide concrete developmental advice for becoming more effective as a leader
+
+Structure the report with these headings exactly:
+Name
+Dominant Style
+Secondary Style
+Comparison With Earlier Report
+Style Interpretation
+Strengths
+Risks And Blind Spots
+Development Priorities
+
+Do not include markdown bullets. Use short paragraphs under each heading. Do not mention answer letters.`
+            : `You are an executive leadership coach providing personalized feedback. Analyze these ${answerCount} leadership assessment answers for ${name}. The answer choices represent: A=Visionary, B=Coaching, C=Democratic, D=Pacesetter. Provide a 170-230 word report in second person that:
+1) Identifies your dominant leadership style and explains what it means
+2) Mentions your secondary style if there is one
+3) Describes your strengths in this style
+4) Suggests areas where you can grow and develop
+
+Use "you" and "your" throughout. Be warm, encouraging, and actionable.`;
+
+        const userPrompt = normalizedQuizType === 'deep'
+            ? `Analyze these answers: ${answersText}
+
+Name: ${name}
+Quiz type: ${normalizedQuizType}
+Dominant Style Indicated: ${dominantStyleName}
+Secondary Style Indicated: ${secondaryStyleName || 'None'}
+Style breakdown: ${styleBreakdownText}
+${previousReportContext}`
+            : `Analyze these answers (A-D represent answer choices): ${answersText}
+
+Name: ${name}
+Quiz type: ${normalizedQuizType}
+Dominant Style Indicated: ${dominantStyleName}
+Secondary Style Indicated: ${secondaryStyleName || 'None'}
+Style breakdown: ${styleBreakdownText}`;
         
         const groq = new OpenAI({
             apiKey: process.env.GROQ_API_KEY,
@@ -152,25 +363,37 @@ app.post('/analyze-leadership', async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: `You are an executive leadership coach providing personalized feedback. Analyze these ${answerCount} leadership assessment answers for ${name}. The answer choices represent: A=Visionary, B=Coaching, C=Democratic, D=Pacesetter. Provide a 150-220 word report in second person that:\n1) Identifies your dominant leadership style and explains what it means\n2) Describes your strengths in this style\n3) Suggests areas where you can grow and develop\n4) Ends with exactly: "Want a much deeper evaluation. Take a indepth test across multiple scenarios."\n\nUse "you" and "your" throughout. Be warm, encouraging, and actionable.`
+                    content: systemPrompt
                 },
                 {
                     role: "user",
-                    content: `Analyze these answers (A-D represent answer choices): ${answersText}\n\nName: ${name}\nQuiz type: ${quizType || 'quick'}\nDominant Style Indicated: ${dominantStyleName}`
+                    content: userPrompt
                 }
             ],
             model: "llama-3.3-70b-versatile",
         });
 
         const aiReport = completion.choices[0].message.content;
+        const timestamp = new Date().toISOString();
+
+        appendStoredReport(history, {
+            timestamp,
+            name,
+            email,
+            mobile: normalizedMobile,
+            quizType: normalizedQuizType,
+            dominantStyle: dominantStyleName,
+            secondaryStyle: secondaryStyleName,
+            report: aiReport
+        });
+        saveReportHistory(history);
 
         // Log in the required format
-        const timestamp = new Date().toISOString();
-        const logMessage = `[REPORT_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Email: ${email} | Style: ${dominantStyleName} | Report: ${aiReport}`;
+        const logMessage = `[REPORT_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Mobile: ${normalizedMobile} | Email: ${email} | QuizType: ${normalizedQuizType} | DominantStyle: ${dominantStyleName} | SecondaryStyle: ${secondaryStyleName || 'None'} | Report: ${aiReport}`;
         console.log(logMessage);
 
         // Send Telegram notification
-        const telegramText = `🚀 New Lead Generated!\nName: ${name}\nEmail: ${email}\nStyle: ${dominantStyleName}\nReport: ${aiReport}`;
+        const telegramText = `🚀 New Lead Generated!\nName: ${name}\nMobile: ${normalizedMobile}\nEmail: ${email}\nQuiz Type: ${normalizedQuizType}\nDominant Style: ${dominantStyleName}\nSecondary Style: ${secondaryStyleName || 'None'}\n\nFull report saved in admin panel.`;
         try {
             await sendTelegramMessage(telegramText);
         } catch (telegramError) {
@@ -179,7 +402,9 @@ app.post('/analyze-leadership', async (req, res) => {
 
         // Return the report to frontend
         res.json({
+            name,
             dominantStyle: dominantStyleName,
+            secondaryStyle: secondaryStyleName,
             report: aiReport
         });
 
