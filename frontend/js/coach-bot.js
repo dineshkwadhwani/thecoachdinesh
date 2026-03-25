@@ -147,6 +147,16 @@ async function sendMessage() {
             console.log('User Phone:', userPhone);
             onboardingStep = 'done';
 
+            try {
+                await fetch('/notify-onboarding', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: userName, phone: userPhone })
+                });
+            } catch (notifyError) {
+                console.error("Telegram Notification Error:", notifyError);
+            }
+
             // Generate AI-driven greeting
             const hour = new Date().getHours();
             let timeOfDay = 'morning';
