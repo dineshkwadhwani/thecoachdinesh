@@ -26,16 +26,15 @@ app.get('/', (req, res) => {
 // 3. THE CHAT API
 app.post('/chat', async (req, res) => {
 
-    console.log("1. Backend received a request!"); // Check terminal
-    console.log("2. Message content:", req.body.message);
+    console.log("1. ackend received a request", req.body.message);
     try {
         const { message } = req.body;
         const response = await askDinesh(message);
 
-        console.log("3. AI responded successfully!");
+        console.log("2. AI responded successfully!");
         res.json({ reply: response });
     } catch (error) {
-        console.error("4. ERROR:", error.message);
+        console.error("X:post/chat: ERROR:", error.message);
         console.error("AI Error:", error);
         res.status(500).json({ reply: "I'm having trouble connecting to my thoughts. Try again?" });
     }
@@ -46,6 +45,8 @@ async function sendTelegramMessage(text) {
     const telegramChatId = process.env.TELEGRAM_CHAT_ID;
 
     if (!telegramToken || !telegramChatId) {
+        console.error("X:sendTelegramMessage: ERROR:", error.message);
+
         throw new Error('TELEGRAM_TOKEN or TELEGRAM_CHAT_ID is not configured');
     }
 
@@ -75,6 +76,8 @@ app.post('/notify-onboarding', async (req, res) => {
         }
 
         const text = `✅ New verified chatbot lead\nName: ${name}\nPhone: ${phone}`;
+        const timestamp = new Date().toISOString();
+        console.log(`[${timestamp}] Telegram notification message:\n${text}`);
         await sendTelegramMessage(text);
 
         res.json({ success: true });
