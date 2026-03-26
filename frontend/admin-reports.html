@@ -318,7 +318,7 @@ body {
         <section class="admin-hero">
             <p class="eyebrow">Internal Tool</p>
             <h1>Leadership Reports Admin</h1>
-            <p class="hero-copy">Look up previously generated quick and deep assessments using the lead's email address and mobile number.</p>
+            <p class="hero-copy">Look up previously generated assessment reports using the lead's email address and mobile number.</p>
         </section>
 
         <div class="tab-bar">
@@ -477,6 +477,14 @@ function formatTimestamp(timestamp) {
 
 function renderReportCard(report) {
     const isDeepReport = report.quizType === 'deep';
+    const assessmentLabelMap = {
+        quick: 'Leadership Reflection (Quick)',
+        deep: 'Leadership Reflection (Deep)',
+        clarity: 'Strategic Clarity',
+        presence: 'Executive Presence',
+        systems: 'Systems Thinking'
+    };
+    const assessmentLabel = report.assessmentType || assessmentLabelMap[report.quizType] || 'Assessment';
     const reportBody = isDeepReport
         ? renderAdminDeepReport(report.report)
         : renderSimpleReport(report.report);
@@ -489,6 +497,18 @@ function renderReportCard(report) {
             </div>
         `
         : '';
+    const dominantMetaPill = report.dominantStyle
+        ? `<span class="meta-pill">Dominant: ${adminEscapeHtml(report.dominantStyle)}</span>`
+        : '';
+    const secondaryMetaPill = report.secondaryStyle
+        ? `<span class="meta-pill">Secondary: ${adminEscapeHtml(report.secondaryStyle)}</span>`
+        : '';
+    const clarityScorePill = typeof report.noiseScore === 'number'
+        ? `<span class="meta-pill">Clarity Quotient: ${adminEscapeHtml(report.noiseScore)}%</span>`
+        : '';
+    const summaryPill = report.summary
+        ? `<span class="meta-pill">Summary: ${adminEscapeHtml(String(report.summary).slice(0, 60))}${String(report.summary).length > 60 ? '…' : ''}</span>`
+        : '';
 
     return `
         <article class="report-card">
@@ -496,9 +516,11 @@ function renderReportCard(report) {
                 <div>
                     <h2>${adminEscapeHtml(report.name || 'Leadership Report')}</h2>
                     <div class="report-meta">
-                        <span class="meta-pill">${adminEscapeHtml(report.quizType || 'unknown')}</span>
-                        <span class="meta-pill">Dominant: ${adminEscapeHtml(report.dominantStyle || 'Unknown')}</span>
-                        <span class="meta-pill">Secondary: ${adminEscapeHtml(report.secondaryStyle || 'None')}</span>
+                        <span class="meta-pill">${adminEscapeHtml(assessmentLabel)}</span>
+                        ${dominantMetaPill}
+                        ${secondaryMetaPill}
+                        ${clarityScorePill}
+                        ${summaryPill}
                     </div>
                 </div>
                 <div class="report-meta">

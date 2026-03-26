@@ -305,5 +305,257 @@
         { "text": "Break the silence: 'I know it’s risky, but we should probably do it.'", "label": "D", "presenceType": "Submission Leak" }
       ]
     }
+  ],
+  "systemsAssessment": [
+    {
+      "id": "ST01",
+      "scenario": "A top-performing Project Manager has missed three consecutive deadlines and team morale has dropped.",
+      "domains": [
+        { "name": "Operations & Workflow", "weight": 10, "description": "Check process bottlenecks, handoff delays, and workload flow." },
+        { "name": "HR & Individual Capability", "weight": 5, "description": "Assess individual skill gaps, motivation, or personal constraints." },
+        { "name": "Strategic Alignment", "weight": 8, "description": "Verify whether priorities and project scope are realistic." },
+        { "name": "Cultural Health", "weight": 7, "description": "Evaluate burnout, psychological safety, and team trust." }
+      ]
+    },
+    {
+      "id": "ST02",
+      "scenario": "Customer churn spikes after launching a new pricing model.",
+      "domains": [
+        { "name": "Customer Value Perception", "weight": 10, "description": "Assess whether pricing still reflects perceived value." },
+        { "name": "Go-To-Market Messaging", "weight": 8, "description": "Review how price changes were communicated to segments." },
+        { "name": "Sales Execution", "weight": 6, "description": "Check discounting behavior and negotiation quality." },
+        { "name": "Finance Controls", "weight": 5, "description": "Inspect margin protection constraints and guardrails." }
+      ]
+    },
+    {
+      "id": "ST03",
+      "scenario": "A critical product launch is delayed even though each team says they completed their tasks.",
+      "domains": [
+        { "name": "Cross-Functional Dependencies", "weight": 10, "description": "Identify hidden inter-team sequencing issues." },
+        { "name": "Leadership Communication", "weight": 7, "description": "Assess clarity of ownership and escalation channels." },
+        { "name": "Individual Accountability", "weight": 6, "description": "Check missed commitments at role level." },
+        { "name": "Planning Cadence", "weight": 8, "description": "Evaluate planning horizon, risk reviews, and readiness gates." }
+      ]
+    },
+    {
+      "id": "ST04",
+      "scenario": "Employee engagement scores decline while business targets are still being met.",
+      "domains": [
+        { "name": "Cultural Health", "weight": 10, "description": "Evaluate leadership climate and emotional load." },
+        { "name": "Performance Systems", "weight": 7, "description": "Review whether KPIs are driving unhealthy behavior." },
+        { "name": "Manager Capability", "weight": 6, "description": "Assess coaching quality and local leadership skill." },
+        { "name": "Workload Design", "weight": 8, "description": "Check structural overcommitment and resource strain." }
+      ]
+    },
+    {
+      "id": "ST05",
+      "scenario": "Revenue is flat despite increased marketing spend.",
+      "domains": [
+        { "name": "Funnel Conversion System", "weight": 10, "description": "Analyze conversion drop-off points end-to-end." },
+        { "name": "Channel Mix Strategy", "weight": 8, "description": "Validate channel fit with buyer behavior." },
+        { "name": "Sales Enablement", "weight": 6, "description": "Check if leads are nurtured and qualified properly." },
+        { "name": "Campaign Execution", "weight": 5, "description": "Inspect creative quality and tactical setup." }
+      ]
+    },
+    {
+      "id": "ST06",
+      "scenario": "A high-potential leader is suddenly underperforming after a reorganization.",
+      "domains": [
+        { "name": "Role Design & Span", "weight": 10, "description": "Assess whether the new role is structurally feasible." },
+        { "name": "Strategic Clarity", "weight": 8, "description": "Check if priorities and decision rights are clear." },
+        { "name": "HR & Coaching Support", "weight": 6, "description": "Review support for transition and capability building." },
+        { "name": "Team Dynamics", "weight": 7, "description": "Evaluate trust and alignment in the new team context." }
+      ]
+    },
+    {
+      "id": "ST07",
+      "scenario": "A major client escalates recurring quality issues although audits show compliance.",
+      "domains": [
+        { "name": "Voice of Customer Loop", "weight": 10, "description": "Examine feedback capture and response system." },
+        { "name": "Operational Variability", "weight": 8, "description": "Check process consistency across delivery points." },
+        { "name": "Account Leadership", "weight": 6, "description": "Assess relationship management and expectation setting." },
+        { "name": "Quality Governance", "weight": 7, "description": "Review metrics, thresholds, and corrective actions." }
+      ]
+    },
+    {
+      "id": "ST08",
+      "scenario": "Innovation pipeline slows down after introducing stricter approval controls.",
+      "domains": [
+        { "name": "Governance Design", "weight": 10, "description": "Assess whether controls are choking idea velocity." },
+        { "name": "Risk Appetite Strategy", "weight": 8, "description": "Review leadership stance on experimentation." },
+        { "name": "Incentive System", "weight": 7, "description": "Check if rewards favor execution over innovation." },
+        { "name": "Individual Creativity", "weight": 5, "description": "Evaluate personal ideation capability." }
+      ]
+    },
+    {
+      "id": "ST09",
+      "scenario": "Two teams repeatedly duplicate work on similar initiatives.",
+      "domains": [
+        { "name": "Portfolio Governance", "weight": 10, "description": "Validate visibility and steering across initiatives." },
+        { "name": "Information Architecture", "weight": 8, "description": "Check if plans and ownership are discoverable." },
+        { "name": "Leadership Alignment", "weight": 7, "description": "Assess alignment across department heads." },
+        { "name": "Individual Discipline", "weight": 5, "description": "Review personal planning habits." }
+      ]
+    },
+    {
+      "id": "ST10",
+      "scenario": "Attrition rises in a profitable business unit while compensation remains above market.",
+      "domains": [
+        { "name": "Managerial Climate", "weight": 10, "description": "Evaluate quality of day-to-day leadership." },
+        { "name": "Career System Design", "weight": 8, "description": "Check growth pathways and internal mobility." },
+        { "name": "Workload Sustainability", "weight": 7, "description": "Assess pressure, pace, and recovery cycles." },
+        { "name": "Compensation Policy", "weight": 5, "description": "Re-check pay equity and structure." }
+      ]
+    },
+    {
+      "id": "ST11",
+      "scenario": "A digital transformation program is behind schedule and over budget.",
+      "domains": [
+        { "name": "Program Architecture", "weight": 10, "description": "Assess sequencing, milestones, and integration complexity." },
+        { "name": "Change Adoption System", "weight": 8, "description": "Evaluate readiness and user behavior change." },
+        { "name": "Vendor Ecosystem", "weight": 6, "description": "Review vendor dependencies and governance." },
+        { "name": "Individual Skills", "weight": 5, "description": "Check training and capability of specific members." }
+      ]
+    },
+    {
+      "id": "ST12",
+      "scenario": "Customer support tickets are increasing despite a recent process automation rollout.",
+      "domains": [
+        { "name": "Service Design", "weight": 10, "description": "Assess whether automation matches real customer journeys." },
+        { "name": "Knowledge System", "weight": 8, "description": "Check quality of support knowledge and routing rules." },
+        { "name": "Product Usability", "weight": 7, "description": "Review whether UX issues drive ticket volume." },
+        { "name": "Agent Capability", "weight": 5, "description": "Evaluate coaching and individual troubleshooting skill." }
+      ]
+    },
+    {
+      "id": "ST13",
+      "scenario": "A merger integration effort creates confusion across both legacy organizations.",
+      "domains": [
+        { "name": "Operating Model Integration", "weight": 10, "description": "Examine structural alignment of functions and decisions." },
+        { "name": "Cultural Integration", "weight": 8, "description": "Assess trust, identity, and collaboration norms." },
+        { "name": "Communication Strategy", "weight": 7, "description": "Review cadence, clarity, and transparency of updates." },
+        { "name": "Individual Adaptability", "weight": 5, "description": "Check personal willingness to change." }
+      ]
+    },
+    {
+      "id": "ST14",
+      "scenario": "A sales region consistently misses quota even with experienced account executives.",
+      "domains": [
+        { "name": "Territory Design", "weight": 10, "description": "Validate account distribution and opportunity mix." },
+        { "name": "Pipeline Health System", "weight": 8, "description": "Check stage movement and conversion governance." },
+        { "name": "Pricing & Offer Fit", "weight": 7, "description": "Assess product-market fit in that segment." },
+        { "name": "Individual Selling Skill", "weight": 5, "description": "Review rep-level consultative selling capability." }
+      ]
+    },
+    {
+      "id": "ST15",
+      "scenario": "A key initiative stalls because stakeholders keep changing requirements.",
+      "domains": [
+        { "name": "Decision Governance", "weight": 10, "description": "Assess who has authority and how scope changes are controlled." },
+        { "name": "Strategic Prioritization", "weight": 8, "description": "Check if objectives are clearly ranked and protected." },
+        { "name": "Stakeholder Alignment", "weight": 7, "description": "Evaluate alignment rituals and expectation management." },
+        { "name": "Team Resilience", "weight": 5, "description": "Review adaptability under uncertainty." }
+      ]
+    },
+    {
+      "id": "ST16",
+      "scenario": "Defect rates rise after moving to a faster release cadence.",
+      "domains": [
+        { "name": "Engineering System Design", "weight": 10, "description": "Review quality gates, test automation, and release workflow." },
+        { "name": "Product Trade-Off Strategy", "weight": 8, "description": "Assess speed-vs-stability decision framework." },
+        { "name": "Operational Readiness", "weight": 7, "description": "Check incident response and rollout controls." },
+        { "name": "Developer Performance", "weight": 5, "description": "Evaluate individual coding discipline." }
+      ]
+    },
+    {
+      "id": "ST17",
+      "scenario": "The CEO says strategy is clear, but middle managers report constant confusion.",
+      "domains": [
+        { "name": "Strategy Translation System", "weight": 10, "description": "Assess how strategy converts into operational priorities." },
+        { "name": "Communication Cascade", "weight": 8, "description": "Review message consistency across leadership layers." },
+        { "name": "Role Clarity", "weight": 7, "description": "Check ownership boundaries and accountability." },
+        { "name": "Individual Listening Skills", "weight": 5, "description": "Evaluate manager-level comprehension behavior." }
+      ]
+    },
+    {
+      "id": "ST18",
+      "scenario": "A high-value transformation fails to gain traction outside the head office.",
+      "domains": [
+        { "name": "Adoption Ecosystem", "weight": 10, "description": "Check local context fit, incentives, and enablement." },
+        { "name": "Change Leadership", "weight": 8, "description": "Assess sponsorship depth and role-model behavior." },
+        { "name": "Operational Constraints", "weight": 7, "description": "Review local capacity and process limits." },
+        { "name": "Individual Resistance", "weight": 5, "description": "Inspect personal reluctance to change." }
+      ]
+    },
+    {
+      "id": "ST19",
+      "scenario": "Client onboarding takes longer every quarter even though templates are standardized.",
+      "domains": [
+        { "name": "End-to-End Process Design", "weight": 10, "description": "Map hidden delays and unnecessary approvals." },
+        { "name": "System Integration", "weight": 8, "description": "Evaluate tooling handoffs and data continuity." },
+        { "name": "Cross-Team Coordination", "weight": 7, "description": "Check responsibility transitions and dependencies." },
+        { "name": "Individual Productivity", "weight": 5, "description": "Review personal output levels." }
+      ]
+    },
+    {
+      "id": "ST20",
+      "scenario": "Board members question why profitable products are still losing market share.",
+      "domains": [
+        { "name": "Competitive Positioning System", "weight": 10, "description": "Assess differentiation and strategic moat sustainability." },
+        { "name": "Customer Insight Loop", "weight": 8, "description": "Check if market signals are feeding product decisions." },
+        { "name": "Innovation Portfolio", "weight": 7, "description": "Review future bets versus legacy optimization." },
+        { "name": "Sales Team Effort", "weight": 5, "description": "Evaluate frontline effort levels." }
+      ]
+    },
+    {
+      "id": "ST21",
+      "scenario": "Interdepartmental conflict rises after introducing a new performance bonus plan.",
+      "domains": [
+        { "name": "Incentive System Design", "weight": 10, "description": "Assess whether reward mechanics trigger silo behavior." },
+        { "name": "Collaboration Norms", "weight": 8, "description": "Review shared goals and cross-team trust." },
+        { "name": "Leadership Governance", "weight": 7, "description": "Check conflict resolution and boundary setting." },
+        { "name": "Individual Attitudes", "weight": 5, "description": "Evaluate personal competitiveness." }
+      ]
+    },
+    {
+      "id": "ST22",
+      "scenario": "Operational costs increase even after workforce optimization measures.",
+      "domains": [
+        { "name": "Process Complexity", "weight": 10, "description": "Identify duplicated loops and expensive rework." },
+        { "name": "Demand Planning", "weight": 8, "description": "Check planning accuracy against actual demand." },
+        { "name": "Technology Utilization", "weight": 7, "description": "Assess whether systems are underused or fragmented." },
+        { "name": "Individual Efficiency", "weight": 5, "description": "Review time management and personal throughput." }
+      ]
+    },
+    {
+      "id": "ST23",
+      "scenario": "A business unit repeatedly misses handoff commitments to downstream teams.",
+      "domains": [
+        { "name": "Interface Accountability", "weight": 10, "description": "Assess how handoff SLAs and ownership are defined." },
+        { "name": "Workflow Design", "weight": 8, "description": "Review dependency timing and queue management." },
+        { "name": "Capability Capacity", "weight": 7, "description": "Check if staffing and skills match the load." },
+        { "name": "Individual Reliability", "weight": 5, "description": "Evaluate consistency of specific contributors." }
+      ]
+    },
+    {
+      "id": "ST24",
+      "scenario": "NPS drops in one region where product and pricing are unchanged.",
+      "domains": [
+        { "name": "Service Delivery System", "weight": 10, "description": "Assess local service quality and issue resolution loops." },
+        { "name": "Regional Operating Context", "weight": 8, "description": "Review market-specific constraints and expectations." },
+        { "name": "Customer Communication", "weight": 7, "description": "Check clarity and consistency of customer touchpoints." },
+        { "name": "Individual Agent Behavior", "weight": 5, "description": "Inspect frontline interaction quality." }
+      ]
+    },
+    {
+      "id": "ST25",
+      "scenario": "A strategy offsite produced strong ideas, but execution momentum disappeared within a month.",
+      "domains": [
+        { "name": "Execution Operating System", "weight": 10, "description": "Assess follow-through rituals, cadence, and ownership." },
+        { "name": "Priority Governance", "weight": 8, "description": "Check whether initiatives are protected from daily noise." },
+        { "name": "Leadership Accountability", "weight": 7, "description": "Review role-model behavior and commitment visibility." },
+        { "name": "Individual Motivation", "weight": 5, "description": "Evaluate personal drive after the offsite." }
+      ]
+    }
   ]
 }

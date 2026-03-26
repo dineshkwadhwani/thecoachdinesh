@@ -14,6 +14,7 @@ const pageCacheDurationMs = 15 * 60 * 1000;
 const REFLECT_YOUR_STYLE_KEY = 'reflectYourStyle';
 const STRATEGIC_CLARITY_KEY = 'strategicClarity';
 const EXECUTIVE_PRESENCE_KEY = 'executivePresence';
+const SYSTEMS_THINKING_KEY = 'systemsThinking';
 const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
 const DEFAULT_LEADERSHIP_QUIZ_CONFIG = {
     quizEnabled: true,
@@ -28,6 +29,10 @@ const DEFAULT_STRATEGIC_CLARITY_CONFIG = {
 const DEFAULT_EXECUTIVE_PRESENCE_CONFIG = {
     quizEnabled: true,
     scenarioCount: 10
+};
+const DEFAULT_SYSTEMS_THINKING_CONFIG = {
+    quizEnabled: true,
+    scenarioCount: 5
 };
 
 function normalizeLeadershipQuizConfig(rawConfig = {}) {
@@ -68,6 +73,17 @@ function normalizeExecutivePresenceConfig(rawConfig = {}) {
     };
 }
 
+function normalizeSystemsThinkingConfig(rawConfig = {}) {
+    const scenarioCount = Number.parseInt(rawConfig.scenarioCount, 10);
+
+    return {
+        quizEnabled: rawConfig.quizEnabled !== false,
+        scenarioCount: Number.isInteger(scenarioCount) && scenarioCount > 0
+            ? scenarioCount
+            : DEFAULT_SYSTEMS_THINKING_CONFIG.scenarioCount
+    };
+}
+
 function loadLeadershipQuizData() {
     const questionsPath = path.join(__dirname, 'questions.json');
     const configPath = path.join(__dirname, 'quiz-config.json');
@@ -80,7 +96,8 @@ function loadLeadershipQuizData() {
     let configByQuiz = {
         [REFLECT_YOUR_STYLE_KEY]: DEFAULT_LEADERSHIP_QUIZ_CONFIG,
         [STRATEGIC_CLARITY_KEY]: DEFAULT_STRATEGIC_CLARITY_CONFIG,
-        [EXECUTIVE_PRESENCE_KEY]: DEFAULT_EXECUTIVE_PRESENCE_CONFIG
+        [EXECUTIVE_PRESENCE_KEY]: DEFAULT_EXECUTIVE_PRESENCE_CONFIG,
+        [SYSTEMS_THINKING_KEY]: DEFAULT_SYSTEMS_THINKING_CONFIG
     };
     let messagesByQuiz = {};
 
@@ -92,7 +109,8 @@ function loadLeadershipQuizData() {
             ...rawConfig,
             [REFLECT_YOUR_STYLE_KEY]: quizConfig,
             [STRATEGIC_CLARITY_KEY]: normalizeStrategicClarityConfig(rawConfig[STRATEGIC_CLARITY_KEY]),
-            [EXECUTIVE_PRESENCE_KEY]: normalizeExecutivePresenceConfig(rawConfig[EXECUTIVE_PRESENCE_KEY])
+            [EXECUTIVE_PRESENCE_KEY]: normalizeExecutivePresenceConfig(rawConfig[EXECUTIVE_PRESENCE_KEY]),
+            [SYSTEMS_THINKING_KEY]: normalizeSystemsThinkingConfig(rawConfig[SYSTEMS_THINKING_KEY])
         };
     }
 
@@ -516,6 +534,23 @@ End with a natural invitation to a 1-on-1 Clarity Session to explore their blind
 
         const aiReport = completion.choices[0].message.content;
         const timestamp = new Date().toISOString();
+        const history = loadReportHistory();
+
+        appendStoredReport(history, {
+            timestamp,
+            name,
+            email,
+            mobile: normalizedPhone,
+            quizType: 'clarity',
+            assessmentType: 'Strategic Clarity',
+            noiseScore,
+            noiseCleared,
+            signalsMissed,
+            totalNoise,
+            totalSignals,
+            report: aiReport
+        });
+        saveReportHistory(history);
 
         const reportSummary = String(aiReport || '').replace(/\s+/g, ' ').trim().slice(0, 220);
         console.log(`[CLARITY_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Phone: ${normalizedPhone} | Email: ${email} | NoiseScore: ${noiseScore}% | NoiseCleared: ${noiseCleared}/${totalNoise} | SignalsMissed: ${signalsMissed}/${totalSignals} | Summary: ${reportSummary}`);
@@ -582,6 +617,20 @@ ${validPowerMoves.map((move, index) => `${index + 1}. ${move}`).join('\n')}`;
         const aiReport = String(completion.choices[0].message.content || '').trim();
         const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Presence profile generated';
         const timestamp = new Date().toISOString();
+        const history = loadReportHistory();
+
+        appendStoredReport(history, {
+            timestamp,
+            name: normalizedName,
+            email: normalizedEmail,
+            mobile: normalizedPhone,
+            quizType: 'presence',
+            assessmentType: 'Executive Presence',
+            summary: aiSummary,
+            powerMoves: validPowerMoves,
+            report: aiReport
+        });
+        saveReportHistory(history);
 
         console.log(`[PRESENCE_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | PowerMoves: ${validPowerMoves.join(', ')} | Summary: ${aiSummary}`);
 
@@ -602,6 +651,116 @@ ${validPowerMoves.map((move, index) => `${index + 1}. ${move}`).join('\n')}`;
     } catch (error) {
         console.error('Presence analysis error:', error.message);
         res.status(500).json({ error: 'Failed to analyze executive presence' });
+    }
+});
+
+app.post('/analyze-systems', async (req, res) => {
+    try {
+        const { name, phone, email, rankings } = req.body;
+        const { configByQuiz } = loadLeadershipQuizData();
+        const expectedScenarioCount = normalizeSystemsThinkingConfig(
+            configByQuiz[SYSTEMS_THINKING_KEY]
+        ).scenarioCount;
+
+        const normalizedName = String(name || '').trim();
+        const normalizedPhone = typeof phone === 'string' ? phone.replace(/\s+/g, '') : '';
+        const normalizedEmail = String(email || '').trim().toLowerCase();
+        const hasValidPhone = /^\+\d{7,15}$/.test(normalizedPhone);
+        const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
+
+        const normalizedRankings = Array.isArray(rankings)
+            ? rankings
+                .map((entry) => ({
+                    scenarioId: String(entry && entry.scenarioId ? entry.scenarioId : '').trim(),
+                    scenario: String(entry && entry.scenario ? entry.scenario : '').trim(),
+                    orderedDomains: Array.isArray(entry && entry.orderedDomains)
+                        ? entry.orderedDomains.map(domain => String(domain || '').trim()).filter(Boolean)
+                        : []
+                }))
+                .filter(entry => entry.scenarioId && entry.orderedDomains.length > 0)
+            : [];
+
+        if (!normalizedName || !hasValidPhone || !hasValidEmail || normalizedRankings.length !== expectedScenarioCount) {
+            return res.status(400).json({ error: 'Invalid request data' });
+        }
+
+        const rankingSummary = normalizedRankings
+            .map((entry, index) => `${index + 1}. Scenario ${entry.scenarioId}: ${entry.scenario}\n   Ranking (most to least impact): ${entry.orderedDomains.join(' > ')}`)
+            .join('\n\n');
+
+        const systemPrompt = `You are an executive coach specializing in systems thinking.
+
+Analyze the leader's impact hierarchies across organizational scenarios and classify their dominant thinking pattern:
+- Linear Thinker: repeatedly prioritizes individual/HR symptoms over structural, strategic, process, or cultural dynamics.
+- Systems Thinker: identifies upstream leverage points across strategy, process, operations, customer, and culture.
+
+Write a practical, encouraging report in around 200 words with these sections:
+1) Pattern Summary
+2) What This Reveals About Their Leadership Lens
+3) Hidden Connections They Are Missing or Capturing
+4) Two concrete habits to improve systems thinking in real leadership decisions
+
+Use direct, professional language and tailor specifically to the submitted rankings.`;
+
+        const userPrompt = `Name: ${normalizedName}
+Phone: ${normalizedPhone}
+Email: ${normalizedEmail}
+
+Impact hierarchy responses:
+${rankingSummary}`;
+
+        const groq = new OpenAI({
+            apiKey: process.env.GROQ_API_KEY,
+            baseURL: 'https://api.groq.com/openai/v1'
+        });
+
+        const completion = await groq.chat.completions.create({
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+            ],
+            model: 'llama-3.3-70b-versatile'
+        });
+
+        const aiReport = String(completion.choices[0].message.content || '').trim();
+        const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Systems thinking profile generated';
+        const timestamp = new Date().toISOString();
+        const history = loadReportHistory();
+
+        appendStoredReport(history, {
+            timestamp,
+            name: normalizedName,
+            email: normalizedEmail,
+            mobile: normalizedPhone,
+            quizType: 'systems',
+            assessmentType: 'Systems Thinking',
+            summary: aiSummary,
+            rankings: normalizedRankings,
+            report: aiReport
+        });
+        saveReportHistory(history);
+
+        console.log(`[SYSTEMS_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | Responses: ${normalizedRankings.length} | Summary: ${aiSummary}`);
+
+        const telegramText = `🧠 New Systems Thinking Lead! ${normalizedName} completed the hierarchy diagnostic. Summary: ${aiSummary}.`;
+        try {
+            await sendTelegramMessage(telegramText);
+        } catch (telegramError) {
+            console.error('Telegram send error (non-blocking):', telegramError.message);
+        }
+
+        console.log(`[SYSTEMS_SEND] | Timestamp: ${timestamp} | Name: ${normalizedName}`);
+        res.json({
+            name: normalizedName,
+            phone: normalizedPhone,
+            email: normalizedEmail,
+            summary: aiSummary,
+            report: aiReport
+        });
+        console.log(`[SYSTEMS_DONE] | Timestamp: ${timestamp} | Name: ${normalizedName}`);
+    } catch (error) {
+        console.error('Systems analysis error:', error.message);
+        res.status(500).json({ error: 'Failed to analyze systems thinking diagnostic' });
     }
 });
 

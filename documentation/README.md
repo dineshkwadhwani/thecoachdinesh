@@ -19,6 +19,11 @@ This folder contains implementation notes for the three coaching assessments and
   - Config-driven enable/disable + scenario count
   - Message-driven UI/report copy and report action block
 
+- [Systems Thinking Diagnostic](./SYSTEMS_THINKING_IMPLEMENTATION.md)
+  - Impact-hierarchy ranking flow across organizational domains
+  - Config-driven enable/disable + scenario count from a randomized pool
+  - Message-driven UI/report copy and systems-thinking AI analysis
+
 ## Shared Runtime Endpoints
 
 - `GET /get-questions`

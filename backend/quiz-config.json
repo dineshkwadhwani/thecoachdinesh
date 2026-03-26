@@ -12,5 +12,9 @@
   "executivePresence": {
     "quizEnabled": true,
     "scenarioCount": 10
+  },
+  "systemsThinking": {
+    "quizEnabled": true,
+    "scenarioCount": 5
   }
 }

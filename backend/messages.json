@@ -92,5 +92,48 @@
       "whatsappButton": "Send WhatsApp",
       "closeButton": "Close"
     }
+  },
+  "systemsThinking": {
+    "identity": {
+      "title": "Let's start with your details",
+      "intro": "Please share your name and mobile number to begin the Systems Thinking diagnostic.",
+      "continueButton": "Continue"
+    },
+    "welcome": {
+      "title": "Welcome to the Systems Thinking Diagnostic",
+      "intro": "Strong leaders do not just solve visible problems; they trace hidden connections across people, process, culture, and strategy.",
+      "whatItDoes": "In this diagnostic, you will rank impact areas from most affected to least affected for each scenario.",
+      "outcome": "Outcome: You will discover whether your default lens is linear or systems-level, and where to improve your leadership decisions.",
+      "startButton": "Start the Test"
+    },
+    "progress": {
+      "identity": "Step 1 of 5: Identify Yourself",
+      "welcome": "Step 2 of 5: The Diagnostic",
+      "question": "Scenario {current} of {total}",
+      "email": "Step 4 of 5: Capture Email",
+      "report": "Step 5 of 5: Your Systems Thinking Report"
+    },
+    "labels": {
+      "scenarioCounter": "Scenario {current} of {total}",
+      "rankedHeader": "Your impact hierarchy (top = most impacted)",
+      "availableHeader": "Tap areas in impact order",
+      "nextScenarioButton": "Next Scenario",
+      "seeResultsButton": "See Results",
+      "removeButton": "Remove"
+    },
+    "email": {
+      "title": "Almost there",
+      "intro": "Where should we send your Systems Thinking report?",
+      "submitButton": "Get My Systems Report",
+      "loadingButton": "Analyzing..."
+    },
+    "report": {
+      "title": "Systems Thinking Report, {name}",
+      "consultationGreeting": "Dear {name},",
+      "consultationBody": "This is just a sample evaluation to help you notice your pattern of thinking. Smarter leaders navigate systems more effectively. If you would love to discuss further, I can help you streamline your thinking pattern. Send me a WhatsApp.",
+      "whatsappMessage": "Hey Coach, my name is {name}. I completed the Systems Thinking Diagnostic and want to discuss my report.",
+      "whatsappButton": "Send WhatsApp",
+      "closeButton": "Close"
+    }
   }
 }
