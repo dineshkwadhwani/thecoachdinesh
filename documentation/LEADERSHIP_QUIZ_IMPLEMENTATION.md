@@ -4,8 +4,8 @@
 
 A complete "Reflect Your Style" lead-magnet system with two quiz tracks:
 
-- **Quick Reflection** — 10 questions, fast snapshot of leadership style
-- **Deep Insight** — 25 questions, executive-level analysis
+- **Quick Reflection** — config-driven question count (`quickQuestionCount`)
+- **Deep Insight** — config-driven question count (`deepQuestionCount`)
 
 Both tracks capture leads (name + phone), generate an AI-powered personalized report via Groq, and notify via Telegram. A chatbot with a form-gated onboarding and localStorage persistence supplements the quiz.
 
@@ -17,7 +17,7 @@ Both tracks capture leads (name + phone), generate an AI-powered personalized re
 1. User clicks "Reflect on your Style" → modal opens
 2. **Step: Name** — Enter name + country code + phone number
 3. **Step: Welcome** — Tailored welcome screen with Quick intro, key points, and "Start Quick Reflection" button
-4. **Step: Questions** — 10 questions (A–D), one at a time, with progress bar
+4. **Step: Questions** — configured quick-question count (A–D), one at a time, with progress bar
 5. **Step: Email** — Email capture (lead generation)
 6. **Step: Report** — AI-generated quick report with:
    - Personalized leadership insights
@@ -28,7 +28,7 @@ Both tracks capture leads (name + phone), generate an AI-powered personalized re
 1. User clicks "Deep Insight" button on the quick report
 2. **Name/phone are reused** — no re-entry required
 3. **Step: Welcome** — Deep-specific welcome copy and "Start Deep Reflection" button
-4. **Step: Questions** — 25 questions (A–D), one at a time
+4. **Step: Questions** — configured deep-question count (A–D), one at a time
 5. **Step: Email** — Pre-filled (reused from quick)
 6. **Step: Report** — Full deep report with:
    - Extended leadership analysis
@@ -92,9 +92,17 @@ Both tracks capture leads (name + phone), generate an AI-powered personalized re
 Loads questions from `backend/quiz-config.json` (question counts) and `backend/questions.json` (question text), plus messages from `backend/messages.json`. Response shape:
 ```json
 {
-  "questions": [...],
-  "quickQuestionCount": 10,
-  "deepQuestionCount": 25,
+  "reflectYourStyle": [...],
+  "clarityAssessment": [...],
+  "presenceAssessment": [...],
+  "config": {
+    "reflectYourStyle": {
+      "quizEnabled": true,
+      "deepInsightEnabled": true,
+      "quickQuestionCount": 5,
+      "deepQuestionCount": 5
+    }
+  },
   "messages": { "reflectYourStyle": { "welcome": {...}, "report": {...} } }
 }
 ```
@@ -134,8 +142,8 @@ Controls feature flags and question counts:
   "reflectYourStyle": {
     "quizEnabled": true,
     "deepInsightEnabled": true,
-    "quickQuestionCount": 10,
-    "deepQuestionCount": 25
+    "quickQuestionCount": 5,
+    "deepQuestionCount": 5
   }
 }
 ```
@@ -214,11 +222,11 @@ After 7 exchanges the bot prompts the user to book a call directly. Counter stor
 1. User clicks "Reflect on your Style" → quiz modal opens at the **Name** step
 2. User enters name + phone → proceeds to **Welcome** screen
 3. User reads welcome copy → clicks "Start Quick Reflection" → **Questions** begin
-4. 10 questions answered → **Email** step
+4. Configured quick-question count answered → **Email** step
 5. Email submitted → `POST /analyze-leadership` called
 6. Backend: determines style, calls Groq AI, logs summary, sends Telegram, returns report
 7. Frontend: displays **Quick Report** with 3 action buttons
-8. If user clicks **Deep Insight**: reuses name/phone, shows deep **Welcome** screen, then 25 **Questions**
+8. If user clicks **Deep Insight**: reuses name/phone, shows deep **Welcome** screen, then configured deep-question count
 9. Deep email + submit → same backend flow → **Deep Report** with 2 buttons
 
 ---
@@ -267,7 +275,7 @@ After 7 exchanges the bot prompts the user to book a call directly. Counter stor
 
 ## Key Features
 
-✅ **Two quiz tracks**: Quick (10 questions) and Deep (25 questions)  
+✅ **Two quiz tracks** with config-driven question counts  
 ✅ **Feature flags**: `quizEnabled` shows/hides the quiz button; `deepInsightEnabled` shows/hides the deep flow  
 ✅ **Lead capture**: Name + Phone + Email  
 ✅ **Welcome screen**: Tailored copy for each quiz type (from `messages.json`)  

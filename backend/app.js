@@ -13,6 +13,7 @@ const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
 const REFLECT_YOUR_STYLE_KEY = 'reflectYourStyle';
 const STRATEGIC_CLARITY_KEY = 'strategicClarity';
+const EXECUTIVE_PRESENCE_KEY = 'executivePresence';
 const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
 const DEFAULT_LEADERSHIP_QUIZ_CONFIG = {
     quizEnabled: true,
@@ -23,6 +24,10 @@ const DEFAULT_LEADERSHIP_QUIZ_CONFIG = {
 const DEFAULT_STRATEGIC_CLARITY_CONFIG = {
     quizEnabled: true,
     scenarioCount: 5
+};
+const DEFAULT_EXECUTIVE_PRESENCE_CONFIG = {
+    quizEnabled: true,
+    scenarioCount: 10
 };
 
 function normalizeLeadershipQuizConfig(rawConfig = {}) {
@@ -52,6 +57,17 @@ function normalizeStrategicClarityConfig(rawConfig = {}) {
     };
 }
 
+function normalizeExecutivePresenceConfig(rawConfig = {}) {
+    const scenarioCount = Number.parseInt(rawConfig.scenarioCount, 10);
+
+    return {
+        quizEnabled: rawConfig.quizEnabled !== false,
+        scenarioCount: Number.isInteger(scenarioCount) && scenarioCount > 0
+            ? scenarioCount
+            : DEFAULT_EXECUTIVE_PRESENCE_CONFIG.scenarioCount
+    };
+}
+
 function loadLeadershipQuizData() {
     const questionsPath = path.join(__dirname, 'questions.json');
     const configPath = path.join(__dirname, 'quiz-config.json');
@@ -63,7 +79,8 @@ function loadLeadershipQuizData() {
     let quizConfig = DEFAULT_LEADERSHIP_QUIZ_CONFIG;
     let configByQuiz = {
         [REFLECT_YOUR_STYLE_KEY]: DEFAULT_LEADERSHIP_QUIZ_CONFIG,
-        [STRATEGIC_CLARITY_KEY]: DEFAULT_STRATEGIC_CLARITY_CONFIG
+        [STRATEGIC_CLARITY_KEY]: DEFAULT_STRATEGIC_CLARITY_CONFIG,
+        [EXECUTIVE_PRESENCE_KEY]: DEFAULT_EXECUTIVE_PRESENCE_CONFIG
     };
     let messagesByQuiz = {};
 
@@ -74,7 +91,8 @@ function loadLeadershipQuizData() {
         configByQuiz = {
             ...rawConfig,
             [REFLECT_YOUR_STYLE_KEY]: quizConfig,
-            [STRATEGIC_CLARITY_KEY]: normalizeStrategicClarityConfig(rawConfig[STRATEGIC_CLARITY_KEY])
+            [STRATEGIC_CLARITY_KEY]: normalizeStrategicClarityConfig(rawConfig[STRATEGIC_CLARITY_KEY]),
+            [EXECUTIVE_PRESENCE_KEY]: normalizeExecutivePresenceConfig(rawConfig[EXECUTIVE_PRESENCE_KEY])
         };
     }
 
@@ -516,6 +534,74 @@ End with a natural invitation to a 1-on-1 Clarity Session to explore their blind
     } catch (error) {
         console.error('Clarity analysis error:', error.message);
         res.status(500).json({ error: 'Failed to analyze clarity diagnostic' });
+    }
+});
+
+app.post('/analyze-presence', async (req, res) => {
+    try {
+        const { name, phone, email, powerMoves } = req.body;
+        const { configByQuiz } = loadLeadershipQuizData();
+        const expectedMoveCount = normalizeExecutivePresenceConfig(
+            configByQuiz[EXECUTIVE_PRESENCE_KEY]
+        ).scenarioCount;
+
+        const normalizedName = String(name || '').trim();
+        const normalizedPhone = typeof phone === 'string' ? phone.replace(/\s+/g, '') : '';
+        const normalizedEmail = String(email || '').trim().toLowerCase();
+        const hasValidPhone = /^\+\d{7,15}$/.test(normalizedPhone);
+        const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
+        const validPowerMoves = Array.isArray(powerMoves)
+            ? powerMoves.map(move => String(move || '').trim()).filter(Boolean)
+            : [];
+
+        if (!normalizedName || !hasValidPhone || !hasValidEmail || validPowerMoves.length !== expectedMoveCount) {
+            return res.status(400).json({ error: 'Invalid request data' });
+        }
+
+        const systemPrompt = `Analyze ${normalizedName}'s ${expectedMoveCount} 'Power Moves'. Tell them if they lead with 'Quiet Authority', 'Strategic Influence', or if they have 'Executive Presence Leaks'. Write a 180-word encouraging report. End with a strong call to action to buy the 1-on-1 coaching bundle.`;
+
+        const userPrompt = `Name: ${normalizedName}
+Phone: ${normalizedPhone}
+Email: ${normalizedEmail}
+Power Moves:
+${validPowerMoves.map((move, index) => `${index + 1}. ${move}`).join('\n')}`;
+
+        const groq = new OpenAI({
+            apiKey: process.env.GROQ_API_KEY,
+            baseURL: 'https://api.groq.com/openai/v1'
+        });
+
+        const completion = await groq.chat.completions.create({
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+            ],
+            model: 'llama-3.3-70b-versatile'
+        });
+
+        const aiReport = String(completion.choices[0].message.content || '').trim();
+        const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Presence profile generated';
+        const timestamp = new Date().toISOString();
+
+        console.log(`[PRESENCE_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | PowerMoves: ${validPowerMoves.join(', ')} | Summary: ${aiSummary}`);
+
+        const telegramText = `✅ New Executive Presence Lead! ${normalizedName} finished the simulator. Style: ${aiSummary}.`;
+        try {
+            await sendTelegramMessage(telegramText);
+        } catch (telegramError) {
+            console.error('Telegram send error (non-blocking):', telegramError.message);
+        }
+
+        res.json({
+            name: normalizedName,
+            phone: normalizedPhone,
+            email: normalizedEmail,
+            summary: aiSummary,
+            report: aiReport
+        });
+    } catch (error) {
+        console.error('Presence analysis error:', error.message);
+        res.status(500).json({ error: 'Failed to analyze executive presence' });
     }
 });
 

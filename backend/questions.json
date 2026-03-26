@@ -192,5 +192,118 @@
         { "label": "You still use a 2024 goals template", "isSignal": false }
       ]
     }
+  ],
+
+  "presenceAssessment": [
+    {
+      "id": 1,
+      "image": "images/expr_scenario1.png",
+      "short_description": "A stakeholder has just held up a hand and interrupted your boardroom presentation. What is your 'Power Move'?",
+      "options": [
+        { "text": "Hold silent eye contact and wait for them to finish before continuing.", "label": "A", "presenceType": "High Gravitas" },
+        { "text": "Address them directly: 'I’ll cover that in two slides; let me finish this data flow.'", "label": "B", "presenceType": "Assertive Influence" },
+        { "text": "Stop speaking immediately and look down at your notes until they are done.", "label": "C", "presenceType": "Submission Leak" },
+        { "text": "Raise your voice slightly to speak over them and finish your point quickly.", "label": "D", "presenceType": "Aggression/Anxiety Leak" }
+      ]
+    },
+    {
+      "id": 2,
+      "image": "images/expr_scenario2.png",
+      "short_description": "You are giving a virtual keynote. Your 'Audience Gallery' view is a wall of 'Cameras Off' and one person yawning. Your response?",
+      "options": [
+        { "text": "Pause the presentation, stop sharing the screen, and ask a direct provocative question.", "label": "A", "presenceType": "Active Influence" },
+        { "text": "Power through the presentation as fast as possible to get it over with.", "label": "B", "presenceType": "Anxiety Leak" },
+        { "text": "Call out the energy: 'It looks like we’ve hit a wall. Let's pivot to discussion.'", "label": "C", "presenceType": "High Social Awareness" },
+        { "text": "Ignore the cameras and keep speaking with high enthusiasm to an empty screen.", "label": "D", "presenceType": "Standard/Neutral" }
+      ]
+    },
+    {
+      "id": 3,
+      "image": "images/expr_scenario3.png",
+      "short_description": "A junior gatekeeper is blocking your path to the elevator with an aggressive, 'loaded' rumor about your project. Other employees are watching. You:",
+      "options": [
+        { "text": "Keep walking to the elevator while giving a polite, vague response.", "label": "A", "presenceType": "Submission Leak" },
+        { "text": "Stop, turn your full body, make direct eye contact: 'Let's book 10 minutes tomorrow.'", "label": "B", "presenceType": "Strong Boundaries" },
+        { "text": "Give a detailed, transparent explanation right there in the hallway.", "label": "C", "presenceType": "Over-explaining Leak" },
+        { "text": "Smile and pivot: 'That's a clever rumor. How is the temperature on the floor?'", "label": "D", "presenceType": "Political Influence" }
+      ]
+    },
+    {
+      "id": 4,
+      "image": "images/expr_scenario4.png",
+      "short_description": "Your team brainstorm has stalled. Everyone looks drained and defeated. The clock is late. You are the marker-holder. You:",
+      "options": [
+        { "text": "Sit down with them, lower your voice, and share a story of a major setback you once overcame.", "label": "A", "presenceType": "Vulnerable Presence" },
+        { "text": "Point to the clock and demand three new ideas from the team before anyone can leave.", "label": "B", "presenceType": "Aggression/Pacesetter" },
+        { "text": "Start writing a 'North Star' vision word on the board to re-center the 'Why'.", "label": "C", "presenceType": "Visionary Presence" },
+        { "text": "Ask for a volunteer to take the marker and lead the next 10 minutes.", "label": "D", "presenceType": "Democratic Influence" }
+      ]
+    },
+    {
+      "id": 5,
+      "image": "images/expr_scenario5.png",
+      "short_description": "You are on stage at a large conference. A spotlight is on you. Someone in the front row has just asked a very aggressive, personal question about your integrity. You:",
+      "options": [
+        { "text": "Take a slow, deliberate sip of water to control the tempo of the room.", "label": "A", "presenceType": "Master Gravitas" },
+        { "text": "Immediately launch into a list of your achievements and values to defend yourself.", "label": "B", "presenceType": "Defensive Leak" },
+        { "text": "Lean forward, lower your voice, and make eye contact: 'I appreciate the courage to ask that.'", "label": "C", "presenceType": "High Stature/Influence" },
+        { "text": "Look at the moderator and ask them to move to the next question.", "label": "D", "presenceType": "Avoidance Leak" }
+      ]
+    },
+    {
+      "id": 6,
+      "image": "images/expr_scenario6.png",
+      "short_description": "The CFO has abruptly closed their laptop during your budget pitch, signaling a 'NO'. The room is waiting for your reaction. You:",
+      "options": [
+        { "text": "Nod, wait 3 seconds in silence, and say: 'I understand the initial 'No'. Let's find the middle ground.'", "label": "A", "presenceType": "Silent Stature" },
+        { "text": "Start re-pitching the ROI data more aggressively with a faster speaking pace.", "label": "B", "presenceType": "Defensive Leak" },
+        { "text": "Close your notebook slowly: 'Fair point on the timing. Let's schedule a deep-dive next week.'", "label": "C", "presenceType": "Strong Boundaries" },
+        { "text": "Immediately agree and say: 'You're right, the numbers need more work.'", "label": "D", "presenceType": "Submission Leak" }
+      ]
+    },
+    {
+      "id": 7,
+      "image": "images/expr_scenario7.png",
+      "short_description": "24 hours before a launch, your co-founder finds a critical bug that requires a delay. Anxiety is high. You:",
+      "options": [
+        { "text": "Deep breath, calm face: 'This is why we built contingency. Let's activate the communication plan.'", "label": "A", "presenceType": "Composure/Gravitas" },
+        { "text": "Angrily ask: 'How did we miss this? Who checked the code?'", "label": "B", "presenceType": "Aggression Leak" },
+        { "text": "Immediately start working on the code yourself without delegation.", "label": "C", "presenceType": "Pacesetter/Anxiety" },
+        { "text": "Call the main investor to ask for permission to delay.", "label": "D", "presenceType": "Confidence Leak" }
+      ]
+    },
+    {
+      "id": 8,
+      "image": "images/expr_scenario8.png",
+      "short_description": "You are being ambushed by journalists about an organization integrity issue. A microphone is in your face. You:",
+      "options": [
+        { "text": "Keep walking at a steady pace, looking straight ahead with a neutral face.", "label": "A", "presenceType": "Gravitas (Master)" },
+        { "text": "Cover your face with your hand and run to the car.", "label": "B", "presenceType": "Panic Leak" },
+        { "text": "Stop, look at the camera: 'We are conducting an audit and will release a statement on Friday.'", "label": "C", "presenceType": "Active Influence" },
+        { "text": "Shout back: 'This is fake news!'", "label": "D", "presenceType": "Aggression Leak" }
+      ]
+    },
+    {
+      "id": 9,
+      "image": "images/expr_scenario9.png",
+      "short_description": "During a sensitive 1-on-1 performance review, a high-potential employee starts crying. You:",
+      "options": [
+        { "text": "Sit perfectly still, hand a tissue slowly, and wait for them to finish (Hold Space).", "label": "A", "presenceType": "Empathic Presence" },
+        { "text": "Immediately stop the feedback and start reassuring them they are doing a great job.", "label": "B", "presenceType": "Confidence Leak" },
+        { "text": "Tell them: 'It's okay, tears are natural. Let's talk about the next steps when you are ready.'", "label": "C", "presenceType": "Composure" },
+        { "text": "Look at the time and say: 'We should reschedule this for tomorrow.'", "label": "D", "presenceType": "Avoidance Leak" }
+      ]
+    },
+    {
+      "id": 10,
+      "image": "images/expr_scenario10.png",
+      "short_description": "You have just pitched a high-risk, $10M deal to a closed group of senior stakeholders. The room is dead silent, waiting for your final posture. You:",
+      "options": [
+        { "text": "Stand tall, maintain silent, calm eye contact with the key decision-maker.", "label": "A", "presenceType": "Silent Gravitas" },
+        { "text": "Start over-explaining the 'risk' section because you are worried about the silence.", "label": "B", "presenceType": "Over-explaining Leak" },
+        { "text": "Lean back, put your hands behind your head to show 'Confidence'.", "label": "C", "presenceType": "Arrogance/Neutral" },
+        { "text": "Break the silence: 'I know it’s risky, but we should probably do it.'", "label": "D", "presenceType": "Submission Leak" }
+      ]
+    }
   ]
 }

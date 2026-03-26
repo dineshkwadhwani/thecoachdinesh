@@ -8,5 +8,9 @@
   "strategicClarity": {
     "quizEnabled": true,
     "scenarioCount": 5
+  },
+  "executivePresence": {
+    "quizEnabled": true,
+    "scenarioCount": 10
   }
 }

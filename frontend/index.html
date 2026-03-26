@@ -5,11 +5,13 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/leadership-quiz.css">
 <link rel="stylesheet" href="css/clarity-game.css">
+<link rel="stylesheet" href="css/presence.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 <script src="js/coach-bot.js"></script>
 <script src="js/script.js"></script>
 <script src="js/leadership-quiz.js"></script>
 <script src="js/clarity-game.js"></script>
+<script src="js/presence-game.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -185,6 +187,8 @@ decisions.
 Strengthening communication, influence and executive presence.
 
 </p>
+
+<button id="presence-launch-btn" class="btn-small" style="display:none;" onclick="openPresenceGame()">Check your presence</button>
 
 </div>
 
@@ -477,6 +481,89 @@ Schedule a Conversation
             </div>
             <div class="clarity-consultation-message" id="clarity-consultation"></div>
             <div class="clarity-report-actions" id="clarity-report-actions"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Executive Presence Visual Simulator Modal -->
+<div id="presence-modal" class="modal" style="display: none;">
+    <div class="modal-content" id="presence-modal-content">
+        <button class="modal-close" onclick="closePresenceGame()">×</button>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="presence-progress-fill" style="width: 10%;"></div>
+            </div>
+            <div class="progress-text" id="presence-progress-text">Step 1 of 5: Identify Yourself</div>
+        </div>
+
+        <div class="quiz-step" id="presence-step-identity">
+            <h2>Let's start with your details</h2>
+            <p>Please share your name and mobile number to begin the simulator.</p>
+            <input type="text" id="presence-name-input" placeholder="Enter your name" />
+            <div class="phone-input-row">
+                <select id="presence-country-code" aria-label="Country code">
+                    <option value="+1">+1 (US/Canada)</option>
+                    <option value="+7">+7 (Russia)</option>
+                    <option value="+20">+20 (Egypt)</option>
+                    <option value="+27">+27 (South Africa)</option>
+                    <option value="+33">+33 (France)</option>
+                    <option value="+34">+34 (Spain)</option>
+                    <option value="+39">+39 (Italy)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+49">+49 (Germany)</option>
+                    <option value="+52">+52 (Mexico)</option>
+                    <option value="+55">+55 (Brazil)</option>
+                    <option value="+61">+61 (Australia)</option>
+                    <option value="+65">+65 (Singapore)</option>
+                    <option value="+81">+81 (Japan)</option>
+                    <option value="+82">+82 (South Korea)</option>
+                    <option value="+91" selected>+91 (India)</option>
+                    <option value="+92">+92 (Pakistan)</option>
+                    <option value="+94">+94 (Sri Lanka)</option>
+                    <option value="+966">+966 (Saudi Arabia)</option>
+                    <option value="+971">+971 (UAE)</option>
+                    <option value="+974">+974 (Qatar)</option>
+                </select>
+                <input type="tel" id="presence-phone-input" placeholder="Mobile number" inputmode="numeric" autocomplete="tel-national" />
+            </div>
+            <button class="btn" onclick="presenceContinueFromIdentity()">Continue</button>
+        </div>
+
+        <div class="quiz-step" id="presence-step-welcome" style="display:none;">
+            <h2>Welcome to the Executive Presence Simulator</h2>
+            <p>Leaders are judged not just by their choices, but by how they handle the room.</p>
+            <p>We will present 10 high-stakes leadership scenarios. Choose your "Power Move" to see how you command presence.</p>
+            <button class="btn" onclick="presenceStartFromWelcome()">Start</button>
+        </div>
+
+        <div class="quiz-step" id="presence-step-question" style="display:none;">
+            <div class="presence-question-header" id="presence-question-counter">Scenario 1 of 10</div>
+            <img id="presence-scenario-image" class="presence-scenario-image" alt="Scenario image" />
+            <p class="presence-prompt" id="presence-scenario-prompt"></p>
+            <div class="presence-options-grid" id="presence-options-container"></div>
+            <div class="quiz-actions presence-quiz-actions">
+                <button class="btn btn-secondary" id="presence-prev-btn" onclick="presencePrevQuestion()">Previous</button>
+                <button class="btn" id="presence-next-btn" onclick="presenceNextQuestion()">Next Scenario</button>
+            </div>
+        </div>
+
+        <div class="quiz-step" id="presence-step-email" style="display:none;">
+            <h2>Almost there</h2>
+            <p>Where should we send your Executive Presence report?</p>
+            <input type="email" id="presence-email-input" placeholder="Enter your email" />
+            <button class="btn" id="presence-submit-btn" onclick="presenceSubmitEmail()">Get My Presence Report</button>
+        </div>
+
+        <div class="quiz-step" id="presence-step-report" style="display:none;">
+            <h2 id="presence-report-title">Executive Presence Report</h2>
+            <div id="presence-report-body" class="presence-report"></div>
+            <div class="report-signoff">
+                <img src="images/signature.png" alt="Dinesh Wadhwani Signature" class="signature-image" onerror="this.style.display='none'">
+                <p class="signature-name">Dinesh Wadhwani</p>
+            </div>
+            <div class="consultation-message" id="presence-consultation"></div>
+            <div class="report-actions-row" id="presence-report-actions"></div>
         </div>
     </div>
 </div>

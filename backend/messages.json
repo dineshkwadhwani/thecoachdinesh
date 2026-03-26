@@ -53,5 +53,44 @@
       "whatsappButton": "Send WhatsApp",
       "closeButton": "Close"
     }
+  },
+  "executivePresence": {
+    "identity": {
+      "title": "Let's start with your details",
+      "intro": "Please share your name and mobile number to begin the simulator.",
+      "continueButton": "Continue"
+    },
+    "welcome": {
+      "title": "Welcome to the Executive Presence Simulator",
+      "intro": "Leaders are judged not just by their choices, but by how they handle the room.",
+      "scenarioInstruction": "We will present {scenarioCount} high-stakes leadership scenarios. Choose your \"Power Move\" to see how you command presence.",
+      "startButton": "Start"
+    },
+    "progress": {
+      "identity": "Step 1 of 5: Identify Yourself",
+      "welcome": "Step 2 of 5: The Simulator",
+      "question": "Scenario {current} of {total}",
+      "email": "Step 4 of 5: Capture Email",
+      "report": "Step 5 of 5: Your Presence Report"
+    },
+    "labels": {
+      "questionCounter": "Scenario {current} of {total}",
+      "nextScenarioButton": "Next Scenario",
+      "seeResultsButton": "See Results"
+    },
+    "email": {
+      "title": "Almost there",
+      "intro": "Where should we send your Executive Presence report?",
+      "submitButton": "Get My Presence Report",
+      "loadingButton": "Analyzing..."
+    },
+    "report": {
+      "title": "Executive Presence Report, {name}",
+      "consultationGreeting": "Dear {name},",
+      "consultationBody": "Thank you for completing the Executive Presence Visual Simulator. I would love to offer you a complimentary 1-on-1 Presence Session to help you strengthen your executive impact. Send me a WhatsApp and we can find a time that works.",
+      "whatsappMessage": "Hey Coach, my name is {name}. I completed the Executive Presence Visual Simulator and want to discuss my report.",
+      "whatsappButton": "Send WhatsApp",
+      "closeButton": "Close"
+    }
   }
 }

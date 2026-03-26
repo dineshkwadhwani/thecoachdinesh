@@ -1,0 +1,105 @@
+#presence-modal .modal-content {
+    max-width: 600px;
+}
+
+#presence-country-code {
+    flex: 0 0 170px;
+    padding: 12px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    background: white;
+}
+
+#presence-country-code:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+#presence-phone-input {
+    margin-bottom: 0;
+}
+
+.presence-question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    color: #999;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.presence-scenario-image {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 14px;
+    object-fit: cover;
+    max-height: 340px;
+    background: #f8f8f8;
+}
+
+.presence-prompt {
+    color: #333;
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+.presence-options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.presence-option-card {
+    width: 100%;
+    text-align: left;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #f8f9fa;
+    color: #333;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.presence-option-card:hover {
+    transform: translateY(-3px);
+    border-color: #4a90e2;
+    background: #eef5ff;
+}
+
+.presence-option-card.selected {
+    border-color: #4a90e2;
+    background: #e7f1ff;
+}
+
+.presence-report {
+    border-top: 1px solid #eee;
+    padding-top: 16px;
+}
+
+.presence-report p {
+    color: #333;
+    line-height: 1.65;
+}
+
+.presence-quiz-actions {
+    justify-content: space-between;
+    margin-top: 14px;
+}
+
+@media (max-width: 760px) {
+    .presence-modal-content {
+        padding: 20px;
+    }
+
+    .presence-step h2 {
+        font-size: 24px;
+    }
+}
