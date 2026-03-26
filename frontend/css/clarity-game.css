@@ -1,0 +1,363 @@
+/* ===================================================
+   Strategic Clarity Diagnostic — Game Styles
+   Shares .modal, .modal-content, .modal-close,
+   .btn, .btn-secondary, .progress-* from leadership-quiz.css
+   =================================================== */
+
+/* ---- Identity & Email Steps ---- */
+#clarity-modal .quiz-step h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #333;
+    font-family: 'Playfair Display', serif;
+}
+
+#clarity-modal .quiz-step p {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+#clarity-modal .quiz-step input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+#clarity-modal .quiz-step input:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+/* Phone row — reuse quiz style */
+#clarity-modal .phone-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#clarity-modal .phone-input-row select {
+    flex: 0 0 160px;
+    padding: 12px 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+#clarity-modal .phone-input-row select:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+#clarity-modal .phone-input-row input {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* ---- Welcome Screen ---- */
+.clarity-welcome-copy {
+    background: #f3f8fe;
+    border: 1px solid #c8dff5;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+}
+
+.clarity-welcome-copy p {
+    margin: 0 0 10px;
+    color: #2d3e50;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.clarity-welcome-copy p:last-child {
+    margin-bottom: 0;
+}
+
+/* ---- Scenario / Game Step ---- */
+.clarity-scenario-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #4a90e2;
+    margin-bottom: 10px;
+}
+
+.clarity-context {
+    background: #f8f9fa;
+    border-left: 4px solid #4a90e2;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    font-size: 15px;
+    color: #2d3e50;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+.clarity-instructions {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 18px;
+    font-style: italic;
+}
+
+.clarity-tags-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 80px;
+    margin-bottom: 24px;
+}
+
+/* ---- Individual Tags ---- */
+.clarity-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 14px;
+    background: #ffffff;
+    border: 2px solid #d0dce8;
+    border-radius: 20px;
+    font-size: 13.5px;
+    font-family: 'Inter', sans-serif;
+    color: #2d3e50;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.18s, border-color 0.18s, transform 0.12s, opacity 0.3s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.clarity-tag:hover {
+    border-color: #4a90e2;
+    background: #f0f6ff;
+    transform: translateY(-1px);
+}
+
+/* Noise dismissed — fades out */
+.clarity-tag.dismissed-noise {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.88);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Signal mistakenly dismissed — shake red */
+.clarity-tag.dismissed-signal {
+    border-color: #e53935;
+    background: #fff0f0;
+    color: #c62828;
+    cursor: default;
+    pointer-events: none;
+    animation: shake-red 0.5s ease;
+}
+
+.clarity-tag.dismissed-signal::before {
+    content: '✕ ';
+    font-weight: 700;
+    color: #e53935;
+}
+
+@keyframes shake-red {
+    0%   { transform: translateX(0); }
+    15%  { transform: translateX(-6px); }
+    30%  { transform: translateX(6px); }
+    45%  { transform: translateX(-5px); }
+    60%  { transform: translateX(5px); }
+    75%  { transform: translateX(-3px); }
+    90%  { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
+
+/* ---- Score bar after each scenario ---- */
+.clarity-mini-score {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.clarity-progress-bar-wrap {
+    width: 100%;
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.clarity-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #43a047, #66bb6a);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+/* ---- Done / Next button row ---- */
+.clarity-game-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ---- Report Step ---- */
+.clarity-report-header {
+    margin-bottom: 20px;
+}
+
+.clarity-score-summary {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0 24px;
+    flex-wrap: wrap;
+}
+
+.clarity-score-pill {
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.clarity-score-pill.cleared {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.clarity-score-pill.missed {
+    background: #ffebee;
+    color: #b71c1c;
+    border: 1px solid #ef9a9a;
+}
+
+.clarity-score-pill.quotient {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #90caf9;
+}
+
+.clarity-report-body {
+    border-top: 1px solid #eee;
+    padding-top: 18px;
+    margin-bottom: 24px;
+}
+
+.clarity-report-body p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 14px;
+}
+
+.clarity-report-body h3,
+.clarity-report-body h4 {
+    font-family: 'Playfair Display', serif;
+    color: #2d3e50;
+    margin: 18px 0 8px;
+}
+
+.clarity-report-signoff {
+    margin: 24px 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.clarity-signature-image {
+    max-width: 120px;
+    height: auto;
+}
+
+.clarity-signature-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #2d3e50;
+    margin: 0;
+}
+
+.clarity-consultation-message {
+    background: #f8fbff;
+    border: 1px solid #d9e7f5;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #2d3e50;
+    line-height: 1.6;
+}
+
+.clarity-consultation-message p {
+    margin: 0 0 8px;
+}
+
+.clarity-consultation-message p:last-child {
+    margin: 0;
+}
+
+.clarity-report-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+/* ---- Loading Spinner ---- */
+.clarity-loading {
+    text-align: center;
+    padding: 30px 0;
+    color: #666;
+}
+
+.clarity-spinner {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid #ddd;
+    border-top-color: #4a90e2;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+    .clarity-score-summary {
+        flex-direction: column;
+    }
+
+    .clarity-report-actions {
+        flex-direction: column;
+    }
+
+    .clarity-report-actions .btn,
+    .clarity-report-actions .whatsapp-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    #clarity-modal .phone-input-row {
+        flex-direction: column;
+    }
+
+    #clarity-modal .phone-input-row select {
+        flex: none;
+        width: 100%;
+    }
+}

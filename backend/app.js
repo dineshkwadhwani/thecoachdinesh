@@ -12,12 +12,17 @@ const { askDinesh } = require('./coachService');
 const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
 const REFLECT_YOUR_STYLE_KEY = 'reflectYourStyle';
+const STRATEGIC_CLARITY_KEY = 'strategicClarity';
 const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
 const DEFAULT_LEADERSHIP_QUIZ_CONFIG = {
     quizEnabled: true,
     deepInsightEnabled: true,
     quickQuestionCount: 10,
     deepQuestionCount: 25
+};
+const DEFAULT_STRATEGIC_CLARITY_CONFIG = {
+    quizEnabled: true,
+    scenarioCount: 5
 };
 
 function normalizeLeadershipQuizConfig(rawConfig = {}) {
@@ -36,6 +41,17 @@ function normalizeLeadershipQuizConfig(rawConfig = {}) {
     };
 }
 
+function normalizeStrategicClarityConfig(rawConfig = {}) {
+    const scenarioCount = Number.parseInt(rawConfig.scenarioCount, 10);
+
+    return {
+        quizEnabled: rawConfig.quizEnabled !== false,
+        scenarioCount: Number.isInteger(scenarioCount) && scenarioCount > 0
+            ? scenarioCount
+            : DEFAULT_STRATEGIC_CLARITY_CONFIG.scenarioCount
+    };
+}
+
 function loadLeadershipQuizData() {
     const questionsPath = path.join(__dirname, 'questions.json');
     const configPath = path.join(__dirname, 'quiz-config.json');
@@ -46,7 +62,8 @@ function loadLeadershipQuizData() {
 
     let quizConfig = DEFAULT_LEADERSHIP_QUIZ_CONFIG;
     let configByQuiz = {
-        [REFLECT_YOUR_STYLE_KEY]: DEFAULT_LEADERSHIP_QUIZ_CONFIG
+        [REFLECT_YOUR_STYLE_KEY]: DEFAULT_LEADERSHIP_QUIZ_CONFIG,
+        [STRATEGIC_CLARITY_KEY]: DEFAULT_STRATEGIC_CLARITY_CONFIG
     };
     let messagesByQuiz = {};
 
@@ -56,7 +73,8 @@ function loadLeadershipQuizData() {
         quizConfig = normalizeLeadershipQuizConfig(rawConfig[REFLECT_YOUR_STYLE_KEY]);
         configByQuiz = {
             ...rawConfig,
-            [REFLECT_YOUR_STYLE_KEY]: quizConfig
+            [REFLECT_YOUR_STYLE_KEY]: quizConfig,
+            [STRATEGIC_CLARITY_KEY]: normalizeStrategicClarityConfig(rawConfig[STRATEGIC_CLARITY_KEY])
         };
     }
 
@@ -435,6 +453,69 @@ Style breakdown: ${styleBreakdownText}`;
     } catch (error) {
         console.error('Leadership analysis error:', error.message);
         res.status(500).json({ error: 'Failed to analyze leadership style' });
+    }
+});
+
+// 6. ANALYZE CLARITY DIAGNOSTIC
+app.post('/analyze-clarity', async (req, res) => {
+    try {
+        const { name, phone, email, noiseCleared, signalsMissed, totalNoise, totalSignals, noiseScore } = req.body;
+
+        const normalizedPhone = typeof phone === 'string' ? phone.replace(/\s+/g, '') : '';
+        const isValidPhone = /^\+\d{7,15}$/.test(normalizedPhone);
+
+        if (!name || !email || !isValidPhone ||
+            typeof noiseCleared !== 'number' || typeof signalsMissed !== 'number') {
+            return res.status(400).json({ error: 'Invalid request data' });
+        }
+
+        const systemPrompt = `You are an executive leadership coach. Provide a focused, honest 180-word report on a leader's ability to filter strategic noise. Use "you" and "your" throughout. Be warm, credible and actionable.`;
+
+        const userPrompt = `Analyze ${name}'s ability to filter noise in the Strategic Clarity Diagnostic.
+They correctly cleared ${noiseCleared} out of ${totalNoise} pieces of noise (${noiseScore}% noise accuracy).
+They mistakenly dismissed ${signalsMissed} critical signals out of ${totalSignals} total signals as distractions.
+
+Write approximately 180 words covering:
+1) Their overall Strategic Focus capability
+2) What their signal/noise accuracy reveals about their current leadership lens
+3) Specific risks if they continue to miss those critical signals
+4) One practical habit or mental model to sharpen their clarity
+
+End with a natural invitation to a 1-on-1 Clarity Session to explore their blindspots further.`;
+
+        const groq = new OpenAI({
+            apiKey: process.env.GROQ_API_KEY,
+            baseURL: 'https://api.groq.com/openai/v1'
+        });
+
+        const completion = await groq.chat.completions.create({
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user',   content: userPrompt }
+            ],
+            model: 'llama-3.3-70b-versatile'
+        });
+
+        const aiReport = completion.choices[0].message.content;
+        const timestamp = new Date().toISOString();
+
+        const reportSummary = String(aiReport || '').replace(/\s+/g, ' ').trim().slice(0, 220);
+        console.log(`[CLARITY_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Phone: ${normalizedPhone} | Email: ${email} | NoiseScore: ${noiseScore}% | NoiseCleared: ${noiseCleared}/${totalNoise} | SignalsMissed: ${signalsMissed}/${totalSignals} | Summary: ${reportSummary}`);
+
+        const telegramText = `🎯 Clarity Lead!\nName: ${name}\nPhone: ${normalizedPhone}\nEmail: ${email}\nClarity Quotient: ${noiseScore}% — cleared ${noiseCleared}/${totalNoise} noise, missed ${signalsMissed}/${totalSignals} signals.`;
+        try {
+            await sendTelegramMessage(telegramText);
+        } catch (telegramError) {
+            console.error('Telegram send error (non-blocking):', telegramError.message);
+        }
+
+        console.log(`[CLARITY_SEND] | Timestamp: ${timestamp} | Name: ${name}`);
+        res.json({ name, noiseScore, noiseCleared, signalsMissed, totalNoise, totalSignals, report: aiReport });
+        console.log(`[CLARITY_DONE] | Timestamp: ${timestamp} | Name: ${name}`);
+
+    } catch (error) {
+        console.error('Clarity analysis error:', error.message);
+        res.status(500).json({ error: 'Failed to analyze clarity diagnostic' });
     }
 });
 

@@ -19,9 +19,39 @@
       ]
     },
     "report": {
-      "quickConsultation": "This is a small sumamry report to get you started. If you want more details, do a deep indepth report. Alternatively, I will be happy to provide voluntary consultance if you need one. Send me a whatsapp.",
+      "quickConsultation": "This is a small summary report to get you started. If you want more details, do a deep in-depth report. Alternatively, I will be happy to provide voluntary consultation if you need one. Send me a WhatsApp.",
       "quickConsultationDeepDisabled": "This is a small summary report to get you started. If you would like to dive deeper, I will be happy to provide voluntary consultance if you need one. Send me a whatsapp.",
       "deepConsultation": "I will be happy to provide one session of voluntary consultation in case you would like to talk to me. Send me a whatsapp message and we can schedule a time."
+    }
+  },
+  "strategicClarity": {
+    "welcome": {
+      "title": "Welcome to the Clarity Challenge",
+      "intro": "Leaders are bombarded with noise. Your task is to identify the signals that matter and remove the noise.",
+      "scenarioInstruction": "You will face {scenarioCount} real-world leadership scenarios. Each scenario contains a mix of noise and signals. Click on the items you think are noise to dismiss them.",
+      "outcome": "Outcome: We will measure your Clarity Quotient and identify your strategic blindspots.",
+      "startButton": "Start the Challenge →"
+    },
+    "progress": {
+      "identity": "Step 1 of 5: Identify Yourself",
+      "welcome": "Step 2 of 5: The Challenge",
+      "game": "Scenario {current} of {total}",
+      "email": "Step 4 of 5: Capture Your Report",
+      "loading": "Analysing your Clarity Quotient...",
+      "report": "Your Strategic Clarity Report"
+    },
+    "labels": {
+      "scenario": "Scenario {current} of {total}",
+      "nextScenarioButton": "Next Scenario →",
+      "getReportButton": "Get My Report →"
+    },
+    "report": {
+      "title": "Your Strategic Clarity Report, {name}",
+      "consultationGreeting": "Dear {name},",
+      "consultationBody": "Thank you for completing the Strategic Clarity Diagnostic. I would love to offer you a complimentary 1-on-1 Clarity Session to explore your blindspots further. Send me a WhatsApp and we can find a time that works.",
+      "whatsappMessage": "Hey Coach, my name is {name}. I completed the Strategic Clarity Diagnostic and scored {noiseScore}% on the Clarity Quotient. I'd love to discuss my results.",
+      "whatsappButton": "Send WhatsApp",
+      "closeButton": "Close"
     }
   }
 }

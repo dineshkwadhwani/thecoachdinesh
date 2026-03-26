@@ -4,5 +4,9 @@
     "deepInsightEnabled": true,
     "quickQuestionCount": 5,
     "deepQuestionCount": 5
+  },
+  "strategicClarity": {
+    "quizEnabled": true,
+    "scenarioCount": 5
   }
 }

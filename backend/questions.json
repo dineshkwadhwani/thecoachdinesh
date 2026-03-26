@@ -50,5 +50,147 @@
     { "id": 48, "question": "What motivates you most?", "options": { "A": "Innovation.", "B": "Impact.", "C": "Involvement.", "D": "Achievement." } },
     { "id": 49, "question": "Your leadership 'legacy' will be:", "options": { "A": "The vision I realized.", "B": "The people I grew.", "C": "The culture I built.", "D": "The results I delivered." } },
     { "id": 50, "question": "Finally, you view leadership as a:", "options": { "A": "Calling.", "B": "Service.", "C": "Duty.", "D": "Skill." } }
+  ],
+  "clarityAssessment": [
+    {
+      "id": "CA01",
+      "context": "Your inbox on Monday morning contains 24 items. You have one hour before your first meeting.",
+      "items": [
+        { "label": "Message from CEO about Q3 strategy shift", "isSignal": true },
+        { "label": "Auto-reply confirming a calendar invite", "isSignal": false },
+        { "label": "Customer complaint escalated by Sales", "isSignal": true },
+        { "label": "System-generated weekly report (unread for 3 weeks)", "isSignal": false },
+        { "label": "Team member flagging a critical dependency risk", "isSignal": true },
+        { "label": "Newsletter from an industry publication", "isSignal": false },
+        { "label": "Vendor invoice approval request", "isSignal": false },
+        { "label": "Competitor just launched a new product — alert from your tracker", "isSignal": true }
+      ]
+    },
+    {
+      "id": "CA02",
+      "context": "Your leadership team is in a 90-minute strategy session. The following topics are raised.",
+      "items": [
+        { "label": "We need to redesign the office layout", "isSignal": false },
+        { "label": "Our top performer has had 3 missed deadlines this quarter", "isSignal": true },
+        { "label": "The team-building event needs a new venue", "isSignal": false },
+        { "label": "Revenue from our core product dropped 12% last month", "isSignal": true },
+        { "label": "We should update the team WhatsApp group icon", "isSignal": false },
+        { "label": "A key client is asking for capability we don't yet have", "isSignal": true },
+        { "label": "Last year's team photo needs reframing", "isSignal": false },
+        { "label": "Two business units are working on duplicate initiatives", "isSignal": true }
+      ]
+    },
+    {
+      "id": "CA03",
+      "context": "You are reviewing your organisation's strategic health. These signals come in over a single week.",
+      "items": [
+        { "label": "Employee satisfaction survey shows rising disengagement in R&D", "isSignal": true },
+        { "label": "Printer on floor 3 keeps jamming", "isSignal": false },
+        { "label": "Your CFO quietly mentions cash runway is tightening", "isSignal": true },
+        { "label": "The office coffee machine needs servicing", "isSignal": false },
+        { "label": "Three senior people had informal chats about 'looking elsewhere'", "isSignal": true },
+        { "label": "Someone forgot to stock the stationery cupboard", "isSignal": false },
+        { "label": "A major industry conference is happening next month", "isSignal": true },
+        { "label": "The meeting room booking system has a glitch", "isSignal": false }
+      ]
+    },
+    {
+      "id": "CA04",
+      "context": "You are a senior leader preparing next year's operating plan. Data from across the business arrives.",
+      "items": [
+        { "label": "The marketing team's slide deck font is inconsistent", "isSignal": false },
+        { "label": "Customer retention rate has dropped for the third consecutive quarter", "isSignal": true },
+        { "label": "A junior analyst flagged an anomaly in the unit economics model", "isSignal": true },
+        { "label": "The company intranet homepage looks outdated", "isSignal": false },
+        { "label": "A new regulation in your sector takes effect in 60 days", "isSignal": true },
+        { "label": "Someone asked for a new screensaver for the lobby screen", "isSignal": false },
+        { "label": "Your most profitable product line has stagnant NPS for 6 months", "isSignal": true },
+        { "label": "The meeting notes template needs a footer update", "isSignal": false }
+      ]
+    },
+    {
+      "id": "CA05",
+      "context": "You are leading a high-stakes product launch in 6 weeks. These updates arrive from across the team.",
+      "items": [
+        { "label": "Legal hasn't signed off on the product name yet", "isSignal": true },
+        { "label": "The launch party venue still needs a final headcount", "isSignal": false },
+        { "label": "QA found a repeatable crash in the core user flow", "isSignal": true },
+        { "label": "Press release needs a comma changed", "isSignal": false },
+        { "label": "The head of sales says the key enterprise demo account went cold", "isSignal": true },
+        { "label": "Someone wants to change the slide background colour for the launch deck", "isSignal": false },
+        { "label": "Manufacturing partner flagged a 3-week supply delay", "isSignal": true },
+        { "label": "A team member wants to adjust the font size in the product spec doc", "isSignal": false }
+      ]
+    },
+    {
+      "id": "CA06",
+      "context": "You spend an afternoon reviewing your team's work and communication. The following surface.",
+      "items": [
+        { "label": "A high-performer mentioned feeling unchallenged in a 1-on-1", "isSignal": true },
+        { "label": "Someone used the wrong bullet style in a deck", "isSignal": false },
+        { "label": "Your team's delivery velocity has slowed 30% over 2 months", "isSignal": true },
+        { "label": "The team lunch order had the wrong sandwich for one person", "isSignal": false },
+        { "label": "Cross-functional friction has resurfaced between two leads", "isSignal": true },
+        { "label": "The Zoom background used in last week's call looked unprofessional", "isSignal": false },
+        { "label": "A key project has no clear owner after last month's reorg", "isSignal": true },
+        { "label": "Someone submitted expenses 2 days late", "isSignal": false }
+      ]
+    },
+    {
+      "id": "CA07",
+      "context": "You are in a board review. The following points come up during the conversation.",
+      "items": [
+        { "label": "The colour scheme of the investor deck could be more 'modern'", "isSignal": false },
+        { "label": "A board member quietly asks if leadership succession plans are in place", "isSignal": true },
+        { "label": "The executive team's headshots on the website look dated", "isSignal": false },
+        { "label": "Revenue concentration in two clients represents 60% of total income", "isSignal": true },
+        { "label": "A board member noted that company culture wasn't mentioned in the CEO's update", "isSignal": true },
+        { "label": "The font size on the appendix slides is too small", "isSignal": false },
+        { "label": "Your top clients are starting to ask about your AI roadmap", "isSignal": true },
+        { "label": "The agenda was circulated 30 minutes later than planned", "isSignal": false }
+      ]
+    },
+    {
+      "id": "CA08",
+      "context": "You are coaching a direct report who has just been promoted. These observations come across.",
+      "items": [
+        { "label": "They are still doing their old job instead of delegating it", "isSignal": true },
+        { "label": "Their desk is not as tidy as before the promotion", "isSignal": false },
+        { "label": "Their direct reports are unclear who makes decisions on the team", "isSignal": true },
+        { "label": "Their presentation slides use two different fonts", "isSignal": false },
+        { "label": "They have avoided giving difficult feedback to a peer twice now", "isSignal": true },
+        { "label": "They didn't respond to a Slack message within an hour", "isSignal": false },
+        { "label": "Their team's morale has dipped noticeably over the last month", "isSignal": true },
+        { "label": "Their weekly report is submitted on Thursdays instead of Fridays", "isSignal": false }
+      ]
+    },
+    {
+      "id": "CA09",
+      "context": "You are scanning the external environment for strategic threats and opportunities.",
+      "items": [
+        { "label": "A direct competitor just announced a 40% price cut", "isSignal": true },
+        { "label": "Your LinkedIn company page hasn't been updated in two months", "isSignal": false },
+        { "label": "A technology shift is making your current product architecture harder to scale", "isSignal": true },
+        { "label": "The office kitchen fridge needs cleaning", "isSignal": false },
+        { "label": "Your top three talent sources are drying up", "isSignal": true },
+        { "label": "The company blog has fewer posts this quarter than last", "isSignal": false },
+        { "label": "A startup in your space just received Series B funding", "isSignal": true },
+        { "label": "The team's Slack channel has fewer GIFs lately", "isSignal": false }
+      ]
+    },
+    {
+      "id": "CA10",
+      "context": "You are doing a mid-year review of your own leadership priorities.",
+      "items": [
+        { "label": "You have said yes to every meeting request this quarter", "isSignal": true },
+        { "label": "Your calendar background colour is the default grey", "isSignal": false },
+        { "label": "Your most important strategic goal has had no progress for 8 weeks", "isSignal": true },
+        { "label": "Your out-of-office template is slightly outdated", "isSignal": false },
+        { "label": "You have not had a single deep-work block in 3 weeks", "isSignal": true },
+        { "label": "Your email signature doesn't include your new title", "isSignal": false },
+        { "label": "The most critical relationship in your stakeholder map has gone cold", "isSignal": true },
+        { "label": "You still use a 2024 goals template", "isSignal": false }
+      ]
+    }
   ]
 }
