@@ -120,6 +120,30 @@
     margin-bottom: 20px;
 }
 
+.welcome-copy {
+    background: #f8fbff;
+    border: 1px solid #d9e7f5;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+}
+
+.welcome-copy p {
+    margin: 0 0 10px;
+    color: #3a4a58;
+}
+
+.welcome-copy ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.welcome-copy li {
+    margin-bottom: 8px;
+    color: #3a4a58;
+    line-height: 1.45;
+}
+
 .quiz-step input {
     width: 100%;
     padding: 12px 15px;

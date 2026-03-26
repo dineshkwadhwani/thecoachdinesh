@@ -14,6 +14,8 @@ const pageCacheDurationMs = 15 * 60 * 1000;
 const REFLECT_YOUR_STYLE_KEY = 'reflectYourStyle';
 const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
 const DEFAULT_LEADERSHIP_QUIZ_CONFIG = {
+    quizEnabled: true,
+    deepInsightEnabled: true,
     quickQuestionCount: 10,
     deepQuestionCount: 25
 };
@@ -23,6 +25,8 @@ function normalizeLeadershipQuizConfig(rawConfig = {}) {
     const deepQuestionCount = Number.parseInt(rawConfig.deepQuestionCount, 10);
 
     return {
+        quizEnabled: rawConfig.quizEnabled !== false,
+        deepInsightEnabled: rawConfig.deepInsightEnabled !== false,
         quickQuestionCount: Number.isInteger(quickQuestionCount) && quickQuestionCount > 0
             ? quickQuestionCount
             : DEFAULT_LEADERSHIP_QUIZ_CONFIG.quickQuestionCount,

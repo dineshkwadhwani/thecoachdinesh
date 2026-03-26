@@ -1,5 +1,5 @@
 // Onboarding state
-let onboardingStep = 'name'; // 'name', 'phone', 'done'
+let onboardingStep = 'form'; // 'form', 'done'
 let userName = '';
 let userPhone = '';
 
@@ -15,7 +15,39 @@ function getOrCreateBrowserId() {
 
 const browserId = getOrCreateBrowserId();
 const conversationStorageKey = `conversationCount:${browserId}`;
+const onboardingStorageKey = `onboarding:${browserId}`;
 let conversationCount = parseInt(localStorage.getItem(conversationStorageKey) || '0');
+
+function saveOnboardingData() {
+    const payload = {
+        name: userName,
+        phone: userPhone,
+        done: onboardingStep === 'done'
+    };
+    localStorage.setItem(onboardingStorageKey, JSON.stringify(payload));
+}
+
+function hydrateOnboardingData() {
+    const raw = localStorage.getItem(onboardingStorageKey);
+    if (!raw) return;
+
+    try {
+        const parsed = JSON.parse(raw);
+        const persistedName = String(parsed && parsed.name ? parsed.name : '').trim();
+        const persistedPhone = String(parsed && parsed.phone ? parsed.phone : '').trim();
+        const isDone = Boolean(parsed && parsed.done);
+
+        if (isDone && persistedName && persistedPhone) {
+            userName = persistedName;
+            userPhone = persistedPhone;
+            onboardingStep = 'done';
+        }
+    } catch (error) {
+        console.warn('Could not parse persisted onboarding data:', error);
+    }
+}
+
+hydrateOnboardingData();
 
 function toggleBot() {
     const windowDiv = document.getElementById('bot-window');
@@ -33,11 +65,6 @@ function toggleBot() {
         // keep the latest messages visible when opened
         const messages = document.getElementById('bot-messages');
         if (messages) messages.scrollTop = messages.scrollHeight;
-
-        // Start onboarding if not done
-        if (onboardingStep === 'name') {
-            appendMessage('Coach Dinesh', 'Hello! May I have your name?');
-        }
     }
 }
 
@@ -56,13 +83,72 @@ function openBot() {
 
     const messages = document.getElementById('bot-messages');
     if (messages) messages.scrollTop = messages.scrollHeight;
+}
 
-    if (onboardingStep === 'name') {
-        appendMessage('Coach Dinesh', 'Hello! May I have your name?');
+function startBotChat() {
+    const nameInputEl = document.getElementById('bot-name-input');
+    const countryCodeEl = document.getElementById('bot-country-code-input');
+    const phoneInputEl = document.getElementById('bot-phone-input');
+
+    if (!nameInputEl || !countryCodeEl || !phoneInputEl) return;
+
+    const nameInput = nameInputEl.value.trim();
+    const countryCodeInput = countryCodeEl.value;
+    const mobileInputRaw = phoneInputEl.value.trim();
+    const mobileDigits = mobileInputRaw.replace(/\D/g, '');
+    const localNamePattern = /^[A-Za-z][A-Za-z .'-]{1,}$/;
+
+    if (!nameInput || !localNamePattern.test(nameInput)) {
+        alert('Please enter a valid name.');
+        nameInputEl.focus();
+        return;
     }
+
+    if (!countryCodeInput) {
+        alert('Please select a country code.');
+        countryCodeEl.focus();
+        return;
+    }
+
+    if (!/^\d{7,15}$/.test(mobileDigits)) {
+        alert('Please enter a valid mobile number (7 to 15 digits).');
+        phoneInputEl.focus();
+        return;
+    }
+
+    userName = nameInput;
+    userPhone = `${countryCodeInput}${mobileDigits}`;
+    onboardingStep = 'done';
+    saveOnboardingData();
+
+    const onboardingForm = document.getElementById('bot-onboarding-form');
+    const messages = document.getElementById('bot-messages');
+    const inputArea = document.getElementById('bot-input-area');
+
+    if (onboardingForm) onboardingForm.style.display = 'none';
+    if (messages) messages.style.display = 'block';
+    if (inputArea) inputArea.style.display = 'flex';
+
+    appendMessage('Coach Dinesh', `Hi ${userName}, welcome! How can I help you today?`);
+
+    fetch('/notify-onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: userName, phone: userPhone })
+    }).catch((notifyError) => {
+        console.error('Telegram Notification Error:', notifyError);
+    });
+
+    const botInput = document.getElementById('bot-input');
+    if (botInput) botInput.focus();
 }
 
 async function sendMessage() {
+    if (onboardingStep !== 'done') {
+        alert('Please enter your name and mobile number to start chatting.');
+        return;
+    }
+
     const input = document.getElementById('bot-input');
     const userText = input.value.trim();
     
@@ -71,115 +157,6 @@ async function sendMessage() {
     // 1. Show user message immediately
     appendMessage(userName || 'User', userText);
     input.value = '';
-
-    // Handle onboarding
-    if (onboardingStep === 'name') {
-        // local regex validation is the strong source for normal names
-        const localNamePattern = /^[A-Za-z][A-Za-z .'-]{1,}$/;
-        let isNameValid = localNamePattern.test(userText);
-
-        if (!isNameValid) {
-            // only call AI if local heuristics fail, to avoid false rejection
-            try {
-                const response = await fetch('/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "VALIDATE_NAME:" + userText })
-                });
-                const data = await response.json();
-                const validation = data.reply.trim().toLowerCase();
-
-                if (validation.includes('yes') && !validation.includes('no')) {
-                    isNameValid = true;
-                } else if (validation.includes('no') && !validation.includes('yes')) {
-                    isNameValid = false;
-                }
-                // if ambiguous AI answer, keep current local decision (false)
-            } catch (error) {
-                console.warn("Name validation service error, using local check:", error);
-            }
-        } else {
-            console.log("Local name validation accepted:", userText);
-        }
-
-        if (isNameValid) {
-            userName = userText;
-            console.log('User Name:', userName);
-            onboardingStep = 'phone';
-            appendMessage('Coach Dinesh', `Nice to meet you, ${userName}! May I have your telephone number?`);
-        } else {
-            appendMessage('Coach Dinesh', 'That name doesn\'t look valid yet. You can use a first name or nickname (e.g. "John" or "Sam"). Let\'s try again: by what name should I call you?');
-        }
-
-        return;
-    }
-
-    if (onboardingStep === 'phone') {
-        if (userText.toLowerCase() === 'skip') {
-            console.log('User Phone: Skipped');
-            onboardingStep = 'done';
-
-            // Generate AI-driven greeting
-            const hour = new Date().getHours();
-            let timeOfDay = 'morning';
-            if (hour >= 12 && hour < 17) timeOfDay = 'afternoon';
-            else if (hour >= 17) timeOfDay = 'evening';
-
-            try {
-                const greetingResponse = await fetch('/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "GENERATE_GREETING:" + JSON.stringify({ name: userName, phone: 'Not provided', timeOfDay }) })
-                });
-                const greetingData = await greetingResponse.json();
-                appendMessage('Coach Dinesh', greetingData.reply);
-            } catch (error) {
-                console.error("Greeting Error:", error);
-                appendMessage('Coach Dinesh', `Alright, ${userName}. Let's start our conversation! How can I help you today?`);
-            }
-            return;
-        }
-
-        // Simple phone validation: at least 10 digits
-        const phoneRegex = /^\d{10,15}$/;
-        if (phoneRegex.test(userText.replace(/\D/g, ''))) {
-            userPhone = userText;
-            console.log('User Phone:', userPhone);
-            onboardingStep = 'done';
-
-            try {
-                await fetch('/notify-onboarding', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: userName, phone: userPhone })
-                });
-            } catch (notifyError) {
-                console.error("Telegram Notification Error:", notifyError);
-            }
-
-            // Generate AI-driven greeting
-            const hour = new Date().getHours();
-            let timeOfDay = 'morning';
-            if (hour >= 12 && hour < 17) timeOfDay = 'afternoon';
-            else if (hour >= 17) timeOfDay = 'evening';
-
-            try {
-                const greetingResponse = await fetch('/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "GENERATE_GREETING:" + JSON.stringify({ name: userName, phone: userPhone, timeOfDay }) })
-                });
-                const greetingData = await greetingResponse.json();
-                appendMessage('Coach Dinesh', greetingData.reply);
-            } catch (error) {
-                console.error("Greeting Error:", error);
-                appendMessage('Coach Dinesh', `Thank you, ${userName}! Your number is ${userPhone}. Let's start our conversation! How can I help you today?`);
-            }
-        } else {
-            appendMessage('Coach Dinesh', 'That doesn\'t look like a valid phone number. Would you like to type it again or type "skip" to continue without it?');
-        }
-        return;
-    }
 
     // Normal conversation
     if (conversationCount >= 7) {
@@ -256,6 +233,9 @@ function setupEnterKeySend() {
 function initializeBotVisibility() {
     const windowDiv = document.getElementById('bot-window');
     const launcherButton = document.getElementById('bot-launcher');
+    const onboardingForm = document.getElementById('bot-onboarding-form');
+    const messages = document.getElementById('bot-messages');
+    const inputArea = document.getElementById('bot-input-area');
 
     if (!windowDiv || !launcherButton) return;
 
@@ -264,6 +244,29 @@ function initializeBotVisibility() {
 
     const isOpen = windowDiv.classList.contains('open');
     launcherButton.classList.toggle('is-hidden', isOpen);
+
+    if (onboardingForm && messages && inputArea) {
+        if (onboardingStep === 'done') {
+            onboardingForm.style.display = 'none';
+            messages.style.display = 'block';
+            inputArea.style.display = 'flex';
+
+            const botInput = document.getElementById('bot-input');
+            if (botInput) {
+                botInput.placeholder = userName
+                    ? `Hi ${userName}, type your message...`
+                    : 'Type a message...';
+            }
+
+            if (messages.children.length === 0) {
+                appendMessage('Coach Dinesh', `Welcome back, ${userName}! Great to hear from you again. How can I help you today?`);
+            }
+        } else {
+            onboardingForm.style.display = 'block';
+            messages.style.display = 'none';
+            inputArea.style.display = 'none';
+        }
+    }
 }
 
 // Ensure the input is wired after DOM is ready

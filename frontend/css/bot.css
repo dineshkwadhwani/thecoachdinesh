@@ -82,6 +82,74 @@
     border-bottom: 1px solid #e5e7eb;
 }
 
+#bot-onboarding-form {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f8fafc;
+}
+
+#bot-onboarding-form h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    color: #1f2937;
+}
+
+#bot-onboarding-form p {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: #475569;
+}
+
+#bot-name-input,
+#bot-phone-input,
+#bot-country-code-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+}
+
+#bot-name-input:focus,
+#bot-phone-input:focus,
+#bot-country-code-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+#bot-name-input {
+    margin-bottom: 8px;
+}
+
+.bot-phone-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+#bot-country-code-input {
+    max-width: 130px;
+}
+
+.bot-start-btn {
+    width: 100%;
+    border: none;
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.bot-start-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
 #bot-header {
     position: relative;
     display: flex;

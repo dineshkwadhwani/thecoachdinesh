@@ -153,7 +153,7 @@ reflect deeply on their leadership impact.
 
 </p>
 
-<button class="btn-small" onclick="openLeadershipQuiz()">Reflect on your Style</button>
+<button id="reflect-your-style-btn" class="btn-small" style="display:none;" onclick="openLeadershipQuiz()">Reflect on your Style</button>
 
 </div>
 
@@ -301,11 +301,18 @@ Schedule a Conversation
         <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-bar" id="progress-bar"></div>
-            <div class="progress-text" id="progress-text">Step 1 of 4: Identify Yourself</div>
+            <div class="progress-text" id="progress-text">Step 1 of 5: Identify Yourself</div>
+        </div>
+
+        <!-- Step 0: Welcome -->
+        <div class="quiz-step" id="step-welcome">
+            <h2 id="welcome-title">Welcome to Reflect Your Style</h2>
+            <div class="welcome-copy" id="welcome-copy"></div>
+            <button class="btn" id="welcome-start-btn" onclick="startQuizFromWelcome()">Start</button>
         </div>
         
         <!-- Step 1: Name Input -->
-        <div class="quiz-step" id="step-name">
+        <div class="quiz-step" id="step-name" style="display: none;">
             <h2>Let's start with your name</h2>
             <p>What should we call you? Please share your mobile number too.</p>
             <input type="text" id="user-name-input" placeholder="Enter your name" />
@@ -384,8 +391,41 @@ Schedule a Conversation
             </div>
             <button id="bot-close-button" aria-label="Close chat" onclick="toggleBot()">×</button>
         </div>
-        <div id="bot-messages"></div>
-        <div id="bot-input-area">
+
+        <div id="bot-onboarding-form">
+            <h3>Let’s start with your details</h3>
+            <p>Please share your name and mobile number to begin chatting.</p>
+            <input type="text" id="bot-name-input" placeholder="Enter your name" />
+            <div class="bot-phone-row">
+                <select id="bot-country-code-input" aria-label="Country code">
+                    <option value="+1">+1 (US/Canada)</option>
+                    <option value="+7">+7 (Russia)</option>
+                    <option value="+20">+20 (Egypt)</option>
+                    <option value="+27">+27 (South Africa)</option>
+                    <option value="+33">+33 (France)</option>
+                    <option value="+34">+34 (Spain)</option>
+                    <option value="+39">+39 (Italy)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+49">+49 (Germany)</option>
+                    <option value="+52">+52 (Mexico)</option>
+                    <option value="+55">+55 (Brazil)</option>
+                    <option value="+60">+60 (Malaysia)</option>
+                    <option value="+61">+61 (Australia)</option>
+                    <option value="+65">+65 (Singapore)</option>
+                    <option value="+81">+81 (Japan)</option>
+                    <option value="+86">+86 (China)</option>
+                    <option value="+91" selected>+91 (India)</option>
+                    <option value="+94">+94 (Sri Lanka)</option>
+                    <option value="+971">+971 (UAE)</option>
+                    <option value="+974">+974 (Qatar)</option>
+                </select>
+                <input type="tel" id="bot-phone-input" placeholder="Enter mobile number" inputmode="numeric" />
+            </div>
+            <button id="bot-start-chat" class="bot-start-btn" type="button" onclick="startBotChat()">Start Chat</button>
+        </div>
+
+        <div id="bot-messages" style="display: none;"></div>
+        <div id="bot-input-area" style="display: none;">
             <input type="text" id="bot-input" placeholder="Type a message...">
             <button id="bot-send-button" onclick="sendMessage()">Send</button>
         </div>

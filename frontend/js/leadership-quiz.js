@@ -1,27 +1,65 @@
 // Leadership Quiz Modal Logic
 
 const DEFAULT_QUIZ_CONFIG = {
+    quizEnabled: true,
+    deepInsightEnabled: true,
     quickQuestionCount: 10,
     deepQuestionCount: 25
 };
 const QUIZ_CONFIG_KEY = 'reflectYourStyle';
 const QUIZ_MESSAGES_KEY = 'reflectYourStyle';
 const DEFAULT_QUIZ_MESSAGES = {
+    welcome: {
+        quickTitle: 'Welcome to Reflect Your Style (Quick)',
+        quickStartLabel: 'Start Quick Reflection',
+        quickIntro: 'This quick assessment gives you a focused snapshot of your current leadership style.',
+        quickPoints: [
+            'What to expect: a short set of scenario-based leadership questions.',
+            'Output: your dominant style, secondary tendency, and a concise interpretation.',
+            'How it helps: identify your natural leadership pattern and immediate improvement focus.'
+        ],
+        deepTitle: 'Welcome to Reflect Your Style (Deep)',
+        deepStartLabel: 'Start Deep Reflection',
+        deepIntro: 'This in-depth assessment gives you a richer, executive-level view of your leadership behavior.',
+        deepPoints: [
+            'What to expect: a deeper set of questions covering multiple leadership situations.',
+            'Output: a structured report with dominant/secondary style, strengths, risks, and priorities.',
+            'How it helps: clarify blind spots and define a practical leadership development path.'
+        ]
+    },
     report: {
-        quickConsultation: 'This is a small sumamry report to get you started. If you want more details, do a deep indepth report. Alternatively, I will be happy to provide voluntary consultance if you need one. Send me a whatsapp.',
-        deepConsultation: 'I will be happy to provide one session of you a voluntary consultation in case you would like to talk to me. Send me a whatsapp message and we can schedule a time.'
+        quickConsultation: 'This is a small summary report to get you started. If you want more details, do a deep in-depth report. Alternatively, I will be happy to provide voluntary consultance if you need one. Send me a whatsapp.',
+        quickConsultationDeepDisabled: 'This is a small summary report to get you started. If you would like to dive deeper, I will be happy to provide voluntary consultance if you need one. Send me a whatsapp.',
+        deepConsultation: 'I will be happy to provide one session of voluntary consultation in case you would like to talk to me. Send me a whatsapp message and we can schedule a time.'
     }
 };
 
 let quizConfig = { ...DEFAULT_QUIZ_CONFIG };
 let quizMessages = JSON.parse(JSON.stringify(DEFAULT_QUIZ_MESSAGES));
+let cachedQuizData = null;
 
 function normalizeQuizMessages(rawMessages = {}) {
+    const welcomeMessages = rawMessages && typeof rawMessages.welcome === 'object' ? rawMessages.welcome : {};
     const reportMessages = rawMessages && typeof rawMessages.report === 'object' ? rawMessages.report : {};
 
     return {
+        welcome: {
+            quickTitle: String(welcomeMessages.quickTitle || DEFAULT_QUIZ_MESSAGES.welcome.quickTitle),
+            quickStartLabel: String(welcomeMessages.quickStartLabel || DEFAULT_QUIZ_MESSAGES.welcome.quickStartLabel),
+            quickIntro: String(welcomeMessages.quickIntro || DEFAULT_QUIZ_MESSAGES.welcome.quickIntro),
+            quickPoints: Array.isArray(welcomeMessages.quickPoints) && welcomeMessages.quickPoints.length > 0
+                ? welcomeMessages.quickPoints.map(point => String(point))
+                : DEFAULT_QUIZ_MESSAGES.welcome.quickPoints,
+            deepTitle: String(welcomeMessages.deepTitle || DEFAULT_QUIZ_MESSAGES.welcome.deepTitle),
+            deepStartLabel: String(welcomeMessages.deepStartLabel || DEFAULT_QUIZ_MESSAGES.welcome.deepStartLabel),
+            deepIntro: String(welcomeMessages.deepIntro || DEFAULT_QUIZ_MESSAGES.welcome.deepIntro),
+            deepPoints: Array.isArray(welcomeMessages.deepPoints) && welcomeMessages.deepPoints.length > 0
+                ? welcomeMessages.deepPoints.map(point => String(point))
+                : DEFAULT_QUIZ_MESSAGES.welcome.deepPoints
+        },
         report: {
             quickConsultation: String(reportMessages.quickConsultation || DEFAULT_QUIZ_MESSAGES.report.quickConsultation),
+            quickConsultationDeepDisabled: String(reportMessages.quickConsultationDeepDisabled || DEFAULT_QUIZ_MESSAGES.report.quickConsultationDeepDisabled),
             deepConsultation: String(reportMessages.deepConsultation || DEFAULT_QUIZ_MESSAGES.report.deepConsultation)
         }
     };
@@ -30,6 +68,7 @@ function normalizeQuizMessages(rawMessages = {}) {
 function createInitialQuizState() {
     return {
         currentStep: 'name',
+        welcomeNextStep: 'questions',
         userName: '',
         countryCode: '+91',
         userMobileNumber: '',
@@ -127,6 +166,8 @@ function normalizeQuizConfig(rawConfig = {}) {
     const deepQuestionCount = Number.parseInt(rawConfig.deepQuestionCount, 10);
 
     return {
+        quizEnabled: rawConfig.quizEnabled !== false,
+        deepInsightEnabled: rawConfig.deepInsightEnabled !== false,
         quickQuestionCount: Number.isInteger(quickQuestionCount) && quickQuestionCount > 0
             ? quickQuestionCount
             : DEFAULT_QUIZ_CONFIG.quickQuestionCount,
@@ -136,15 +177,37 @@ function normalizeQuizConfig(rawConfig = {}) {
     };
 }
 
-// Load questions from backend and initialize
-async function loadQuestionsAndInit() {
-    console.log('[QUIZ] loadQuestionsAndInit called');
+// Fetch quiz data once on page load; show quiz button if quizEnabled
+async function initQuizFeatureFlags() {
     try {
         const response = await fetch('/get-questions', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
-        const data = await response.json();
+        cachedQuizData = await response.json();
+        const cfg = normalizeQuizConfig(cachedQuizData.config && cachedQuizData.config[QUIZ_CONFIG_KEY]);
+        if (cfg.quizEnabled) {
+            const btn = document.getElementById('reflect-your-style-btn');
+            if (btn) btn.style.display = '';
+        }
+    } catch (err) {
+        console.warn('[QUIZ] Could not load quiz flags on page load:', err);
+    }
+}
+
+// Load questions from backend and initialize
+async function loadQuestionsAndInit() {
+    console.log('[QUIZ] loadQuestionsAndInit called');
+    try {
+        let data = cachedQuizData;
+        if (!data) {
+            const response = await fetch('/get-questions', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            data = await response.json();
+            cachedQuizData = data;
+        }
         const allQuestions = Array.isArray(data.reflectYourStyle) ? data.reflectYourStyle : [];
         quizConfig = normalizeQuizConfig(data.config && data.config[QUIZ_CONFIG_KEY]);
         quizMessages = normalizeQuizMessages(data.messages && data.messages[QUIZ_MESSAGES_KEY]);
@@ -164,12 +227,49 @@ async function loadQuestionsAndInit() {
         quizState.questions = getBalancedRandomQuestions(allQuestions, quickQuestionCount);
         console.log('Questions loaded:', quizState.questions);
         console.log('[QUIZ] Init complete. config:', quizConfig, 'quizType:', quizState.quizType, 'questionCount:', quizState.questionCount);
+        quizState.welcomeNextStep = 'questions';
         displayStep('name');
     } catch (error) {
         console.error('Failed to load questions:', error);
         alert('Failed to load quiz. Please try again.');
         closeLeadershipQuiz();
     }
+}
+
+function renderWelcomeStep() {
+    const isDeep = quizState.quizType === 'deep';
+    const title = isDeep ? quizMessages.welcome.deepTitle : quizMessages.welcome.quickTitle;
+    const intro = isDeep ? quizMessages.welcome.deepIntro : quizMessages.welcome.quickIntro;
+    const points = isDeep ? quizMessages.welcome.deepPoints : quizMessages.welcome.quickPoints;
+    const startLabel = isDeep ? quizMessages.welcome.deepStartLabel : quizMessages.welcome.quickStartLabel;
+
+    const welcomeTitleEl = document.getElementById('welcome-title');
+    const welcomeCopyEl = document.getElementById('welcome-copy');
+    const welcomeStartBtn = document.getElementById('welcome-start-btn');
+
+    if (welcomeTitleEl) {
+        welcomeTitleEl.textContent = title;
+    }
+
+    if (welcomeCopyEl) {
+        const pointsHtml = (points || [])
+            .map(point => `<li>${escapeHtml(point)}</li>`)
+            .join('');
+
+        welcomeCopyEl.innerHTML = `
+            <p>${escapeHtml(intro)}</p>
+            <ul>${pointsHtml}</ul>
+        `;
+    }
+
+    if (welcomeStartBtn) {
+        welcomeStartBtn.textContent = startLabel;
+    }
+}
+
+function startQuizFromWelcome() {
+    const nextStep = quizState.welcomeNextStep || 'name';
+    displayStep(nextStep);
 }
 
 function shuffleQuestions(questions) {
@@ -217,6 +317,7 @@ function getBalancedRandomQuestions(pool, count) {
 function displayStep(step) {
     console.log('[QUIZ] displayStep:', step, '| quizType:', quizState.quizType, '| questionCount:', quizState.questionCount, '| answers so far:', quizState.answers.length);
     // Hide all steps
+    document.getElementById('step-welcome').style.display = 'none';
     document.getElementById('step-name').style.display = 'none';
     document.getElementById('step-questions').style.display = 'none';
     document.getElementById('step-email').style.display = 'none';
@@ -229,18 +330,21 @@ function displayStep(step) {
     let progressPercent = 0;
     let progressText = '';
     
-    if (step === 'name') {
-        progressPercent = 25;
-        progressText = 'Step 1 of 4: Identify Yourself';
+    if (step === 'welcome') {
+        progressPercent = 12;
+        progressText = 'Step 2 of 5: Welcome';
+    } else if (step === 'name') {
+        progressPercent = 28;
+        progressText = 'Step 1 of 5: Identify Yourself';
     } else if (step === 'questions') {
-        progressPercent = 50;
-        progressText = `Step 2 of 4: Question ${quizState.currentQuestion + 1} of ${quizState.questionCount}`;
+        progressPercent = 56;
+        progressText = `Step 3 of 5: Question ${quizState.currentQuestion + 1} of ${quizState.questionCount}`;
     } else if (step === 'email') {
-        progressPercent = 75;
-        progressText = 'Step 3 of 4: Share Your Email';
+        progressPercent = 78;
+        progressText = 'Step 4 of 5: Share Your Email';
     } else if (step === 'report') {
         progressPercent = 100;
-        progressText = 'Step 4 of 4: Your Leadership Report';
+        progressText = 'Step 5 of 5: Your Leadership Report';
     }
     
     document.getElementById('progress-text').textContent = progressText;
@@ -250,6 +354,28 @@ function displayStep(step) {
         progressFill.innerHTML = `<div class="progress-bar-fill" style="width: ${progressPercent}%"></div>`;
     }
     
+    if (step === 'welcome') {
+        renderWelcomeStep();
+    }
+
+    if (step === 'name') {
+        const nameInput = document.getElementById('user-name-input');
+        const countryCodeInput = document.getElementById('user-country-code-input');
+        const mobileInput = document.getElementById('user-mobile-input');
+
+        if (nameInput) {
+            nameInput.value = quizState.userName || '';
+        }
+
+        if (countryCodeInput) {
+            countryCodeInput.value = quizState.countryCode || '+91';
+        }
+
+        if (mobileInput) {
+            mobileInput.value = quizState.userMobileNumber || '';
+        }
+    }
+
     if (step === 'questions') {
         displayQuestion();
     }
@@ -294,7 +420,8 @@ function quizNextStep(from) {
         quizState.userMobileNumber = mobileDigits;
         quizState.currentQuestion = 0;
         quizState.answers = [];
-        displayStep('questions');
+        quizState.welcomeNextStep = 'questions';
+        displayStep('welcome');
     }
 }
 
@@ -309,7 +436,7 @@ function displayQuestion() {
     const questionNum = quizState.currentQuestion + 1;
     
     // Update progress text
-    document.getElementById('progress-text').textContent = `Step 2 of 4: Question ${questionNum} of ${quizState.questionCount}`;
+    document.getElementById('progress-text').textContent = `Step 3 of 5: Question ${questionNum} of ${quizState.questionCount}`;
     
     // Update question number and progress
     document.getElementById('question-number').textContent = `Question ${questionNum} of ${quizState.questionCount}`;
@@ -470,13 +597,19 @@ function displayReport(reportData) {
         ? `Hey Coach, my name is ${participantName}. I completed the quick summary report and want to discuss next steps.`
         : `Hey Coach, my name is ${participantName}. I want to talk.`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
-    const deepActionButton = quizState.quizType === 'quick'
+    const showDeepButton = quizState.quizType === 'quick' && quizConfig.deepInsightEnabled;
+    const deepActionButton = showDeepButton
         ? `<button class="btn" onclick="startInDepthTest()">Deep Executive Analysis</button>`
         : '';
 
-    const consultationBody = quizState.quizType === 'quick'
-        ? quizMessages.report.quickConsultation
-        : quizMessages.report.deepConsultation;
+    let consultationBody;
+    if (quizState.quizType === 'quick') {
+        consultationBody = quizConfig.deepInsightEnabled
+            ? quizMessages.report.quickConsultation
+            : quizMessages.report.quickConsultationDeepDisabled;
+    } else {
+        consultationBody = quizMessages.report.deepConsultation;
+    }
 
     const closeButton = quizState.quizType === 'deep'
         ? `<button class="btn btn-secondary" onclick="closeLeadershipQuiz()">Close</button>`
@@ -537,11 +670,19 @@ function startInDepthTest() {
     quizState.answers = [];
     quizState.userEmail = '';
     quizState.questions = getRandomQuestions(remainingQuestions, deepQuestionCount);
+    quizState.welcomeNextStep = 'questions';
 
     const emailInput = document.getElementById('user-email-input');
     if (emailInput) {
         emailInput.value = '';
     }
 
-    displayStep('questions');
+    displayStep('welcome');
+}
+
+// Run on page load to apply feature flags and show/hide the quiz button
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initQuizFeatureFlags);
+} else {
+    initQuizFeatureFlags();
 }

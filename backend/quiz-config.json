@@ -1,5 +1,7 @@
 {
   "reflectYourStyle": {
+    "quizEnabled": true,
+    "deepInsightEnabled": true,
     "quickQuestionCount": 5,
     "deepQuestionCount": 5
   }

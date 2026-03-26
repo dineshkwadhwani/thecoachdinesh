@@ -1,7 +1,26 @@
 {
   "reflectYourStyle": {
+    "welcome": {
+      "quickTitle": "Welcome to Reflect Your Style ",
+      "quickStartLabel": "Start Quick Reflection",
+      "quickIntro": "This quick assessment gives you a focused snapshot of your current leadership style.",
+      "quickPoints": [
+        "What to expect: a short set of scenario-based leadership questions.",
+        "Output: your dominant style, secondary tendency, and a concise interpretation.",
+        "How it helps: identify your natural leadership pattern and immediate improvement focus."
+      ],
+      "deepTitle": "Welcome to Reflect Your Style (Deep Insightful Version)",
+      "deepStartLabel": "Start Deep Reflection",
+      "deepIntro": "This in-depth assessment gives you a richer, executive-level view of your leadership behavior.",
+      "deepPoints": [
+        "What to expect: a deeper set of questions covering multiple leadership situations.",
+        "Output: a structured report with dominant/secondary style, strengths, risks, and priorities.",
+        "How it helps: clarify blind spots and define a practical leadership development path."
+      ]
+    },
     "report": {
       "quickConsultation": "This is a small sumamry report to get you started. If you want more details, do a deep indepth report. Alternatively, I will be happy to provide voluntary consultance if you need one. Send me a whatsapp.",
+      "quickConsultationDeepDisabled": "This is a small summary report to get you started. If you would like to dive deeper, I will be happy to provide voluntary consultance if you need one. Send me a whatsapp.",
       "deepConsultation": "I will be happy to provide one session of voluntary consultation in case you would like to talk to me. Send me a whatsapp message and we can schedule a time."
     }
   }
