@@ -17,6 +17,7 @@ const STRATEGIC_CLARITY_KEY = 'strategicClarity';
 const EXECUTIVE_PRESENCE_KEY = 'executivePresence';
 const SYSTEMS_THINKING_KEY = 'systemsThinking';
 const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
+const TRANSFORMATION_SNAPSHOT_PATH = path.join(__dirname, 'transformation-snapshot.json');
 const TRANSFORMATION_SOURCE_QUIZ_TYPES = new Set(['quick', 'deep', 'clarity', 'presence', 'systems']);
 
 // Function to generate today's admin password in ddmmyyyy format
@@ -158,6 +159,39 @@ function loadReportHistory() {
 
 function saveReportHistory(history) {
     fs.writeFileSync(REPORT_HISTORY_PATH, JSON.stringify(history, null, 2));
+}
+
+// Transformation snapshot: tracks assessment count at time of last plan generation, keyed by phone
+function loadTransformationSnapshot() {
+    try {
+        if (fs.existsSync(TRANSFORMATION_SNAPSHOT_PATH)) {
+            const data = fs.readFileSync(TRANSFORMATION_SNAPSHOT_PATH, 'utf-8');
+            const parsed = JSON.parse(data);
+            return parsed && typeof parsed === 'object' ? parsed : {};
+        }
+    } catch (error) {
+        console.error('Error loading transformation snapshot:', error.message);
+    }
+    return {};
+}
+
+function saveTransformationSnapshot(snapshot) {
+    fs.writeFileSync(TRANSFORMATION_SNAPSHOT_PATH, JSON.stringify(snapshot, null, 2));
+}
+
+function getTransformationAssessmentCount(phone) {
+    const snapshot = loadTransformationSnapshot();
+    const entry = snapshot[String(phone || '').trim()];
+    return entry && typeof entry.assessmentCount === 'number' ? entry.assessmentCount : null;
+}
+
+function setTransformationAssessmentCount(phone, count) {
+    const snapshot = loadTransformationSnapshot();
+    snapshot[String(phone || '').trim()] = {
+        assessmentCount: count,
+        updatedAt: new Date().toISOString()
+    };
+    saveTransformationSnapshot(snapshot);
 }
 
 function getLatestStoredReport(history, email, mobile, quizType) {
@@ -1667,27 +1701,14 @@ app.post('/analyze-transformation', async (req, res) => {
         }
 
         // Check if a transformation report already exists for this phone
-        const leadKey = createLeadKey('', normalizedPhone);
-        let existingTransformationReport = null;
-        if (history.leads[leadKey] && Array.isArray(history.leads[leadKey].reports)) {
-            existingTransformationReport = history.leads[leadKey].reports.find(
-                reportEntry => reportEntry.quizType === 'transformation'
-            );
-        }
-
-        // If transformation plan exists and test count hasn't changed, return "already created" status
-        if (existingTransformationReport) {
-            const newTestCount = sourceReports.length;
-            const existingTestCount = existingTransformationReport.sourceReportCount || 
-                (existingTransformationReport.assessmentSnapshot && existingTransformationReport.assessmentSnapshot.totalAssessmentsAnalysed) || 0;
-
-            if (newTestCount === existingTestCount) {
-                return res.json({
-                    alreadyCreated: true,
-                    name,
-                    phone: normalizedPhone
-                });
-            }
+        // using the snapshot file (keyed by phone) to compare assessment counts
+        const snapshotCount = getTransformationAssessmentCount(normalizedPhone);
+        if (snapshotCount !== null && snapshotCount === sourceReports.length) {
+            return res.json({
+                alreadyCreated: true,
+                name,
+                phone: normalizedPhone
+            });
         }
 
         // Build full digest from ALL source reports (not just latest per type)
@@ -1851,6 +1872,9 @@ Using ALL ${sourceReports.length} assessments above, generate a comprehensive tr
             report: buildTransformationReportText(normalizedPlan, assessmentSnapshot)
         });
         saveReportHistory(history);
+
+        // Save the assessment count used for this plan so we can skip regeneration next time
+        setTransformationAssessmentCount(normalizedPhone, sourceReports.length);
 
         const telegramSummary = normalizedPlan.executiveSummary.replace(/\s+/g, ' ').trim().slice(0, 220);
         const telegramText = `New Lead\nName: ${name}\nPhone: ${normalizedPhone}\nEmail: ${primaryEmail}\nTest: Transformation Action Plan\nTime: ${timestamp}`;
