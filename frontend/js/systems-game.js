@@ -170,6 +170,10 @@ function openSystemsGame() {
 
     systemsState = createInitialSystemsState();
     systemsScenarios = [];
+    const notice = document.getElementById('already-taken-notice-systems');
+    if (notice) notice.remove();
+    const continueBtn = document.querySelector('#systems-step-identity .btn');
+    if (continueBtn) continueBtn.style.display = '';
 
     const scenarioCount = Math.min(systemsConfig.scenarioCount, systemsAllScenarios.length);
     systemsScenarios = shuffleSystemsArray(systemsAllScenarios).slice(0, scenarioCount);
@@ -278,7 +282,7 @@ function systemsRenderEmail() {
     }
 }
 
-function systemsContinueFromIdentity() {
+async function systemsContinueFromIdentity() {
     const nameInput = document.getElementById('systems-name-input');
     const countryCodeInput = document.getElementById('systems-country-code');
     const phoneInput = document.getElementById('systems-phone-input');
@@ -310,6 +314,12 @@ function systemsContinueFromIdentity() {
     systemsState.name = name;
     systemsState.countryCode = countryCode;
     systemsState.phone = `${countryCode}${phoneDigits}`;
+
+    const continueBtn = document.querySelector('#systems-step-identity .btn');
+    const containerEl = document.getElementById('systems-step-identity');
+    const alreadyTaken = await checkExistingReportAndShowNotice(systemsState.phone, 'systems', name, containerEl, continueBtn);
+    if (alreadyTaken) return;
+
     systemsState.currentQuestion = 0;
     systemsState.rankings = new Array(getActiveSystemsScenarioCount());
     systemsShowStep('welcome');

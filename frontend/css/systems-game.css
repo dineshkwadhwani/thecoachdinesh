@@ -1,3 +1,26 @@
+#systems-country-code {
+    flex: 0 0 170px;
+    padding: 12px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    color: #333;
+    height: 50px;
+    line-height: 1.2;
+}
+
+#systems-country-code:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+#systems-phone-input {
+    margin-bottom: 0;
+    height: 50px;
+}
+
 .systems-domain-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;

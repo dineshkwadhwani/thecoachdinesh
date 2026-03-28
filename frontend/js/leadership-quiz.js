@@ -374,6 +374,14 @@ function displayStep(step) {
         if (mobileInput) {
             mobileInput.value = quizState.userMobileNumber || '';
         }
+
+        // Clean up any existing duplicate notices and restore the continue button
+        ['already-taken-notice-quick', 'already-taken-notice-deep'].forEach(function(noticeId) {
+            const el = document.getElementById(noticeId);
+            if (el) el.style.display = 'none';
+        });
+        const stepContinueBtn = document.querySelector('#step-name .btn');
+        if (stepContinueBtn) stepContinueBtn.style.display = '';
     }
 
     if (step === 'questions') {
@@ -393,7 +401,7 @@ function displayStep(step) {
 }
 
 // Handle next step (from name input)
-function quizNextStep(from) {
+async function quizNextStep(from) {
     if (from === 'name') {
         const nameInput = document.getElementById('user-name-input').value.trim();
         const countryCodeInput = document.getElementById('user-country-code-input').value;
@@ -418,11 +426,69 @@ function quizNextStep(from) {
         quizState.userName = nameInput;
         quizState.countryCode = countryCodeInput;
         quizState.userMobileNumber = mobileDigits;
+
+        const fullPhone = `${countryCodeInput}${mobileDigits}`;
+        const continueBtn = document.querySelector('#step-name .btn');
+        const containerEl = document.getElementById('step-name');
+
+        // Check both quiz types in parallel to handle quick-taken-but-deep-not case
+        let quickExists = false;
+        let deepExists = false;
+        try {
+            const [quickResp, deepResp] = await Promise.all([
+                fetch(`/check-existing-report?phone=${encodeURIComponent(fullPhone)}&quizType=quick`),
+                fetch(`/check-existing-report?phone=${encodeURIComponent(fullPhone)}&quizType=deep`)
+            ]);
+            if (quickResp.ok) { const qd = await quickResp.json(); quickExists = !!qd.exists; }
+            if (deepResp.ok) { const dd = await deepResp.json(); deepExists = !!dd.exists; }
+        } catch (_) { /* Network error — allow through */ }
+
+        if (quickExists && !deepExists) {
+            // Quick taken but deep not yet — offer the deep test as an alternative
+            const whatsappText = encodeURIComponent(
+                `Hi Coach, I am ${nameInput} (${fullPhone}). I have already completed the Leadership Style (Quick) assessment. Could you please share my report with me?`
+            );
+            const noticeId = 'already-taken-notice-quick';
+            let noticeEl = document.getElementById(noticeId);
+            if (!noticeEl) {
+                noticeEl = document.createElement('div');
+                noticeEl.id = noticeId;
+                noticeEl.style.cssText = 'margin-top:16px;padding:16px;background:#edf4fb;border:1px solid #bdd5ed;border-radius:10px;text-align:center;';
+                containerEl.appendChild(noticeEl);
+            }
+            noticeEl.innerHTML = `
+                <p style="margin:0 0 10px;font-weight:600;color:#1d3550;">You have already taken the Quick Leadership Style assessment.</p>
+                <p style="margin:0 0 14px;color:#4d6278;font-size:14px;">Send a WhatsApp message to retrieve your quick report, or take the In-Depth assessment now for a richer leadership profile.</p>
+                <a class="btn" href="https://wa.me/919767676738?text=${whatsappText}" target="_blank" rel="noopener noreferrer"
+                   onclick="sendRetrievalTelegram(${JSON.stringify(nameInput)}, ${JSON.stringify(fullPhone)}, 'quick')"
+                   style="display:inline-block;text-decoration:none;margin-right:8px;">Get Quick Report →</a>
+                <button class="btn" onclick="proceedToDeepFromNotice()" style="margin-top:8px;">Take In-Depth Assessment →</button>
+            `;
+            noticeEl.style.display = 'block';
+            if (continueBtn) continueBtn.style.display = 'none';
+            return;
+        }
+
+        if (deepExists) {
+            // Deep (and possibly quick) already taken — standard block
+            const alreadyTaken = await checkExistingReportAndShowNotice(fullPhone, 'deep', nameInput, containerEl, continueBtn);
+            if (alreadyTaken) return;
+        }
+
         quizState.currentQuestion = 0;
         quizState.answers = [];
         quizState.welcomeNextStep = 'questions';
         displayStep('welcome');
     }
+}
+
+// Display current question
+function proceedToDeepFromNotice() {
+    const noticeEl = document.getElementById('already-taken-notice-quick');
+    if (noticeEl) noticeEl.style.display = 'none';
+    const continueBtn = document.querySelector('#step-name .btn');
+    if (continueBtn) continueBtn.style.display = '';
+    startInDepthTest();
 }
 
 // Display current question

@@ -17,6 +17,7 @@ const STRATEGIC_CLARITY_KEY = 'strategicClarity';
 const EXECUTIVE_PRESENCE_KEY = 'executivePresence';
 const SYSTEMS_THINKING_KEY = 'systemsThinking';
 const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
+const TRANSFORMATION_SOURCE_QUIZ_TYPES = new Set(['quick', 'deep', 'clarity', 'presence', 'systems']);
 
 // Function to generate today's admin password in ddmmyyyy format
 function getTodaysAdminPassword() {
@@ -188,6 +189,419 @@ function appendStoredReport(history, reportEntry) {
     history.leads[leadKey] = existingLead;
 }
 
+function getAssessmentReportsByMobile(history, mobile) {
+    const normalizedMobile = String(mobile || '').replace(/\s+/g, '');
+    const sourceReports = [];
+
+    Object.values(history.leads || {}).forEach((lead) => {
+        if (!lead || !Array.isArray(lead.reports)) {
+            return;
+        }
+
+        lead.reports.forEach((reportEntry) => {
+            const entryMobile = String((reportEntry && reportEntry.mobile) || lead.mobile || '').replace(/\s+/g, '');
+            if (entryMobile !== normalizedMobile) {
+                return;
+            }
+
+            const quizType = String(reportEntry.quizType || '').trim();
+            if (!TRANSFORMATION_SOURCE_QUIZ_TYPES.has(quizType)) {
+                return;
+            }
+
+            sourceReports.push({
+                ...reportEntry,
+                quizType,
+                name: reportEntry.name || lead.name || '',
+                email: reportEntry.email || lead.email || '',
+                mobile: entryMobile
+            });
+        });
+    });
+
+    sourceReports.sort((firstReport, secondReport) => {
+        return new Date(firstReport.timestamp || 0).getTime() - new Date(secondReport.timestamp || 0).getTime();
+    });
+
+    const latestByTypeMap = new Map();
+    sourceReports.forEach((reportEntry) => {
+        latestByTypeMap.set(reportEntry.quizType, reportEntry);
+    });
+
+    return {
+        sourceReports,
+        latestByType: Array.from(latestByTypeMap.values())
+    };
+}
+
+function parseAiJsonObject(rawText) {
+    const trimmed = String(rawText || '').trim();
+    if (!trimmed) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(trimmed);
+    } catch (error) {
+        const firstBraceIndex = trimmed.indexOf('{');
+        const lastBraceIndex = trimmed.lastIndexOf('}');
+        if (firstBraceIndex === -1 || lastBraceIndex === -1 || lastBraceIndex <= firstBraceIndex) {
+            return null;
+        }
+
+        const possibleJson = trimmed.slice(firstBraceIndex, lastBraceIndex + 1);
+        try {
+            return JSON.parse(possibleJson);
+        } catch (parseError) {
+            return null;
+        }
+    }
+}
+
+function formatDateOffset(dayOffset) {
+    const date = new Date();
+    date.setDate(date.getDate() + dayOffset);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
+
+function getReportPreview(text, maxLength = 220) {
+    return String(text || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, maxLength);
+}
+
+function buildTransformationAssessmentSnapshot(latestByType, allSourceReports) {
+    const reports = allSourceReports || latestByType;
+    const styleReport = latestByType.find(entry => entry.quizType === 'deep') || latestByType.find(entry => entry.quizType === 'quick');
+    const clarityReport = latestByType.find(entry => entry.quizType === 'clarity');
+    const presenceReport = latestByType.find(entry => entry.quizType === 'presence');
+    const systemsReport = latestByType.find(entry => entry.quizType === 'systems');
+
+    const takenTests = latestByType
+        .map(entry => String(entry.assessmentType || entry.quizType || '').trim())
+        .filter(Boolean);
+
+    const countByType = {};
+    reports.forEach((entry) => {
+        const t = entry.quizType;
+        countByType[t] = (countByType[t] || 0) + 1;
+    });
+
+    const styleCount = (countByType['deep'] || 0) + (countByType['quick'] || 0);
+
+    return {
+        takenTests,
+        totalAssessmentsAnalysed: reports.length,
+        style: styleReport
+            ? {
+                taken: true,
+                attemptCount: styleCount,
+                dominantStyle: String(styleReport.dominantStyle || 'Not clearly identified'),
+                secondaryStyle: String(styleReport.secondaryStyle || 'Not clearly identified'),
+                summary: getReportPreview(styleReport.summary || styleReport.report || '')
+            }
+            : { taken: false, attemptCount: 0 },
+        clarity: clarityReport
+            ? {
+                taken: true,
+                attemptCount: countByType['clarity'] || 1,
+                noiseScore: typeof clarityReport.noiseScore === 'number' ? clarityReport.noiseScore : null,
+                summary: getReportPreview(clarityReport.summary || clarityReport.report || '')
+            }
+            : { taken: false, attemptCount: 0 },
+        presence: presenceReport
+            ? {
+                taken: true,
+                attemptCount: countByType['presence'] || 1,
+                summary: getReportPreview(presenceReport.summary || presenceReport.report || '')
+            }
+            : { taken: false, attemptCount: 0 },
+        systems: systemsReport
+            ? {
+                taken: true,
+                attemptCount: countByType['systems'] || 1,
+                summary: getReportPreview(systemsReport.summary || systemsReport.report || '')
+            }
+            : { taken: false, attemptCount: 0 }
+    };
+}
+
+function getPrelistedTransformationActionItems() {
+    return [
+        {
+            area: 'Strategic Focus',
+            keyAction: 'Run a weekly strategic signal-vs-noise review and publish the top three priorities for execution.',
+            deliveryMode: 'Self-paced learning',
+            benefit: 'Improves focus quality and reduces reactive decision-making.',
+            startDate: formatDateOffset(0),
+            reviewDate: formatDateOffset(21),
+            reviewType: 'Self'
+        },
+        {
+            area: 'Leadership Style Adaptability',
+            keyAction: 'Apply one situational leadership shift each week and document outcomes with your team.',
+            deliveryMode: 'Coaching',
+            benefit: 'Builds flexibility across contexts and improves leadership effectiveness.',
+            startDate: formatDateOffset(3),
+            reviewDate: formatDateOffset(28),
+            reviewType: 'Coach'
+        },
+        {
+            area: 'Executive Presence',
+            keyAction: 'Rehearse high-stakes messages using concise framing, confident delivery, and explicit asks.',
+            deliveryMode: 'Classroom session',
+            benefit: 'Increases influence, authority, and trust with stakeholders.',
+            startDate: formatDateOffset(7),
+            reviewDate: formatDateOffset(35),
+            reviewType: 'Mentor'
+        },
+        {
+            area: 'Systems Diagnosis',
+            keyAction: 'Map one recurring business challenge using causes, dependencies, and leverage points.',
+            deliveryMode: 'Blended',
+            benefit: 'Improves root-cause quality and long-term decision outcomes.',
+            startDate: formatDateOffset(10),
+            reviewDate: formatDateOffset(40),
+            reviewType: 'Peer'
+        },
+        {
+            area: 'Stakeholder Influence',
+            keyAction: 'Schedule structured alignment conversations with critical stakeholders every fortnight.',
+            deliveryMode: 'Coaching',
+            benefit: 'Reduces friction and accelerates strategic execution.',
+            startDate: formatDateOffset(14),
+            reviewDate: formatDateOffset(45),
+            reviewType: 'Blended'
+        },
+        {
+            area: 'Execution Accountability',
+            keyAction: 'Maintain a 30-day execution tracker with measurable goals and review checkpoints.',
+            deliveryMode: 'Self-paced learning',
+            benefit: 'Converts insight into sustained action and visible leadership progress.',
+            startDate: formatDateOffset(16),
+            reviewDate: formatDateOffset(50),
+            reviewType: 'Self + Coach'
+        }
+    ];
+}
+
+function normalizeTransformationPlan(rawPlan) {
+    const plan = rawPlan && typeof rawPlan === 'object' ? rawPlan : {};
+    const defaultLearningMix = [
+        'Self-paced learning sprints on communication, strategic framing, and systems mapping.',
+        'Structured classroom learning for cross-functional leadership and decision quality.',
+        '1-on-1 executive coaching to convert insights into behavior change and accountability.'
+    ];
+    const prelistedActionItems = getPrelistedTransformationActionItems();
+
+    const rawActionItems = Array.isArray(plan.actionItems) ? plan.actionItems : [];
+    const normalizedActionItems = rawActionItems
+        .map((item, index) => {
+            const safeItem = item && typeof item === 'object' ? item : {};
+            return {
+                area: String(safeItem.area || '').trim(),
+                keyAction: String(safeItem.keyAction || '').trim(),
+                deliveryMode: String(safeItem.deliveryMode || 'Self-paced learning').trim(),
+                benefit: String(safeItem.benefit || 'Improves consistency, confidence, and quality of leadership decisions.').trim(),
+                startDate: String(safeItem.startDate || formatDateOffset(index * 7)).trim(),
+                reviewDate: String(safeItem.reviewDate || formatDateOffset(index * 7 + 28)).trim(),
+                reviewType: String(safeItem.reviewType || 'Self + Coach').trim()
+            };
+        })
+        .filter((item) => item.deliveryMode || item.benefit || item.reviewType);
+
+    const mergedActionItems = prelistedActionItems.map((presetItem, index) => {
+        const aiItem = normalizedActionItems[index] || {};
+        return {
+            area: presetItem.area,
+            keyAction: presetItem.keyAction,
+            deliveryMode: String(aiItem.deliveryMode || presetItem.deliveryMode).trim(),
+            benefit: String(aiItem.benefit || presetItem.benefit).trim(),
+            startDate: String(aiItem.startDate || presetItem.startDate).trim(),
+            reviewDate: String(aiItem.reviewDate || presetItem.reviewDate).trim(),
+            reviewType: String(aiItem.reviewType || presetItem.reviewType).trim()
+        };
+    });
+
+    const extraActionItems = normalizedActionItems
+        .slice(prelistedActionItems.length)
+        .filter((item) => item.area && item.keyAction)
+        .map((item) => ({
+            area: item.area,
+            keyAction: item.keyAction,
+            deliveryMode: item.deliveryMode,
+            benefit: item.benefit,
+            startDate: item.startDate,
+            reviewDate: item.reviewDate,
+            reviewType: item.reviewType
+        }));
+
+    return {
+        executiveSummary: String(plan.executiveSummary || 'Your transformation plan is based on your completed assessments and focuses on practical behavior change.').trim(),
+        industryComparison: String(plan.industryComparison || 'Compared with high-performing industry leaders, your current profile shows strengths with specific opportunities to accelerate impact.').trim(),
+        optimalBehaviours: String(plan.optimalBehaviours || 'Most effective leaders demonstrate clarity under pressure, visible executive presence, systems-level decision making, and disciplined follow-through.').trim(),
+        gapAnalysis: String(plan.gapAnalysis || 'The key leadership gaps are inconsistent strategic filtering, uneven executive influence in high-stakes forums, and limited system-level diagnosis under pressure.').trim(),
+        coachingAcceleration: String(plan.coachingAcceleration || 'Focused coaching and strategic sessions can accelerate your progress by turning these gaps into repeatable strengths with targeted practice and accountability.').trim(),
+        learningMix: Array.isArray(plan.learningMix) && plan.learningMix.length > 0
+            ? plan.learningMix.map(item => String(item || '').trim()).filter(Boolean)
+            : defaultLearningMix,
+        actionItems: [...mergedActionItems, ...extraActionItems]
+    };
+}
+
+function buildTransformationReportText(plan, assessmentSnapshot = {}) {
+    const actionLines = (plan.actionItems || [])
+        .map((item, index) => `${index + 1}. ${item.area}: ${item.keyAction} | Mode: ${item.deliveryMode} | Benefit: ${item.benefit} | Start: ${item.startDate} | Review: ${item.reviewDate} | Review Type: ${item.reviewType}`)
+        .join('\n');
+
+    const testsTakenLine = Array.isArray(assessmentSnapshot.takenTests) && assessmentSnapshot.takenTests.length > 0
+        ? assessmentSnapshot.takenTests.join(', ')
+        : 'No prior assessments listed';
+
+    return [
+        'Executive Summary',
+        plan.executiveSummary,
+        '',
+        'Consolidated Assessment Snapshot',
+        `Tests Taken: ${testsTakenLine}`,
+        `Style: ${assessmentSnapshot.style && assessmentSnapshot.style.taken ? `${assessmentSnapshot.style.dominantStyle || 'N/A'} (Secondary: ${assessmentSnapshot.style.secondaryStyle || 'N/A'})` : 'Not available'}`,
+        `Clarity: ${assessmentSnapshot.clarity && assessmentSnapshot.clarity.taken ? `Noise Score ${assessmentSnapshot.clarity.noiseScore ?? 'N/A'}%` : 'Not available'}`,
+        `Presence Summary: ${assessmentSnapshot.presence && assessmentSnapshot.presence.taken ? assessmentSnapshot.presence.summary || 'Available' : 'Not available'}`,
+        `Systems Summary: ${assessmentSnapshot.systems && assessmentSnapshot.systems.taken ? assessmentSnapshot.systems.summary || 'Available' : 'Not available'}`,
+        '',
+        'Industry Benchmark Comparison',
+        plan.industryComparison,
+        '',
+        'Most Optimal Behaviours',
+        plan.optimalBehaviours,
+        '',
+        'Gap Analysis',
+        plan.gapAnalysis,
+        '',
+        'How Coaching Accelerates Growth',
+        plan.coachingAcceleration,
+        '',
+        'Recommended Learning Mix',
+        ...(plan.learningMix || []),
+        '',
+        'Action Plan Table',
+        actionLines
+    ].join('\n');
+}
+
+function createFallbackLeadershipReport(name, dominantStyleName, secondaryStyleName, quizType) {
+    const secondary = secondaryStyleName ? ` with a secondary tendency towards ${secondaryStyleName}` : '';
+    if (quizType === 'deep') {
+        return `Name\n${name}\n\nDominant Style\n${name} demonstrates a ${dominantStyleName} leadership style${secondary}. This profile is drawn from your extended response pattern across this diagnostic.\n\nSecondary Style\n${secondaryStyleName ? `A ${secondaryStyleName} tendency emerges as a complementary dimension, offering additional flexibility in varied leadership situations.` : 'No clear secondary style was identified in this assessment.'}\n\nComparison With Earlier Report\nThis deeper assessment confirms the pattern identified in earlier evaluations, providing a more detailed picture of how your style operates across complex scenarios.\n\nStyle Interpretation\nLeaders with a ${dominantStyleName} profile tend to bring a distinctive approach to decision-making, team engagement, and strategic execution. This style is most effective when applied with self-awareness and situational flexibility.\n\nStrengths\nYour ${dominantStyleName} orientation brings clear advantages in terms of consistency, credibility, and the ability to rally your team around a coherent direction.\n\nRisks And Blind Spots\nThe primary risk for ${dominantStyleName} leaders is over-reliance on a single mode of engagement. Expanding your repertoire will improve performance across diverse contexts.\n\nDevelopment Priorities\nFocus on deepening your situational awareness, building range across other leadership modes, and investing in structured coaching to accelerate your leadership growth.`;
+    }
+    return `${name}, your responses indicate a ${dominantStyleName} leadership style${secondary}. ${dominantStyleName} leaders bring a strong and consistent approach to how they engage with their teams and make decisions. Your key strengths lie in your ability to lead with clarity and conviction. To grow further, consider expanding your flexibility across other leadership modes, particularly in high-pressure or cross-functional contexts. A structured coaching conversation would help you unlock the next level of your leadership impact.`;
+}
+
+function createFallbackClarityReport(name, noiseScore, noiseCleared, totalNoise, signalsMissed, totalSignals) {
+    const performance = noiseScore >= 70 ? 'strong' : noiseScore >= 50 ? 'developing' : 'emerging';
+    return `${name}, your Strategic Clarity Diagnostic reveals a ${performance} ability to filter leadership noise. You correctly identified ${noiseCleared} out of ${totalNoise} noise items (${noiseScore}% accuracy)${signalsMissed > 0 ? `, though ${signalsMissed} critical signal${signalsMissed > 1 ? 's were' : ' was'} missed` : ''}. The most effective leaders develop a disciplined habit of distinguishing signal from noise before acting — and this score gives you a clear baseline to build from. To sharpen your clarity, try a weekly 15-minute signal audit: review your week's decisions and tag each driver as signal or noise in hindsight. A 1-on-1 Clarity Session with Coach Dinesh can help you identify the specific blind spots in your leadership lens and build a personalised framework for clearer, faster decision-making.`;
+}
+
+function createFallbackPresenceReport(name, powerMoves) {
+    const moveList = Array.isArray(powerMoves) && powerMoves.length > 0
+        ? powerMoves.join(', ')
+        : 'your selected scenarios';
+    return `${name}, your Executive Presence Simulator results show a thoughtful approach to high-stakes leadership moments. Across ${moveList}, your choices reveal how you instinctively frame authority, influence, and credibility under pressure. Strong executive presence is built from consistent, intentional behaviour — and your results highlight both areas of natural strength and specific opportunities to elevate your impact. Leaders who invest in their presence see measurable improvements in stakeholder confidence, team performance, and career trajectory. A 1-on-1 coaching session would help you translate these insights into a targeted presence development plan.`;
+}
+
+function createFallbackSystemsReport(name, rankings) {
+    const scenarioCount = Array.isArray(rankings) ? rankings.length : 0;
+    return `${name}, your Systems Thinking Diagnostic across ${scenarioCount} scenario${scenarioCount !== 1 ? 's' : ''} reveals your current impact hierarchy preferences. The most effective systems thinkers learn to look upstream from symptoms — identifying structural, process, and cultural leverage points rather than reacting to surface-level people or operational issues. Your response pattern provides a valuable baseline. To develop further, practise asking "what system is producing this result?" before acting. Building this habit consistently will significantly extend your strategic influence. A coaching conversation with Coach Dinesh can help you map your specific systems-thinking gaps and design a targeted development path.`;
+}
+
+
+function createFallbackTransformationPlan(name, sourceDigest = []) {
+    const hasStyle = sourceDigest.some(entry => entry.quizType === 'quick' || entry.quizType === 'deep');
+    const hasClarity = sourceDigest.some(entry => entry.quizType === 'clarity');
+    const hasPresence = sourceDigest.some(entry => entry.quizType === 'presence');
+    const hasSystems = sourceDigest.some(entry => entry.quizType === 'systems');
+
+    const focusAreas = [];
+    if (hasStyle) focusAreas.push('Leadership style agility');
+    if (hasClarity) focusAreas.push('Strategic clarity under noise');
+    if (hasPresence) focusAreas.push('Executive presence and influence');
+    if (hasSystems) focusAreas.push('Systems thinking and leverage awareness');
+    if (!focusAreas.length) focusAreas.push('Integrated leadership execution');
+
+    return normalizeTransformationPlan({
+        executiveSummary: `${name}'s transformation plan is built from previously completed assessments and focuses on measurable behavior change across ${focusAreas.join(', ')}.`,
+        gapAnalysis: 'Primary gaps include fragmented prioritization under pressure, inconsistent executive influence in critical forums, and limited use of systems-level diagnosis to prevent recurring issues.',
+        coachingAcceleration: 'A focused coaching journey with strategic review sessions can shorten the learning curve by converting these gaps into practical leadership habits with feedback and accountability.',
+        industryComparison: 'Industry-leading executives show consistency in strategic prioritization, influence quality, and cross-system decision-making. The current profile indicates strengths with clear improvement opportunities that can be closed through disciplined execution.',
+        optimalBehaviours: 'Optimal leadership behavior combines clear strategic filters, visible executive communication, thoughtful systems-level diagnosis, and structured review rhythms that convert insight into outcomes.',
+        learningMix: [
+            'Self-paced learning: Weekly practice modules for strategic framing, communication discipline, and decision hygiene.',
+            'Classroom session: Monthly cohort workshop on influence, stakeholder alignment, and high-stakes leadership communication.',
+            'Coaching: Fortnightly 1-on-1 sessions for reflection, accountability, and targeted behavior correction.'
+        ],
+        actionItems: [
+            {
+                area: 'Strategic Focus',
+                keyAction: 'Run a weekly strategic signal-vs-noise review and publish top three priorities for execution.',
+                deliveryMode: 'Self-paced learning',
+                benefit: 'Improves focus quality and reduces reaction-driven decisions.',
+                startDate: formatDateOffset(0),
+                reviewDate: formatDateOffset(21),
+                reviewType: 'Self'
+            },
+            {
+                area: 'Executive Communication',
+                keyAction: 'Practice concise executive updates with clear narrative, risk framing, and decision asks.',
+                deliveryMode: 'Classroom session',
+                benefit: 'Increases leadership credibility and decision velocity with stakeholders.',
+                startDate: formatDateOffset(3),
+                reviewDate: formatDateOffset(28),
+                reviewType: 'Mentor'
+            },
+            {
+                area: 'Influence and Presence',
+                keyAction: 'Prepare and rehearse high-stakes conversations using intent, evidence, and confident delivery.',
+                deliveryMode: 'Coaching',
+                benefit: 'Strengthens authority, trust, and cross-functional influence.',
+                startDate: formatDateOffset(7),
+                reviewDate: formatDateOffset(35),
+                reviewType: 'Coach'
+            },
+            {
+                area: 'Systems Diagnosis',
+                keyAction: 'Map one recurring organizational challenge using causes, dependencies, and leverage points.',
+                deliveryMode: 'Blended',
+                benefit: 'Improves root-cause quality and long-term decision outcomes.',
+                startDate: formatDateOffset(10),
+                reviewDate: formatDateOffset(40),
+                reviewType: 'Peer'
+            },
+            {
+                area: 'Accountability Rhythm',
+                keyAction: 'Create a 30-day action tracker with fortnightly reviews and visible progress checkpoints.',
+                deliveryMode: 'Coaching',
+                benefit: 'Turns insight into consistent execution and sustained change.',
+                startDate: formatDateOffset(14),
+                reviewDate: formatDateOffset(45),
+                reviewType: 'Coach'
+            },
+            {
+                area: 'Team Leadership Maturity',
+                keyAction: 'Use structured developmental feedback with each direct report once every two weeks.',
+                deliveryMode: 'Self-paced learning',
+                benefit: 'Builds team capability and improves leadership bench strength.',
+                startDate: formatDateOffset(16),
+                reviewDate: formatDateOffset(50),
+                reviewType: 'Blended'
+            }
+        ]
+    });
+}
+
 function setPageCacheHeaders(res) {
     res.setHeader('Cache-Control', 'public, max-age=900, must-revalidate');
     res.setHeader('Expires', new Date(Date.now() + pageCacheDurationMs).toUTCString());
@@ -209,6 +623,21 @@ function isAdminAuthenticated(req) {
     return cookies[ADMIN_AUTH_COOKIE] === 'true';
 }
 
+function isApiCallsEnabled() {
+    try {
+        const configPath = path.join(__dirname, 'quiz-config.json');
+        if (fs.existsSync(configPath)) {
+            const configData = fs.readFileSync(configPath, 'utf-8');
+            const config = JSON.parse(configData);
+            return config.enableApiCalls !== false;
+        }
+        return true;
+    } catch (error) {
+        console.warn('Error checking enableApiCalls flag:', error.message);
+        return true;
+    }
+}
+
 // 1. SERVE STATIC FILES
 // This tells Express to serve your CSS, JS, and Images from the frontend folder
 app.use(express.static(path.join(__dirname, '../frontend'), {
@@ -226,6 +655,75 @@ app.use(express.urlencoded({ extended: false }));
 app.get('/ping', (req, res) => {
   res.status(200).send('Coach is awake!');
 });
+
+// CHECK IF A PHONE NUMBER HAS ALREADY TAKEN A SPECIFIC QUIZ
+app.get('/check-existing-report', (req, res) => {
+    try {
+        const phone = String(req.query.phone || '').replace(/\s+/g, '');
+        const quizType = String(req.query.quizType || '').trim();
+
+        const validQuizTypes = new Set(['quick', 'deep', 'clarity', 'presence', 'systems']);
+        if (!phone || !/^\+\d{7,15}$/.test(phone) || !validQuizTypes.has(quizType)) {
+            return res.status(400).json({ error: 'Valid phone and quizType required.' });
+        }
+
+        const history = loadReportHistory();
+        let found = null;
+
+        Object.values(history.leads || {}).some((lead) => {
+            return (lead.reports || []).some((report) => {
+                const reportPhone = String((report.mobile || lead.mobile || '')).replace(/\s+/g, '');
+                if (reportPhone === phone && report.quizType === quizType) {
+                    found = { name: report.name || lead.name || '' };
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        res.json({ exists: !!found, name: found ? found.name : null });
+    } catch (error) {
+        console.error('Check existing report error:', error.message);
+        res.status(500).json({ error: 'Failed to check report.' });
+    }
+});
+
+// SEND RETRIEVAL REQUEST (Telegram to coach + WhatsApp for user)
+app.post('/request-report-retrieval', async (req, res) => {
+    try {
+        const name = String(req.body && req.body.name || '').trim();
+        const phone = String(req.body && req.body.phone || '').replace(/\s+/g, '');
+        const quizType = String(req.body && req.body.quizType || '').trim();
+
+        if (!name || !phone || !quizType) {
+            return res.status(400).json({ error: 'name, phone and quizType required.' });
+        }
+
+        const quizLabel = {
+            quick: 'Leadership Style (Quick)',
+            deep: 'Leadership Style (Deep)',
+            clarity: 'Strategic Clarity',
+            presence: 'Executive Presence',
+            systems: 'Systems Thinking',
+            transformation: 'Transformation Action Plan'
+        }[quizType] || quizType;
+
+        const telegramText = `Report Requested\nName: ${name}\nPhone: ${phone}\nTest: ${quizLabel}`;
+        try {
+            await sendTelegramMessage(telegramText);
+        } catch (telegramError) {
+            console.error('Telegram send error (non-blocking):', telegramError.message);
+        }
+
+        console.log(`[RETRIEVAL_REQUEST] | Name: ${name} | Phone: ${phone} | Quiz: ${quizType}`);
+        res.json({ ok: true });
+    } catch (error) {
+        console.error('Retrieval request error:', error.message);
+        res.status(500).json({ error: 'Failed to send retrieval request.' });
+    }
+});
+
+
 
 // 2. SERVE THE HOME PAGE
 // When someone goes to http://localhost:3000, send them your index.html
@@ -669,6 +1167,16 @@ app.post('/analyze-leadership', async (req, res) => {
             return res.status(400).json({ error: 'Invalid request data' });
         }
 
+        // Check if API calls are enabled
+        if (!isApiCallsEnabled()) {
+            return res.json({
+                name,
+                dominantStyle: 'Style Analysis',
+                secondaryStyle: 'Secondary Style',
+                report: 'API CALL SUCCESSFUL, TEST CALL PREVENTED'
+            });
+        }
+
         // Count answers to determine dominant style
         const styleCounts = { A: 0, B: 0, C: 0, D: 0 };
         answers.forEach(answer => {
@@ -750,21 +1258,26 @@ Style breakdown: ${styleBreakdownText}`;
             baseURL: "https://api.groq.com/openai/v1"
         });
 
-        const completion = await groq.chat.completions.create({
-            messages: [
-                {
-                    role: "system",
-                    content: systemPrompt
-                },
-                {
-                    role: "user",
-                    content: userPrompt
-                }
-            ],
-            model: "llama-3.3-70b-versatile",
-        });
-
-        const aiReport = completion.choices[0].message.content;
+        let aiReport;
+        try {
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    {
+                        role: "system",
+                        content: systemPrompt
+                    },
+                    {
+                        role: "user",
+                        content: userPrompt
+                    }
+                ],
+                model: "llama-3.3-70b-versatile",
+            });
+            aiReport = completion.choices[0].message.content;
+        } catch (aiError) {
+            console.error('Leadership AI fallback activated:', aiError.message);
+            aiReport = createFallbackLeadershipReport(name, dominantStyleName, secondaryStyleName, normalizedQuizType);
+        }
         const timestamp = new Date().toISOString();
 
         appendStoredReport(history, {
@@ -785,7 +1298,8 @@ Style breakdown: ${styleBreakdownText}`;
         console.log(logMessage);
 
         // Send Telegram notification
-        const telegramText = `🚀 New Lead Generated!\nName: ${name}\nMobile: ${normalizedMobile}\nEmail: ${email}\nQuiz Type: ${normalizedQuizType}\nDominant Style: ${dominantStyleName}\nSecondary Style: ${secondaryStyleName || 'None'}\n\nFull report saved in admin panel.`;
+        const quizTypeLabel = normalizedQuizType === 'deep' ? 'Leadership Style (Deep)' : 'Leadership Style (Quick)';
+        const telegramText = `New Lead\nName: ${name}\nPhone: ${normalizedMobile}\nEmail: ${email}\nTest: ${quizTypeLabel}\nTime: ${timestamp}`;
         try {
             await sendTelegramMessage(telegramText);
         } catch (telegramError) {
@@ -821,6 +1335,19 @@ app.post('/analyze-clarity', async (req, res) => {
             return res.status(400).json({ error: 'Invalid request data' });
         }
 
+        // Check if API calls are enabled
+        if (!isApiCallsEnabled()) {
+            return res.json({
+                name,
+                noiseScore,
+                noiseCleared,
+                signalsMissed,
+                totalNoise,
+                totalSignals,
+                report: 'API CALL SUCCESSFUL, TEST CALL PREVENTED'
+            });
+        }
+
         const systemPrompt = `You are an executive leadership coach. Provide a focused, honest 180-word report on a leader's ability to filter strategic noise. Use "you" and "your" throughout. Be warm, credible and actionable.`;
 
         const userPrompt = `Analyze ${name}'s ability to filter noise in the Strategic Clarity Diagnostic.
@@ -840,15 +1367,21 @@ End with a natural invitation to a 1-on-1 Clarity Session to explore their blind
             baseURL: 'https://api.groq.com/openai/v1'
         });
 
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user',   content: userPrompt }
-            ],
-            model: 'llama-3.3-70b-versatile'
-        });
+        let aiReport;
+        try {
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user',   content: userPrompt }
+                ],
+                model: 'llama-3.3-70b-versatile'
+            });
+            aiReport = completion.choices[0].message.content;
+        } catch (aiError) {
+            console.error('Clarity AI fallback activated:', aiError.message);
+            aiReport = createFallbackClarityReport(name, noiseScore, noiseCleared, totalNoise, signalsMissed, totalSignals);
+        }
 
-        const aiReport = completion.choices[0].message.content;
         const timestamp = new Date().toISOString();
         const history = loadReportHistory();
 
@@ -871,7 +1404,7 @@ End with a natural invitation to a 1-on-1 Clarity Session to explore their blind
         const reportSummary = String(aiReport || '').replace(/\s+/g, ' ').trim().slice(0, 220);
         console.log(`[CLARITY_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Phone: ${normalizedPhone} | Email: ${email} | NoiseScore: ${noiseScore}% | NoiseCleared: ${noiseCleared}/${totalNoise} | SignalsMissed: ${signalsMissed}/${totalSignals} | Summary: ${reportSummary}`);
 
-        const telegramText = `🎯 Clarity Lead!\nName: ${name}\nPhone: ${normalizedPhone}\nEmail: ${email}\nClarity Quotient: ${noiseScore}% — cleared ${noiseCleared}/${totalNoise} noise, missed ${signalsMissed}/${totalSignals} signals.`;
+        const telegramText = `New Lead\nName: ${name}\nPhone: ${normalizedPhone}\nEmail: ${email}\nTest: Strategic Clarity\nTime: ${timestamp}`;
         try {
             await sendTelegramMessage(telegramText);
         } catch (telegramError) {
@@ -909,6 +1442,17 @@ app.post('/analyze-presence', async (req, res) => {
             return res.status(400).json({ error: 'Invalid request data' });
         }
 
+        // Check if API calls are enabled
+        if (!isApiCallsEnabled()) {
+            return res.json({
+                name: normalizedName,
+                phone: normalizedPhone,
+                email: normalizedEmail,
+                summary: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
+                report: 'API CALL SUCCESSFUL, TEST CALL PREVENTED'
+            });
+        }
+
         const systemPrompt = `Analyze ${normalizedName}'s ${expectedMoveCount} 'Power Moves'. Tell them if they lead with 'Quiet Authority', 'Strategic Influence', or if they have 'Executive Presence Leaks'. Write a 180-word encouraging report. End with a strong call to action to buy the 1-on-1 coaching bundle.`;
 
         const userPrompt = `Name: ${normalizedName}
@@ -922,15 +1466,21 @@ ${validPowerMoves.map((move, index) => `${index + 1}. ${move}`).join('\n')}`;
             baseURL: 'https://api.groq.com/openai/v1'
         });
 
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt }
-            ],
-            model: 'llama-3.3-70b-versatile'
-        });
+        let aiReport;
+        try {
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                ],
+                model: 'llama-3.3-70b-versatile'
+            });
+            aiReport = String(completion.choices[0].message.content || '').trim();
+        } catch (aiError) {
+            console.error('Presence AI fallback activated:', aiError.message);
+            aiReport = createFallbackPresenceReport(normalizedName, validPowerMoves);
+        }
 
-        const aiReport = String(completion.choices[0].message.content || '').trim();
         const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Presence profile generated';
         const timestamp = new Date().toISOString();
         const history = loadReportHistory();
@@ -950,7 +1500,7 @@ ${validPowerMoves.map((move, index) => `${index + 1}. ${move}`).join('\n')}`;
 
         console.log(`[PRESENCE_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | PowerMoves: ${validPowerMoves.join(', ')} | Summary: ${aiSummary}`);
 
-        const telegramText = `✅ New Executive Presence Lead! ${normalizedName} finished the simulator. Style: ${aiSummary}.`;
+        const telegramText = `New Lead\nName: ${normalizedName}\nPhone: ${normalizedPhone}\nEmail: ${normalizedEmail}\nTest: Executive Presence\nTime: ${timestamp}`;
         try {
             await sendTelegramMessage(telegramText);
         } catch (telegramError) {
@@ -1000,6 +1550,17 @@ app.post('/analyze-systems', async (req, res) => {
             return res.status(400).json({ error: 'Invalid request data' });
         }
 
+        // Check if API calls are enabled
+        if (!isApiCallsEnabled()) {
+            return res.json({
+                name: normalizedName,
+                phone: normalizedPhone,
+                email: normalizedEmail,
+                summary: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
+                report: 'API CALL SUCCESSFUL, TEST CALL PREVENTED'
+            });
+        }
+
         const rankingSummary = normalizedRankings
             .map((entry, index) => `${index + 1}. Scenario ${entry.scenarioId}: ${entry.scenario}\n   Ranking (most to least impact): ${entry.orderedDomains.join(' > ')}`)
             .join('\n\n');
@@ -1030,15 +1591,21 @@ ${rankingSummary}`;
             baseURL: 'https://api.groq.com/openai/v1'
         });
 
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt }
-            ],
-            model: 'llama-3.3-70b-versatile'
-        });
+        let aiReport;
+        try {
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                ],
+                model: 'llama-3.3-70b-versatile'
+            });
+            aiReport = String(completion.choices[0].message.content || '').trim();
+        } catch (aiError) {
+            console.error('Systems AI fallback activated:', aiError.message);
+            aiReport = createFallbackSystemsReport(normalizedName, normalizedRankings);
+        }
 
-        const aiReport = String(completion.choices[0].message.content || '').trim();
         const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Systems thinking profile generated';
         const timestamp = new Date().toISOString();
         const history = loadReportHistory();
@@ -1058,7 +1625,7 @@ ${rankingSummary}`;
 
         console.log(`[SYSTEMS_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | Responses: ${normalizedRankings.length} | Summary: ${aiSummary}`);
 
-        const telegramText = `🧠 New Systems Thinking Lead! ${normalizedName} completed the hierarchy diagnostic. Summary: ${aiSummary}.`;
+        const telegramText = `New Lead\nName: ${normalizedName}\nPhone: ${normalizedPhone}\nEmail: ${normalizedEmail}\nTest: Systems Thinking\nTime: ${timestamp}`;
         try {
             await sendTelegramMessage(telegramText);
         } catch (telegramError) {
@@ -1077,6 +1644,232 @@ ${rankingSummary}`;
     } catch (error) {
         console.error('Systems analysis error:', error.message);
         res.status(500).json({ error: 'Failed to analyze systems thinking diagnostic' });
+    }
+});
+
+app.post('/analyze-transformation', async (req, res) => {
+    try {
+        const name = String(req.body && req.body.name || '').trim();
+        const normalizedPhone = String(req.body && req.body.phone || '').replace(/\s+/g, '');
+        const namePattern = /^[A-Za-z][A-Za-z .'-]{1,}$/;
+
+        if (!name || !namePattern.test(name) || !/^\+\d{7,15}$/.test(normalizedPhone)) {
+            return res.status(400).json({ error: 'Valid name and mobile number are required.' });
+        }
+
+        const history = loadReportHistory();
+        const { sourceReports, latestByType } = getAssessmentReportsByMobile(history, normalizedPhone);
+
+        if (!sourceReports.length) {
+            return res.status(404).json({
+                error: 'No prior evaluations were found for this number. Please complete at least one evaluation in Clarity, Style, Presence, or Systems Thinking.'
+            });
+        }
+
+        // Check if a transformation report already exists for this phone
+        const leadKey = createLeadKey('', normalizedPhone);
+        let existingTransformationReport = null;
+        if (history.leads[leadKey] && Array.isArray(history.leads[leadKey].reports)) {
+            existingTransformationReport = history.leads[leadKey].reports.find(
+                reportEntry => reportEntry.quizType === 'transformation'
+            );
+        }
+
+        // If transformation plan exists and test count hasn't changed, return "already created" status
+        if (existingTransformationReport) {
+            const newTestCount = sourceReports.length;
+            const existingTestCount = existingTransformationReport.sourceReportCount || 
+                (existingTransformationReport.assessmentSnapshot && existingTransformationReport.assessmentSnapshot.totalAssessmentsAnalysed) || 0;
+
+            if (newTestCount === existingTestCount) {
+                return res.json({
+                    alreadyCreated: true,
+                    name,
+                    phone: normalizedPhone
+                });
+            }
+        }
+
+        // Build full digest from ALL source reports (not just latest per type)
+        // so the AI can see patterns, evolution, and recurring themes across every attempt.
+        const allReportsDigest = sourceReports.map((reportEntry) => {
+            return {
+                quizType: reportEntry.quizType,
+                assessmentType: reportEntry.assessmentType || reportEntry.quizType,
+                timestamp: reportEntry.timestamp,
+                dominantStyle: reportEntry.dominantStyle || '',
+                secondaryStyle: reportEntry.secondaryStyle || '',
+                noiseScore: typeof reportEntry.noiseScore === 'number' ? reportEntry.noiseScore : null,
+                summary: getReportPreview(reportEntry.summary || reportEntry.report || '', 200)
+            };
+        });
+
+        // Group by quiz type for a structured, readable prompt
+        const reportsByType = {};
+        allReportsDigest.forEach((entry) => {
+            if (!reportsByType[entry.quizType]) {
+                reportsByType[entry.quizType] = [];
+            }
+            reportsByType[entry.quizType].push(entry);
+        });
+
+        const typeSummaryLine = Object.entries(reportsByType)
+            .map(([type, entries]) => `${type}: ${entries.length}`)
+            .join(', ');
+
+        let globalIndex = 0;
+        const sourceText = Object.entries(reportsByType).map(([type, entries]) => {
+            const header = `=== ${type.toUpperCase()} — ${entries.length} attempt(s) ===`;
+            const lines = entries.map((entry) => {
+                globalIndex++;
+                const parts = [
+                    `${globalIndex}. [${entry.timestamp || 'N/A'}]`,
+                    entry.dominantStyle ? `DominantStyle: ${entry.dominantStyle}` : null,
+                    entry.secondaryStyle ? `SecondaryStyle: ${entry.secondaryStyle}` : null,
+                    entry.noiseScore != null ? `NoiseScore: ${entry.noiseScore}` : null,
+                    entry.summary ? `Summary: ${entry.summary}` : null
+                ].filter(Boolean);
+                return parts.join(' | ');
+            });
+            return [header, ...lines].join('\n');
+        }).join('\n\n');
+
+        const assessmentSnapshot = buildTransformationAssessmentSnapshot(latestByType, sourceReports);
+
+        const systemPrompt = `You are an elite executive leadership coach with deep expertise in pattern recognition across repeated assessments. Build a professional transformation report using ALL provided assessment history — not just the most recent one.
+
+You will receive multiple assessment attempts grouped by type and ordered chronologically. Analyse the FULL history to:
+- Identify consistent strengths and persistent gaps across attempts
+- Detect whether the leader is improving, regressing, or stuck in patterns
+- Highlight high-frequency themes (behaviours or styles that keep appearing)
+- Compare current state against industry-standard high-performing leadership behaviour
+- Design practical and measurable development recommendations with mixed modalities: self-paced learning, classroom sessions, and coaching
+- Clearly show how coaching/strategic sessions can close the identified gaps
+
+This is a coaching conversion report. Make the case for structured coaching powerfully but credibly.
+
+Return valid JSON only, with this exact schema:
+{
+  "executiveSummary": "string",
+  "gapAnalysis": "string",
+  "coachingAcceleration": "string",
+  "industryComparison": "string",
+  "optimalBehaviours": "string",
+  "learningMix": ["string", "string", "string"],
+  "actionItems": [
+    {
+      "area": "string",
+      "keyAction": "string",
+      "deliveryMode": "Self-paced learning|Classroom session|Coaching|Blended",
+      "benefit": "string",
+      "startDate": "DD-MM-YYYY",
+      "reviewDate": "DD-MM-YYYY",
+      "reviewType": "Peer|Mentor|Coach|Self|Blended"
+    }
+  ]
+}
+
+Rules:
+- Provide between 6 and 10 actionItems.
+- The executiveSummary must reference the TOTAL number of assessments and call out any recurring patterns or evolution detected.
+- The gapAnalysis must name specific gaps visible across the full history, not just the latest result.
+- Keep the tone professional, practical, and high credibility.
+- Ensure recommendations are specific and behaviour based.
+- Assume the first 6 action rows are prelisted focus areas, and optimise delivery mode/benefits/review cadence accordingly.
+- Do not include markdown. Do not add any text outside JSON.`;
+
+        const userPrompt = `Leader Name: ${name}
+Mobile: ${normalizedPhone}
+Total assessments on record: ${sourceReports.length} (${typeSummaryLine})
+
+Full Assessment History (chronological within each category):
+${sourceText}
+
+Using ALL ${sourceReports.length} assessments above, generate a comprehensive transformation action plan that reflects the full pattern of this leader's journey, improvements, and persistent gaps.`;
+
+        // Check if API calls are enabled
+        if (!isApiCallsEnabled()) {
+            return res.json({
+                alreadyCreated: false,
+                name,
+                generatedAt: new Date().toISOString(),
+                sourceReports: latestByType,
+                assessmentSnapshot: buildTransformationAssessmentSnapshot(latestByType, sourceReports),
+                plan: {
+                    executiveSummary: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
+                    gapAnalysis: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
+                    coachingAcceleration: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
+                    industryComparison: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
+                    optimalBehaviours: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
+                    learningMix: ['API CALL SUCCESSFUL, TEST CALL PREVENTED'],
+                    actionItems: []
+                }
+            });
+        }
+
+        let normalizedPlan;
+        try {
+            const groq = new OpenAI({
+                apiKey: process.env.GROQ_API_KEY,
+                baseURL: 'https://api.groq.com/openai/v1'
+            });
+
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                ],
+                model: 'llama-3.3-70b-versatile'
+            });
+
+            const aiRawOutput = String(completion.choices[0].message.content || '').trim();
+            const aiParsedPlan = parseAiJsonObject(aiRawOutput);
+            normalizedPlan = normalizeTransformationPlan(aiParsedPlan || { executiveSummary: aiRawOutput });
+        } catch (aiError) {
+            console.error('Transformation AI fallback activated:', aiError.message);
+            normalizedPlan = createFallbackTransformationPlan(name, allReportsDigest);
+        }
+
+        const timestamp = new Date().toISOString();
+        const primaryEmail = String(
+            (latestByType.find(reportEntry => reportEntry.email) || {}).email ||
+            `transformation+${normalizedPhone.replace(/\D/g, '')}@thecoachdinesh.local`
+        ).trim().toLowerCase();
+
+        appendStoredReport(history, {
+            timestamp,
+            name,
+            email: primaryEmail,
+            mobile: normalizedPhone,
+            quizType: 'transformation',
+            assessmentType: 'Transformation Action Plan',
+            summary: normalizedPlan.executiveSummary.slice(0, 220),
+            sourceReportCount: sourceReports.length,
+            sourceQuizTypes: latestByType.map(reportEntry => reportEntry.quizType),
+            assessmentSnapshot,
+            plan: normalizedPlan,
+            report: buildTransformationReportText(normalizedPlan, assessmentSnapshot)
+        });
+        saveReportHistory(history);
+
+        const telegramSummary = normalizedPlan.executiveSummary.replace(/\s+/g, ' ').trim().slice(0, 220);
+        const telegramText = `New Lead\nName: ${name}\nPhone: ${normalizedPhone}\nEmail: ${primaryEmail}\nTest: Transformation Action Plan\nTime: ${timestamp}`;
+        try {
+            await sendTelegramMessage(telegramText);
+        } catch (telegramError) {
+            console.error('Telegram send error (non-blocking):', telegramError.message);
+        }
+
+        res.json({
+            name,
+            generatedAt: timestamp,
+            sourceReports: latestByType,
+            assessmentSnapshot,
+            plan: normalizedPlan
+        });
+    } catch (error) {
+        console.error('Transformation analysis error:', error.message);
+        res.status(500).json({ error: 'Failed to generate transformation plan' });
     }
 });
 

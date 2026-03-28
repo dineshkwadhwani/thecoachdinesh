@@ -149,6 +149,10 @@ function openPresenceGame() {
     if (!modal) return;
     modal.style.display = 'flex';
     presenceState = createInitialPresenceState();
+    const notice = document.getElementById('already-taken-notice-presence');
+    if (notice) notice.remove();
+    const continueBtn = document.querySelector('#presence-step-identity .btn');
+    if (continueBtn) continueBtn.style.display = '';
     presenceShowStep('identity');
 }
 
@@ -262,7 +266,7 @@ function presenceRenderEmailStep() {
     }
 }
 
-function presenceContinueFromIdentity() {
+async function presenceContinueFromIdentity() {
     const nameInput = document.getElementById('presence-name-input');
     const countryCodeInput = document.getElementById('presence-country-code');
     const phoneInput = document.getElementById('presence-phone-input');
@@ -294,6 +298,12 @@ function presenceContinueFromIdentity() {
     presenceState.name = name;
     presenceState.countryCode = countryCode;
     presenceState.phone = `${countryCode}${phoneDigits}`;
+
+    const continueBtn = document.querySelector('#presence-step-identity .btn');
+    const containerEl = document.getElementById('presence-step-identity');
+    const alreadyTaken = await checkExistingReportAndShowNotice(presenceState.phone, 'presence', name, containerEl, continueBtn);
+    if (alreadyTaken) return;
+
     presenceState.currentQuestion = 0;
     presenceState.answers = [];
     presenceShowStep('welcome');

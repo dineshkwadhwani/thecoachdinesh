@@ -407,6 +407,7 @@ body {
         <div class="tab-bar">
             <button class="tab-btn tab-btn-active" id="tab-search" onclick="switchTab('search')">Search by Lead</button>
             <button class="tab-btn" id="tab-all" onclick="switchTab('all')">Browse All Leads</button>
+            <button class="tab-btn" id="tab-transformation" onclick="switchTab('transformation')">Transformation Plans</button>
         </div>
 
         <section class="search-panel" id="panel-search">
@@ -461,6 +462,11 @@ body {
         <section id="panel-all" class="browse-all-panel" style="display:none;">
             <button class="btn-primary" id="load-all-btn" onclick="loadAllReports()">Load All Leads</button>
             <p id="all-status-message" class="status-message" aria-live="polite"></p>
+        </section>
+
+        <section id="panel-transformation" class="browse-all-panel" style="display:none;">
+            <button class="btn-primary" id="load-transformation-btn" onclick="loadTransformationReports()">Load Transformation Plans</button>
+            <p id="transformation-status-message" class="status-message" aria-live="polite"></p>
         </section>
 
         <section id="results-toolbar" class="results-toolbar" style="display:none;">
@@ -635,7 +641,8 @@ function renderReportCard(report) {
         deep: 'Leadership Reflection (Deep)',
         clarity: 'Strategic Clarity',
         presence: 'Executive Presence',
-        systems: 'Systems Thinking'
+        systems: 'Systems Thinking',
+        transformation: 'Transformation Action Plan'
     };
     const assessmentLabel = report.assessmentType || assessmentLabelMap[report.quizType] || 'Assessment';
     const reportBody = isDeepReport
@@ -780,13 +787,22 @@ function switchTab(tab) {
     currentTab = tab;
     document.getElementById('panel-search').style.display = tab === 'search' ? '' : 'none';
     document.getElementById('panel-all').style.display = tab === 'all' ? '' : 'none';
+    document.getElementById('panel-transformation').style.display = tab === 'transformation' ? '' : 'none';
     document.getElementById('results-panel').innerHTML = '';
     currentReports = [];
     selectedReportKeys = new Set();
     updateSelectionToolbar();
     document.getElementById('tab-search').classList.toggle('tab-btn-active', tab === 'search');
     document.getElementById('tab-all').classList.toggle('tab-btn-active', tab === 'all');
+    document.getElementById('tab-transformation').classList.toggle('tab-btn-active', tab === 'transformation');
     setStatus('', false);
+}
+
+function getBrowseStatusNode() {
+    if (currentTab === 'transformation') {
+        return document.getElementById('transformation-status-message');
+    }
+    return document.getElementById('all-status-message');
 }
 
 async function loadAllReports() {
@@ -821,6 +837,45 @@ async function loadAllReports() {
     } finally {
         loadAllBtn.disabled = false;
         loadAllBtn.textContent = 'Load All Leads';
+    }
+}
+
+async function loadTransformationReports() {
+    const loadBtn = document.getElementById('load-transformation-btn');
+    const statusMsg = document.getElementById('transformation-status-message');
+
+    loadBtn.disabled = true;
+    loadBtn.textContent = 'Loading...';
+    statusMsg.textContent = 'Fetching transformation plans...';
+    statusMsg.classList.remove('error');
+
+    try {
+        const response = await fetch('/leadership-reports/all');
+
+        checkUnauthorized(response);
+
+        if (!response.ok) {
+            const errorPayload = await response.json().catch(() => ({}));
+            throw new Error(errorPayload.error || `Server error ${response.status}`);
+        }
+
+        const data = await response.json();
+        const transformationReports = Array.isArray(data.reports)
+            ? data.reports.filter((report) => report.quizType === 'transformation')
+            : [];
+
+        renderResults(transformationReports);
+        statusMsg.textContent = `Loaded ${transformationReports.length} transformation plan(s).`;
+    } catch (error) {
+        currentReports = [];
+        selectedReportKeys = new Set();
+        document.getElementById('results-panel').innerHTML = '';
+        updateSelectionToolbar();
+        statusMsg.textContent = error.message;
+        statusMsg.classList.add('error');
+    } finally {
+        loadBtn.disabled = false;
+        loadBtn.textContent = 'Load Transformation Plans';
     }
 }
 
@@ -887,17 +942,17 @@ async function deleteReports(reportsToDelete, buttonLabel, expectedCount) {
         if (currentTab === 'search') {
             setStatus(`Deleted ${expectedCount} report(s).`, false);
         } else {
-            const allStatusMsg = document.getElementById('all-status-message');
-            allStatusMsg.textContent = `Deleted ${expectedCount} report(s).`;
-            allStatusMsg.classList.remove('error');
+            const browseStatusMsg = getBrowseStatusNode();
+            browseStatusMsg.textContent = `Deleted ${expectedCount} report(s).`;
+            browseStatusMsg.classList.remove('error');
         }
     } catch (error) {
         if (currentTab === 'search') {
             setStatus(error.message, true);
         } else {
-            const allStatusMsg = document.getElementById('all-status-message');
-            allStatusMsg.textContent = error.message;
-            allStatusMsg.classList.add('error');
+            const browseStatusMsg = getBrowseStatusNode();
+            browseStatusMsg.textContent = error.message;
+            browseStatusMsg.classList.add('error');
         }
     } finally {
         deleteButton.textContent = buttonLabel;

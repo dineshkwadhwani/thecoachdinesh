@@ -156,6 +156,10 @@ function openClarityGame() {
     if (!modal) return;
     modal.style.display = 'flex';
     clarityState = createInitialClarityState();
+    const notice = document.getElementById('already-taken-notice-clarity');
+    if (notice) notice.remove();
+    const continueBtn = document.querySelector('#clarity-step-identity .btn');
+    if (continueBtn) continueBtn.style.display = '';
     clarityDisplayStep('identity');
 }
 
@@ -212,7 +216,7 @@ function clarityUpdateProgress(step) {
 }
 
 // ---- Identity Step ----
-function clarityNextFromIdentity() {
+async function clarityNextFromIdentity() {
     const nameEl    = document.getElementById('clarity-name-input');
     const ccEl      = document.getElementById('clarity-country-code');
     const phoneEl   = document.getElementById('clarity-phone-input');
@@ -243,6 +247,12 @@ function clarityNextFromIdentity() {
     clarityState.userName    = name;
     clarityState.countryCode = cc;
     clarityState.userPhone   = `${cc}${phone}`;
+
+    const continueBtn = document.querySelector('#clarity-step-identity .btn');
+    const containerEl = document.getElementById('clarity-step-identity');
+    const alreadyTaken = await checkExistingReportAndShowNotice(clarityState.userPhone, 'clarity', name, containerEl, continueBtn);
+    if (alreadyTaken) return;
+
     clarityDisplayStep('welcome');
 }
 
@@ -399,6 +409,7 @@ function clarityNextScenario() {
 // ---- Email Step ----
 function claritySubmitEmail() {
     const emailEl = document.getElementById('clarity-email-input');
+    const submitBtn = emailEl && emailEl.closest('.quiz-step') && emailEl.closest('.quiz-step').querySelector('.btn');
     if (!emailEl) return;
 
     const email = emailEl.value.trim();
@@ -406,6 +417,10 @@ function claritySubmitEmail() {
         alert('Please enter a valid email address.');
         emailEl.focus();
         return;
+    }
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Generating your report...';
     }
     clarityState.userEmail = email;
     clarityDisplayStep('loading');

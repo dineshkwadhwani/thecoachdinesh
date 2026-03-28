@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="css/clarity-game.css">
 <link rel="stylesheet" href="css/presence.css">
 <link rel="stylesheet" href="css/systems-game.css">
+<link rel="stylesheet" href="css/transformation-plan.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 <script src="js/coach-bot.js"></script>
 <script src="js/script.js"></script>
@@ -14,6 +15,7 @@
 <script src="js/clarity-game.js"></script>
 <script src="js/presence-game.js"></script>
 <script src="js/systems-game.js"></script>
+<script src="js/transformation-plan.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -221,6 +223,8 @@ Turning insights from coaching conversations into real leadership
 actions.
 
 </p>
+
+<button id="transformation-launch-btn" class="btn-small" style="display:none;" onclick="openTransformationPlan()">Plan my Transformation</button>
 
 </div>
 
@@ -665,6 +669,91 @@ Schedule a Conversation
             </div>
             <div class="consultation-message" id="systems-consultation"></div>
             <div class="report-actions-row" id="systems-report-actions"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Transformation Action Plan Modal -->
+<div id="transformation-modal" class="modal" style="display: none;">
+    <div class="modal-content transformation-modal-content">
+        <button class="modal-close" onclick="closeTransformationPlan()">×</button>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="transformation-progress-fill" style="width: 10%;"></div>
+            </div>
+            <div class="progress-text" id="transformation-progress-text">Step 1 of 3: Identify Yourself</div>
+        </div>
+
+        <div class="quiz-step" id="transformation-step-identity">
+            <h2>Plan my Transformation</h2>
+            <p>Share your name and mobile number. We will pull your existing assessments and generate your leadership transformation plan.</p>
+            <input type="text" id="transformation-name-input" placeholder="Enter your name" />
+            <div class="phone-input-row">
+                <select id="transformation-country-code" aria-label="Country code">
+                    <option value="+1">+1 (US/Canada)</option>
+                    <option value="+7">+7 (Russia)</option>
+                    <option value="+20">+20 (Egypt)</option>
+                    <option value="+27">+27 (South Africa)</option>
+                    <option value="+33">+33 (France)</option>
+                    <option value="+34">+34 (Spain)</option>
+                    <option value="+39">+39 (Italy)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+49">+49 (Germany)</option>
+                    <option value="+52">+52 (Mexico)</option>
+                    <option value="+55">+55 (Brazil)</option>
+                    <option value="+61">+61 (Australia)</option>
+                    <option value="+65">+65 (Singapore)</option>
+                    <option value="+81">+81 (Japan)</option>
+                    <option value="+82">+82 (South Korea)</option>
+                    <option value="+91" selected>+91 (India)</option>
+                    <option value="+92">+92 (Pakistan)</option>
+                    <option value="+94">+94 (Sri Lanka)</option>
+                    <option value="+966">+966 (Saudi Arabia)</option>
+                    <option value="+971">+971 (UAE)</option>
+                    <option value="+974">+974 (Qatar)</option>
+                </select>
+                <input type="tel" id="transformation-phone-input" placeholder="Mobile number" inputmode="numeric" autocomplete="tel-national" />
+            </div>
+            <button class="btn" id="transformation-generate-btn" onclick="generateTransformationPlan()">Generate Plan</button>
+            <p class="transformation-inline-message" id="transformation-identity-message" style="display:none;"></p>
+        </div>
+
+        <div class="quiz-step" id="transformation-step-loading" style="display:none;">
+            <div class="clarity-loading">
+                <div class="clarity-spinner"></div>
+                <p>Building your professional transformation plan...</p>
+            </div>
+        </div>
+
+        <div class="quiz-step" id="transformation-step-report" style="display:none;">
+            <div class="transformation-report-wrap">
+                <div class="transformation-brand-header">
+                    <div class="transformation-brand-text">
+                        <h2>The Coach Dinesh</h2>
+                        <p>Executive Leadership Coaching | contact@thecoachdinesh.com | +91 9767676738</p>
+                    </div>
+                    <img src="images/hero-dinesh-small.png" alt="Coach Dinesh" class="transformation-header-image" onerror="this.style.display='none'">
+                </div>
+
+                <h3 id="transformation-report-title">Leadership Transformation Action Plan</h3>
+                <p class="transformation-report-subtitle" id="transformation-report-subtitle"></p>
+
+                <div id="transformation-report-body" class="transformation-report-body"></div>
+
+                <div class="transformation-action-table-wrap">
+                    <h4>Action Plan Table</h4>
+                    <div id="transformation-action-table"></div>
+                </div>
+
+                <div class="report-signoff transformation-signoff">
+                    <img src="images/signature.png" alt="Dinesh Wadhwani Signature" class="signature-image" onerror="this.style.display='none'">
+                    <p class="signature-name">Dinesh Wadhwani</p>
+                </div>
+
+                <div class="consultation-message" id="transformation-consultation"></div>
+                <div class="report-actions-row transformation-actions" id="transformation-report-actions"></div>
+            </div>
         </div>
     </div>
 </div>
