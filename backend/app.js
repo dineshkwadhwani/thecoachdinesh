@@ -11,11 +11,21 @@ const { askDinesh } = require('./coachService');
 
 const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
+const ADMIN_AUTH_COOKIE = 'adminAuth';
 const REFLECT_YOUR_STYLE_KEY = 'reflectYourStyle';
 const STRATEGIC_CLARITY_KEY = 'strategicClarity';
 const EXECUTIVE_PRESENCE_KEY = 'executivePresence';
 const SYSTEMS_THINKING_KEY = 'systemsThinking';
 const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
+
+// Function to generate today's admin password in ddmmyyyy format
+function getTodaysAdminPassword() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    return `${day}${month}${year}`;
+}
 const DEFAULT_LEADERSHIP_QUIZ_CONFIG = {
     quizEnabled: true,
     deepInsightEnabled: true,
@@ -183,6 +193,22 @@ function setPageCacheHeaders(res) {
     res.setHeader('Expires', new Date(Date.now() + pageCacheDurationMs).toUTCString());
 }
 
+function parseCookies(req) {
+    const cookies = {};
+    (req.headers.cookie || '').split(';').forEach(cookie => {
+        const [key, value] = cookie.trim().split('=');
+        if (key && value) {
+            cookies[key] = decodeURIComponent(value);
+        }
+    });
+    return cookies;
+}
+
+function isAdminAuthenticated(req) {
+    const cookies = parseCookies(req);
+    return cookies[ADMIN_AUTH_COOKIE] === 'true';
+}
+
 // 1. SERVE STATIC FILES
 // This tells Express to serve your CSS, JS, and Images from the frontend folder
 app.use(express.static(path.join(__dirname, '../frontend'), {
@@ -195,6 +221,7 @@ app.use(express.static(path.join(__dirname, '../frontend'), {
 
 app.use(cors()); 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.get('/ping', (req, res) => {
   res.status(200).send('Coach is awake!');
@@ -205,6 +232,214 @@ app.get('/ping', (req, res) => {
 app.get('/', (req, res) => {
     setPageCacheHeaders(res);
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+// ADMIN LOGIN PAGE
+app.get('/admin', (req, res) => {
+    if (isAdminAuthenticated(req)) {
+        // Already authenticated, redirect to reports
+        return res.redirect('/admin-reports');
+    }
+
+    const hasLoginError = String(req.query.error || '') === '1';
+    
+    // Serve login page
+    const loginHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Coach Dinesh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top left, rgba(74, 144, 226, 0.16), transparent 28%),
+                        linear-gradient(180deg, #f5f8fb 0%, #eef3f8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #24313d;
+        }
+
+        .login-container {
+            max-width: 420px;
+            width: 100%;
+            padding: 24px;
+        }
+
+        .login-card {
+            padding: 40px;
+            border: 1px solid rgba(96, 124, 150, 0.18);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 18px 60px rgba(38, 61, 89, 0.08);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-header h1 {
+            margin: 0 0 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            line-height: 1.1;
+            color: #17212b;
+        }
+
+        .login-header p {
+            margin: 0;
+            font-size: 14px;
+            color: #4d5e6f;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #4a6177;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #cfd9e4;
+            border-radius: 12px;
+            background: #fff;
+            font-size: 15px;
+            color: #23313d;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.14);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px 22px;
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #1d5da8 0%, #4a90e2 100%);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 14px 26px rgba(29, 93, 168, 0.22);
+            transition: transform 0.2s ease;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            cursor: wait;
+            opacity: 0.7;
+        }
+
+        .error-message {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: #fef0f0;
+            color: #b33b3b;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Admin Access</h1>
+                <p>Enter the password to access reports</p>
+            </div>
+
+            <form id="login-form" method="POST" action="/admin-login">
+                <div id="error-message" class="error-message ${hasLoginError ? 'show' : ''}">${hasLoginError ? 'Invalid password. Please try again.' : ''}</div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        name="password"
+                        id="password" 
+                        placeholder="Enter password" 
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn-submit" id="submit-btn">Access Reports</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>`;
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.send(loginHTML);
+});
+
+// ADMIN LOGIN API
+app.post('/admin-login', (req, res) => {
+    const password = String(req.body && req.body.password || '').trim();
+    const todaysPassword = getTodaysAdminPassword();
+    const prefersHtml = (req.headers.accept || '').includes('text/html');
+    
+    if (!password) {
+        if (prefersHtml) {
+            return res.redirect('/admin?error=1');
+        }
+        return res.status(400).json({ success: false, message: 'Password is required' });
+    }
+
+    if (password === todaysPassword) {
+        // Set authentication cookie
+        res.setHeader('Set-Cookie', `${ADMIN_AUTH_COOKIE}=true; Path=/; HttpOnly; SameSite=Strict`);
+        if (prefersHtml) {
+            return res.redirect('/admin-reports');
+        }
+        return res.json({ success: true, message: 'Authentication successful' });
+    }
+
+    if (prefersHtml) {
+        return res.redirect('/admin?error=1');
+    }
+    res.status(401).json({ success: false, message: 'Invalid password' });
+});
+
+// ADMIN LOGOUT API
+app.post('/admin-logout', (req, res) => {
+    res.setHeader('Set-Cookie', `${ADMIN_AUTH_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`);
+    res.json({ success: true });
 });
 
 // 3. THE CHAT API
@@ -292,7 +527,21 @@ app.get('/get-questions', (req, res) => {
     }
 });
 
+// ADMIN REPORTS PAGE - Protected
+app.get('/admin-reports', (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.redirect('/admin');
+    }
+    
+    res.sendFile(path.join(__dirname, '../frontend/admin-reports.html'));
+});
+
+// Protected Leadership Reports Endpoints
 app.get('/leadership-reports/all', (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
     try {
         const history = loadReportHistory();
         const allLeads = Object.values(history.leads || {});
@@ -313,6 +562,10 @@ app.get('/leadership-reports/all', (req, res) => {
 });
 
 app.get('/leadership-reports', (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
     try {
         const email = String(req.query.email || '').trim();
         const mobile = String(req.query.mobile || '').replace(/\s+/g, '');
@@ -324,13 +577,76 @@ app.get('/leadership-reports', (req, res) => {
         const history = loadReportHistory();
         const leadKey = createLeadKey(email, mobile);
         const leadEntry = history.leads[leadKey];
+        const reports = leadEntry && Array.isArray(leadEntry.reports)
+            ? leadEntry.reports.map(reportEntry => ({
+                ...reportEntry,
+                name: reportEntry.name || leadEntry.name,
+                email: reportEntry.email || leadEntry.email,
+                mobile: reportEntry.mobile || leadEntry.mobile
+            }))
+            : [];
 
         res.json({
-            reports: leadEntry && Array.isArray(leadEntry.reports) ? leadEntry.reports : []
+            reports
         });
     } catch (error) {
         console.error('Error retrieving leadership reports:', error.message);
         res.status(500).json({ error: 'Failed to retrieve leadership reports' });
+    }
+});
+
+app.delete('/leadership-reports', (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const requestedReports = Array.isArray(req.body && req.body.reports)
+            ? req.body.reports
+            : [];
+
+        if (requestedReports.length === 0) {
+            return res.status(400).json({ error: 'At least one report identifier is required' });
+        }
+
+        const history = loadReportHistory();
+        let deletedCount = 0;
+
+        requestedReports.forEach((reportIdentifier) => {
+            const email = String(reportIdentifier && reportIdentifier.email || '').trim().toLowerCase();
+            const mobile = String(reportIdentifier && reportIdentifier.mobile || '').replace(/\s+/g, '');
+            const timestamp = String(reportIdentifier && reportIdentifier.timestamp || '').trim();
+            const quizType = String(reportIdentifier && reportIdentifier.quizType || '').trim();
+
+            if (!email || !/^\+\d{7,15}$/.test(mobile) || !timestamp || !quizType) {
+                return;
+            }
+
+            const leadKey = createLeadKey(email, mobile);
+            const leadEntry = history.leads[leadKey];
+            if (!leadEntry || !Array.isArray(leadEntry.reports)) {
+                return;
+            }
+
+            const originalCount = leadEntry.reports.length;
+            leadEntry.reports = leadEntry.reports.filter((reportEntry) => {
+                return !(reportEntry.timestamp === timestamp && reportEntry.quizType === quizType);
+            });
+
+            deletedCount += originalCount - leadEntry.reports.length;
+
+            if (leadEntry.reports.length === 0) {
+                delete history.leads[leadKey];
+            } else {
+                history.leads[leadKey] = leadEntry;
+            }
+        });
+
+        saveReportHistory(history);
+        res.json({ deletedCount });
+    } catch (error) {
+        console.error('Error deleting leadership reports:', error.message);
+        res.status(500).json({ error: 'Failed to delete reports' });
     }
 });
 

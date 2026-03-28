@@ -28,6 +28,29 @@ body {
     margin-bottom: 28px;
 }
 
+.admin-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.btn-logout {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 16px;
+    background: rgba(168, 50, 50, 0.1);
+    color: #a83232;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-logout:hover {
+    background: rgba(168, 50, 50, 0.2);
+}
+
 .eyebrow {
     margin: 0 0 10px;
     font-size: 12px;
@@ -182,6 +205,50 @@ body {
     margin-top: 28px;
 }
 
+.results-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 1px solid rgba(96, 124, 150, 0.16);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 50px rgba(38, 61, 89, 0.08);
+}
+
+.toolbar-select {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #39536d;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-danger {
+    border: none;
+    border-radius: 999px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, #a83232 0%, #d85a5a 100%);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 12px 24px rgba(168, 50, 50, 0.22);
+}
+
+.btn-danger:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 .empty-state,
 .report-card {
     border: 1px solid rgba(96, 124, 150, 0.16);
@@ -197,6 +264,16 @@ body {
 
 .report-card {
     overflow: hidden;
+}
+
+.report-card-selection {
+    padding: 16px 18px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a6177;
 }
 
 .report-card-header {
@@ -299,6 +376,7 @@ body {
     }
 
     .search-panel,
+    .results-toolbar,
     .report-card-body,
     .report-card-header {
         padding-left: 16px;
@@ -316,8 +394,13 @@ body {
 <body>
     <main class="admin-shell">
         <section class="admin-hero">
-            <p class="eyebrow">Internal Tool</p>
-            <h1>Leadership Reports Admin</h1>
+            <div class="admin-hero-top">
+                <div>
+                    <p class="eyebrow">Internal Tool</p>
+                    <h1>Leadership Reports Admin</h1>
+                </div>
+                <button class="btn-logout" onclick="adminLogout()">Log Out</button>
+            </div>
             <p class="hero-copy">Look up previously generated assessment reports using the lead's email address and mobile number.</p>
         </section>
 
@@ -380,6 +463,18 @@ body {
             <p id="all-status-message" class="status-message" aria-live="polite"></p>
         </section>
 
+        <section id="results-toolbar" class="results-toolbar" style="display:none;">
+            <label class="toolbar-select">
+                <input type="checkbox" id="select-all-reports-checkbox">
+                <span>Select / unselect all reports</span>
+            </label>
+            <div class="toolbar-actions">
+                <span id="selection-count-label" class="status-message" style="min-height:auto; margin:0;">0 selected</span>
+                <button class="btn-danger" id="delete-all-visible-btn" type="button" onclick="deleteVisibleReports()" disabled>Delete All Visible</button>
+                <button class="btn-danger" id="delete-selected-btn" type="button" onclick="deleteSelectedReports()" disabled>Delete Selected</button>
+            </div>
+        </section>
+
         <section id="results-panel" class="results-panel"></section>
     </main>
 
@@ -394,6 +489,8 @@ const ADMIN_DEEP_SECTION_TITLES = [
     'Risks And Blind Spots',
     'Development Priorities'
 ];
+let currentReports = [];
+let selectedReportKeys = new Set();
 
 function adminEscapeHtml(value) {
     return String(value || '')
@@ -475,6 +572,62 @@ function formatTimestamp(timestamp) {
     return Number.isNaN(date.getTime()) ? timestamp : date.toLocaleString();
 }
 
+function createReportSelectionKey(report) {
+    return [report.email || '', report.mobile || '', report.timestamp || '', report.quizType || ''].join('::');
+}
+
+function updateSelectionToolbar() {
+    const toolbar = document.getElementById('results-toolbar');
+    const deleteButton = document.getElementById('delete-selected-btn');
+    const deleteAllButton = document.getElementById('delete-all-visible-btn');
+    const countLabel = document.getElementById('selection-count-label');
+    const selectAllCheckbox = document.getElementById('select-all-reports-checkbox');
+    const totalReports = currentReports.length;
+    const selectedCount = selectedReportKeys.size;
+
+    if (toolbar) {
+        toolbar.style.display = totalReports > 0 ? 'flex' : 'none';
+    }
+
+    if (deleteButton) {
+        deleteButton.disabled = selectedCount === 0;
+    }
+
+    if (deleteAllButton) {
+        deleteAllButton.disabled = totalReports === 0;
+    }
+
+    if (countLabel) {
+        countLabel.textContent = `${selectedCount} selected`;
+    }
+
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = totalReports > 0 && selectedCount === totalReports;
+        selectAllCheckbox.indeterminate = selectedCount > 0 && selectedCount < totalReports;
+    }
+}
+
+function toggleReportSelection(reportKey, isSelected) {
+    if (isSelected) {
+        selectedReportKeys.add(reportKey);
+    } else {
+        selectedReportKeys.delete(reportKey);
+    }
+    updateSelectionToolbar();
+}
+
+function toggleSelectAllReports(isSelected) {
+    selectedReportKeys = isSelected
+        ? new Set(currentReports.map(createReportSelectionKey))
+        : new Set();
+
+    document.querySelectorAll('.report-select-checkbox').forEach((checkbox) => {
+        checkbox.checked = isSelected;
+    });
+
+    updateSelectionToolbar();
+}
+
 function renderReportCard(report) {
     const isDeepReport = report.quizType === 'deep';
     const assessmentLabelMap = {
@@ -509,9 +662,15 @@ function renderReportCard(report) {
     const summaryPill = report.summary
         ? `<span class="meta-pill">Summary: ${adminEscapeHtml(String(report.summary).slice(0, 60))}${String(report.summary).length > 60 ? '…' : ''}</span>`
         : '';
+    const reportKey = createReportSelectionKey(report);
+    const isChecked = selectedReportKeys.has(reportKey) ? 'checked' : '';
 
     return `
         <article class="report-card">
+            <label class="report-card-selection">
+                <input type="checkbox" class="report-select-checkbox" data-report-key="${adminEscapeHtml(reportKey)}" ${isChecked}>
+                <span>Select this report</span>
+            </label>
             <div class="report-card-header">
                 <div>
                     <h2>${adminEscapeHtml(report.name || 'Leadership Report')}</h2>
@@ -543,6 +702,8 @@ function setStatus(message, isError) {
 
 function renderResults(reports) {
     const resultsPanel = document.getElementById('results-panel');
+    currentReports = Array.isArray(reports) ? reports : [];
+    selectedReportKeys = new Set();
 
     if (!Array.isArray(reports) || reports.length === 0) {
         resultsPanel.innerHTML = `
@@ -551,6 +712,7 @@ function renderResults(reports) {
                 <p>Try a different email or mobile combination.</p>
             </div>
         `;
+        updateSelectionToolbar();
         return;
     }
 
@@ -558,7 +720,17 @@ function renderResults(reports) {
         return new Date(secondReport.timestamp).getTime() - new Date(firstReport.timestamp).getTime();
     });
 
+    currentReports = sortedReports;
+
     resultsPanel.innerHTML = sortedReports.map(renderReportCard).join('');
+
+    document.querySelectorAll('.report-select-checkbox').forEach((checkbox) => {
+        checkbox.addEventListener('change', (event) => {
+            toggleReportSelection(event.target.dataset.reportKey, event.target.checked);
+        });
+    });
+
+    updateSelectionToolbar();
 }
 
 async function handleAdminSearch(event) {
@@ -577,6 +749,8 @@ async function handleAdminSearch(event) {
         setStatus('Loading stored reports...', false);
 
         const response = await fetch(`/leadership-reports?email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(normalizedMobile)}`);
+        
+        checkUnauthorized(response);
 
         if (!response.ok) {
             const errorPayload = await response.json().catch(() => ({}));
@@ -587,7 +761,10 @@ async function handleAdminSearch(event) {
         renderResults(data.reports || []);
         setStatus(`Loaded ${Array.isArray(data.reports) ? data.reports.length : 0} report(s).`, false);
     } catch (error) {
+        currentReports = [];
+        selectedReportKeys = new Set();
         document.getElementById('results-panel').innerHTML = '';
+        updateSelectionToolbar();
         setStatus(error.message, true);
     } finally {
         searchButton.disabled = false;
@@ -604,6 +781,9 @@ function switchTab(tab) {
     document.getElementById('panel-search').style.display = tab === 'search' ? '' : 'none';
     document.getElementById('panel-all').style.display = tab === 'all' ? '' : 'none';
     document.getElementById('results-panel').innerHTML = '';
+    currentReports = [];
+    selectedReportKeys = new Set();
+    updateSelectionToolbar();
     document.getElementById('tab-search').classList.toggle('tab-btn-active', tab === 'search');
     document.getElementById('tab-all').classList.toggle('tab-btn-active', tab === 'all');
     setStatus('', false);
@@ -620,6 +800,8 @@ async function loadAllReports() {
 
     try {
         const response = await fetch('/leadership-reports/all');
+        
+        checkUnauthorized(response);
 
         if (!response.ok) {
             const errorPayload = await response.json().catch(() => ({}));
@@ -630,7 +812,10 @@ async function loadAllReports() {
         renderResults(data.reports || []);
         allStatusMsg.textContent = `Loaded ${(data.reports || []).length} report(s) across all leads.`;
     } catch (error) {
+        currentReports = [];
+        selectedReportKeys = new Set();
         document.getElementById('results-panel').innerHTML = '';
+        updateSelectionToolbar();
         allStatusMsg.textContent = error.message;
         allStatusMsg.classList.add('error');
     } finally {
@@ -638,6 +823,111 @@ async function loadAllReports() {
         loadAllBtn.textContent = 'Load All Leads';
     }
 }
+
+async function deleteSelectedReports() {
+    const selectedReports = currentReports.filter((report) => selectedReportKeys.has(createReportSelectionKey(report)));
+    if (selectedReports.length === 0) {
+        return;
+    }
+
+    const confirmed = window.confirm(`Delete ${selectedReports.length} selected report(s)? This cannot be undone.`);
+    if (!confirmed) {
+        return;
+    }
+
+    await deleteReports(selectedReports, 'Delete Selected', selectedReports.length);
+}
+
+async function deleteVisibleReports() {
+    if (currentReports.length === 0) {
+        return;
+    }
+
+    const confirmed = window.confirm(`Delete all ${currentReports.length} visible report(s)? This cannot be undone.`);
+    if (!confirmed) {
+        return;
+    }
+
+    await deleteReports(currentReports, 'Delete All Visible', currentReports.length);
+}
+
+async function deleteReports(reportsToDelete, buttonLabel, expectedCount) {
+    const deleteButton = buttonLabel === 'Delete Selected'
+        ? document.getElementById('delete-selected-btn')
+        : document.getElementById('delete-all-visible-btn');
+    const payload = reportsToDelete.map((report) => ({
+        email: report.email,
+        mobile: report.mobile,
+        timestamp: report.timestamp,
+        quizType: report.quizType
+    }));
+
+    deleteButton.disabled = true;
+    deleteButton.textContent = 'Deleting...';
+
+    try {
+        const response = await fetch('/leadership-reports', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reports: payload })
+        });
+
+        checkUnauthorized(response);
+
+        if (!response.ok) {
+            const errorPayload = await response.json().catch(() => ({}));
+            throw new Error(errorPayload.error || 'Failed to delete reports.');
+        }
+
+        const deletedKeys = new Set(reportsToDelete.map(createReportSelectionKey));
+        currentReports = currentReports.filter((report) => !deletedKeys.has(createReportSelectionKey(report)));
+        selectedReportKeys = new Set();
+        renderResults(currentReports);
+
+        if (currentTab === 'search') {
+            setStatus(`Deleted ${expectedCount} report(s).`, false);
+        } else {
+            const allStatusMsg = document.getElementById('all-status-message');
+            allStatusMsg.textContent = `Deleted ${expectedCount} report(s).`;
+            allStatusMsg.classList.remove('error');
+        }
+    } catch (error) {
+        if (currentTab === 'search') {
+            setStatus(error.message, true);
+        } else {
+            const allStatusMsg = document.getElementById('all-status-message');
+            allStatusMsg.textContent = error.message;
+            allStatusMsg.classList.add('error');
+        }
+    } finally {
+        deleteButton.textContent = buttonLabel;
+        updateSelectionToolbar();
+    }
+}
+
+function checkUnauthorized(response) {
+    if (response.status === 401) {
+        window.location.href = '/admin';
+        throw new Error('Unauthorized - redirecting to login');
+    }
+    return response;
+}
+
+async function adminLogout() {
+    try {
+        const response = await fetch('/admin-logout', { method: 'POST' });
+        if (response.ok) {
+            window.location.href = '/admin';
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '/admin';
+    }
+}
+
+document.getElementById('select-all-reports-checkbox').addEventListener('change', (event) => {
+    toggleSelectAllReports(event.target.checked);
+});
 </script>
 </body>
 </html>
