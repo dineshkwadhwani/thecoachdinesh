@@ -8,7 +8,7 @@ function createInitialTransformationState() {
         plan: null,
         generatedAt: '',
         sourceReports: [],
-        assessmentSnapshot: null
+        assessmentSummary: null
     };
 }
 
@@ -155,7 +155,7 @@ async function generateTransformationPlan() {
         transformationState.plan = payload.plan || null;
         transformationState.generatedAt = payload.generatedAt || new Date().toISOString();
         transformationState.sourceReports = Array.isArray(payload.sourceReports) ? payload.sourceReports : [];
-        transformationState.assessmentSnapshot = payload.assessmentSnapshot || null;
+        transformationState.assessmentSummary = payload.assessmentSummary || null;
 
         transformationRenderReport();
         transformationShowStep('report');
@@ -170,7 +170,7 @@ async function generateTransformationPlan() {
 
 function transformationRenderReport() {
     const plan = transformationState.plan || {};
-    const assessmentSnapshot = transformationState.assessmentSnapshot || {};
+    const assessmentSummary = transformationState.assessmentSummary || {};
 
     const titleEl = document.getElementById('transformation-report-title');
     const subtitleEl = document.getElementById('transformation-report-subtitle');
@@ -188,22 +188,22 @@ function transformationRenderReport() {
         subtitleEl.textContent = `${transformationState.name} | Generated on ${dateText}`;
     }
 
-    const totalAnalysed = assessmentSnapshot.totalAssessmentsAnalysed || (transformationState.sourceReports || []).length;
+    const totalAnalysed = assessmentSummary.totalAssessmentsAnalysed || (transformationState.sourceReports || []).length;
 
-    const styleLine = assessmentSnapshot.style && assessmentSnapshot.style.taken
-        ? `${assessmentSnapshot.style.dominantStyle || 'N/A'}${assessmentSnapshot.style.secondaryStyle ? ` | Secondary: ${assessmentSnapshot.style.secondaryStyle}` : ''}${assessmentSnapshot.style.attemptCount > 1 ? ` (${assessmentSnapshot.style.attemptCount} attempts analysed)` : ''}`
+    const styleLine = assessmentSummary.style && assessmentSummary.style.taken
+        ? `${assessmentSummary.style.dominantStyle || 'N/A'}${assessmentSummary.style.secondaryStyle ? ` | Secondary: ${assessmentSummary.style.secondaryStyle}` : ''}${assessmentSummary.style.attemptCount > 1 ? ` (${assessmentSummary.style.attemptCount} attempts analysed)` : ''}`
         : 'Not available';
 
-    const clarityLine = assessmentSnapshot.clarity && assessmentSnapshot.clarity.taken
-        ? `Noise Score: ${assessmentSnapshot.clarity.noiseScore ?? 'N/A'}% | ${assessmentSnapshot.clarity.summary || ''}${assessmentSnapshot.clarity.attemptCount > 1 ? ` (${assessmentSnapshot.clarity.attemptCount} attempts analysed)` : ''}`
+    const clarityLine = assessmentSummary.clarity && assessmentSummary.clarity.taken
+        ? `Noise Score: ${assessmentSummary.clarity.noiseScore ?? 'N/A'}% | ${assessmentSummary.clarity.summary || ''}${assessmentSummary.clarity.attemptCount > 1 ? ` (${assessmentSummary.clarity.attemptCount} attempts analysed)` : ''}`
         : 'Not available';
 
-    const presenceLine = assessmentSnapshot.presence && assessmentSnapshot.presence.taken
-        ? `${assessmentSnapshot.presence.summary || 'Available'}${assessmentSnapshot.presence.attemptCount > 1 ? ` (${assessmentSnapshot.presence.attemptCount} attempts analysed)` : ''}`
+    const presenceLine = assessmentSummary.presence && assessmentSummary.presence.taken
+        ? `${assessmentSummary.presence.summary || 'Available'}${assessmentSummary.presence.attemptCount > 1 ? ` (${assessmentSummary.presence.attemptCount} attempts analysed)` : ''}`
         : 'Not available';
 
-    const systemsLine = assessmentSnapshot.systems && assessmentSnapshot.systems.taken
-        ? `${assessmentSnapshot.systems.summary || 'Available'}${assessmentSnapshot.systems.attemptCount > 1 ? ` (${assessmentSnapshot.systems.attemptCount} attempts analysed)` : ''}`
+    const systemsLine = assessmentSummary.systems && assessmentSummary.systems.taken
+        ? `${assessmentSummary.systems.summary || 'Available'}${assessmentSummary.systems.attemptCount > 1 ? ` (${assessmentSummary.systems.attemptCount} attempts analysed)` : ''}`
         : 'Not available';
 
     if (bodyEl) {
@@ -211,7 +211,7 @@ function transformationRenderReport() {
             <h4>Executive Summary</h4>
             <p>${escapeTransformationHtml(plan.executiveSummary || '')}</p>
 
-            <h4>Consolidated Assessment Snapshot</h4>
+            <h4>Consolidated Assessment Summary</h4>
             <p><em>Based on ${totalAnalysed} total assessment${totalAnalysed !== 1 ? 's' : ''} on record — full history analysed to identify patterns and evolution.</em></p>
             <ul>
                 <li><strong>Leadership Style:</strong> ${escapeTransformationHtml(styleLine)}</li>

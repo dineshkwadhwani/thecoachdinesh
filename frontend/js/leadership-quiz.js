@@ -12,7 +12,7 @@ const DEFAULT_QUIZ_MESSAGES = {
     welcome: {
         quickTitle: 'Welcome to Reflect Your Style (Quick)',
         quickStartLabel: 'Start Quick Reflection',
-        quickIntro: 'This quick assessment gives you a focused snapshot of your current leadership style.',
+        quickIntro: 'This quick assessment gives you a focused summary of your current leadership style.',
         quickPoints: [
             'What to expect: a short set of scenario-based leadership questions.',
             'Output: your dominant style, secondary tendency, and a concise interpretation.',

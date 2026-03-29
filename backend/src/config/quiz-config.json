@@ -3,16 +3,16 @@
   "reflectYourStyle": {
     "quizEnabled": true,
     "deepInsightEnabled": true,
-    "quickQuestionCount": 5,
-    "deepQuestionCount": 5
+    "quickQuestionCount": 10,
+    "deepQuestionCount": 25
   },
   "strategicClarity": {
     "quizEnabled": true,
-    "scenarioCount": 5
+    "scenarioCount": 10
   },
   "executivePresence": {
     "quizEnabled": true,
-    "scenarioCount": 5
+    "scenarioCount": 10
   },
   "systemsThinking": {
     "quizEnabled": true,

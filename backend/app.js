@@ -17,7 +17,7 @@ const STRATEGIC_CLARITY_KEY = 'strategicClarity';
 const EXECUTIVE_PRESENCE_KEY = 'executivePresence';
 const SYSTEMS_THINKING_KEY = 'systemsThinking';
 const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
-const TRANSFORMATION_SNAPSHOT_PATH = path.join(__dirname, 'transformation-snapshot.json');
+const TRANSFORMATION_SUMMARY_PATH = path.join(__dirname, 'transformation-summary.json');
 const TRANSFORMATION_SOURCE_QUIZ_TYPES = new Set(['quick', 'deep', 'clarity', 'presence', 'systems']);
 
 // Function to generate today's admin password in ddmmyyyy format
@@ -97,9 +97,9 @@ function normalizeSystemsThinkingConfig(rawConfig = {}) {
 }
 
 function loadLeadershipQuizData() {
-    const questionsPath = path.join(__dirname, 'questions.json');
-    const configPath = path.join(__dirname, 'quiz-config.json');
-    const messagesPath = path.join(__dirname, 'messages.json');
+    const questionsPath = path.join(__dirname, 'src/config/questions.json');
+    const configPath = path.join(__dirname, 'src/config/quiz-config.json');
+    const messagesPath = path.join(__dirname, 'src/config/messages.json');
 
     const questionsData = fs.readFileSync(questionsPath, 'utf-8');
     const questions = JSON.parse(questionsData);
@@ -161,37 +161,37 @@ function saveReportHistory(history) {
     fs.writeFileSync(REPORT_HISTORY_PATH, JSON.stringify(history, null, 2));
 }
 
-// Transformation snapshot: tracks assessment count at time of last plan generation, keyed by phone
-function loadTransformationSnapshot() {
+// Transformation summary: tracks assessment count at time of last plan generation, keyed by phone
+function loadTransformationSummary() {
     try {
-        if (fs.existsSync(TRANSFORMATION_SNAPSHOT_PATH)) {
-            const data = fs.readFileSync(TRANSFORMATION_SNAPSHOT_PATH, 'utf-8');
+        if (fs.existsSync(TRANSFORMATION_SUMMARY_PATH)) {
+            const data = fs.readFileSync(TRANSFORMATION_SUMMARY_PATH, 'utf-8');
             const parsed = JSON.parse(data);
             return parsed && typeof parsed === 'object' ? parsed : {};
         }
     } catch (error) {
-        console.error('Error loading transformation snapshot:', error.message);
+        console.error('Error loading transformation summary:', error.message);
     }
     return {};
 }
 
-function saveTransformationSnapshot(snapshot) {
-    fs.writeFileSync(TRANSFORMATION_SNAPSHOT_PATH, JSON.stringify(snapshot, null, 2));
+function saveTransformationSummary(summary) {
+    fs.writeFileSync(TRANSFORMATION_SUMMARY_PATH, JSON.stringify(summary, null, 2));
 }
 
 function getTransformationAssessmentCount(phone) {
-    const snapshot = loadTransformationSnapshot();
-    const entry = snapshot[String(phone || '').trim()];
+    const summary = loadTransformationSummary();
+    const entry = summary[String(phone || '').trim()];
     return entry && typeof entry.assessmentCount === 'number' ? entry.assessmentCount : null;
 }
 
 function setTransformationAssessmentCount(phone, count) {
-    const snapshot = loadTransformationSnapshot();
-    snapshot[String(phone || '').trim()] = {
+    const summary = loadTransformationSummary();
+    summary[String(phone || '').trim()] = {
         assessmentCount: count,
         updatedAt: new Date().toISOString()
     };
-    saveTransformationSnapshot(snapshot);
+    saveTransformationSummary(summary);
 }
 
 function getLatestStoredReport(history, email, mobile, quizType) {
@@ -308,7 +308,7 @@ function getReportPreview(text, maxLength = 220) {
         .slice(0, maxLength);
 }
 
-function buildTransformationAssessmentSnapshot(latestByType, allSourceReports) {
+function buildTransformationAssessmentSummary(latestByType, allSourceReports) {
     const reports = allSourceReports || latestByType;
     const styleReport = latestByType.find(entry => entry.quizType === 'deep') || latestByType.find(entry => entry.quizType === 'quick');
     const clarityReport = latestByType.find(entry => entry.quizType === 'clarity');
@@ -487,25 +487,25 @@ function normalizeTransformationPlan(rawPlan) {
     };
 }
 
-function buildTransformationReportText(plan, assessmentSnapshot = {}) {
+function buildTransformationReportText(plan, assessmentSummary = {}) {
     const actionLines = (plan.actionItems || [])
         .map((item, index) => `${index + 1}. ${item.area}: ${item.keyAction} | Mode: ${item.deliveryMode} | Benefit: ${item.benefit} | Start: ${item.startDate} | Review: ${item.reviewDate} | Review Type: ${item.reviewType}`)
         .join('\n');
 
-    const testsTakenLine = Array.isArray(assessmentSnapshot.takenTests) && assessmentSnapshot.takenTests.length > 0
-        ? assessmentSnapshot.takenTests.join(', ')
+    const testsTakenLine = Array.isArray(assessmentSummary.takenTests) && assessmentSummary.takenTests.length > 0
+        ? assessmentSummary.takenTests.join(', ')
         : 'No prior assessments listed';
 
     return [
         'Executive Summary',
         plan.executiveSummary,
         '',
-        'Consolidated Assessment Snapshot',
+        'Consolidated Assessment Summary',
         `Tests Taken: ${testsTakenLine}`,
-        `Style: ${assessmentSnapshot.style && assessmentSnapshot.style.taken ? `${assessmentSnapshot.style.dominantStyle || 'N/A'} (Secondary: ${assessmentSnapshot.style.secondaryStyle || 'N/A'})` : 'Not available'}`,
-        `Clarity: ${assessmentSnapshot.clarity && assessmentSnapshot.clarity.taken ? `Noise Score ${assessmentSnapshot.clarity.noiseScore ?? 'N/A'}%` : 'Not available'}`,
-        `Presence Summary: ${assessmentSnapshot.presence && assessmentSnapshot.presence.taken ? assessmentSnapshot.presence.summary || 'Available' : 'Not available'}`,
-        `Systems Summary: ${assessmentSnapshot.systems && assessmentSnapshot.systems.taken ? assessmentSnapshot.systems.summary || 'Available' : 'Not available'}`,
+        `Style: ${assessmentSummary.style && assessmentSummary.style.taken ? `${assessmentSummary.style.dominantStyle || 'N/A'} (Secondary: ${assessmentSummary.style.secondaryStyle || 'N/A'})` : 'Not available'}`,
+        `Clarity: ${assessmentSummary.clarity && assessmentSummary.clarity.taken ? `Noise Score ${assessmentSummary.clarity.noiseScore ?? 'N/A'}%` : 'Not available'}`,
+        `Presence Summary: ${assessmentSummary.presence && assessmentSummary.presence.taken ? assessmentSummary.presence.summary || 'Available' : 'Not available'}`,
+        `Systems Summary: ${assessmentSummary.systems && assessmentSummary.systems.taken ? assessmentSummary.systems.summary || 'Available' : 'Not available'}`,
         '',
         'Industry Benchmark Comparison',
         plan.industryComparison,
@@ -1701,9 +1701,9 @@ app.post('/analyze-transformation', async (req, res) => {
         }
 
         // Check if a transformation report already exists for this phone
-        // using the snapshot file (keyed by phone) to compare assessment counts
-        const snapshotCount = getTransformationAssessmentCount(normalizedPhone);
-        if (snapshotCount !== null && snapshotCount === sourceReports.length) {
+        // using the summary file (keyed by phone) to compare assessment counts
+        const summaryCount = getTransformationAssessmentCount(normalizedPhone);
+        if (summaryCount !== null && summaryCount === sourceReports.length) {
             return res.json({
                 alreadyCreated: true,
                 name,
@@ -1755,7 +1755,7 @@ app.post('/analyze-transformation', async (req, res) => {
             return [header, ...lines].join('\n');
         }).join('\n\n');
 
-        const assessmentSnapshot = buildTransformationAssessmentSnapshot(latestByType, sourceReports);
+        const assessmentSummary = buildTransformationAssessmentSummary(latestByType, sourceReports);
 
         const systemPrompt = `You are an elite executive leadership coach with deep expertise in pattern recognition across repeated assessments. Build a professional transformation report using ALL provided assessment history — not just the most recent one.
 
@@ -1815,7 +1815,7 @@ Using ALL ${sourceReports.length} assessments above, generate a comprehensive tr
                 name,
                 generatedAt: new Date().toISOString(),
                 sourceReports: latestByType,
-                assessmentSnapshot: buildTransformationAssessmentSnapshot(latestByType, sourceReports),
+                assessmentSummary: buildTransformationAssessmentSummary(latestByType, sourceReports),
                 plan: {
                     executiveSummary: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
                     gapAnalysis: 'API CALL SUCCESSFUL, TEST CALL PREVENTED',
@@ -1867,9 +1867,9 @@ Using ALL ${sourceReports.length} assessments above, generate a comprehensive tr
             summary: normalizedPlan.executiveSummary.slice(0, 220),
             sourceReportCount: sourceReports.length,
             sourceQuizTypes: latestByType.map(reportEntry => reportEntry.quizType),
-            assessmentSnapshot,
+            assessmentSummary,
             plan: normalizedPlan,
-            report: buildTransformationReportText(normalizedPlan, assessmentSnapshot)
+            report: buildTransformationReportText(normalizedPlan, assessmentSummary)
         });
         saveReportHistory(history);
 
@@ -1888,7 +1888,7 @@ Using ALL ${sourceReports.length} assessments above, generate a comprehensive tr
             name,
             generatedAt: timestamp,
             sourceReports: latestByType,
-            assessmentSnapshot,
+            assessmentSummary,
             plan: normalizedPlan
         });
     } catch (error) {
