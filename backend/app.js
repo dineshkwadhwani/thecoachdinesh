@@ -766,6 +766,18 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
+// PROJECTS PAGE (standalone, not linked from the main site nav)
+app.get('/projects', (req, res) => {
+    setPageCacheHeaders(res);
+    res.sendFile(path.join(__dirname, '../frontend/projects.html'));
+});
+
+// PORTFOLIO / RESUME PAGE (standalone, not linked from the main site nav)
+app.get('/portfolio', (req, res) => {
+    setPageCacheHeaders(res);
+    res.sendFile(path.join(__dirname, '../frontend/portfolio.html'));
+});
+
 // ADMIN LOGIN PAGE
 app.get('/admin', (req, res) => {
     if (isAdminAuthenticated(req)) {

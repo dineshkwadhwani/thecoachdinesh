@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Portfolio | Dinesh Wadhwani</title>
+
+<style>
+
+/* SECTION SPACING (tighter than the marketing-page default) */
+section{
+  padding:60px 10%;
+}
+
+.section-title{
+  margin-bottom:35px;
+}
+
+/* HERO OVERRIDES */
+.portfolio-hero{
+  grid-template-columns:1fr 1.3fr;
+  padding-top:150px;
+  padding-bottom:40px;
+  align-items:center;
+}
+
+.portfolio-hero .portfolio-photo{
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid rgba(255,255,255,.15);
+  box-shadow:0 20px 50px rgba(0,0,0,.45);
+  margin:0 auto;
+  display:block;
+}
+
+.portfolio-title{
+  font-size:17px;
+  opacity:.85;
+  margin-bottom:8px;
+  font-weight:500;
+}
+
+.portfolio-subtitle{
+  font-size:15px;
+  opacity:.65;
+  margin-bottom:24px;
+}
+
+.portfolio-contact{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px 26px;
+  font-size:14px;
+  opacity:.85;
+  margin-bottom:30px;
+}
+
+.portfolio-contact a{
+  color:white;
+  opacity:.9;
+  text-decoration:none;
+}
+
+.portfolio-contact a:hover{ opacity:1; text-decoration:underline; }
+
+.hero-buttons{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.hero-buttons .btn,
+.hero-buttons .btn-outline{
+  padding:15px 36px;
+  border-radius:40px;
+  font-weight:500;
+  text-decoration:none;
+}
+
+.hero-buttons .btn-outline{
+  background:transparent;
+  color:white;
+  border:1px solid rgba(255,255,255,.35);
+}
+
+.hero-buttons .btn-outline:hover{
+  border-color:#3b82f6;
+  background:rgba(255,255,255,.06);
+}
+
+/* SUMMARY */
+.summary-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,.1);
+  padding:40px;
+  border-radius:18px;
+  backdrop-filter:blur(10px);
+}
+
+.summary-card p{ margin-bottom:18px; opacity:.9; }
+.summary-card p:last-child{ margin-bottom:0; }
+
+/* SKILL CHIPS */
+.skills-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.skill-chip{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  padding:10px 18px;
+  border-radius:30px;
+  font-size:14px;
+  opacity:.9;
+  transition:.2s;
+}
+
+.skill-chip:hover{
+  border-color:#3b82f6;
+  transform:translateY(-2px);
+}
+
+/* EXPERIENCE TIMELINE */
+.exp-entry{
+  margin-bottom:50px;
+}
+
+.exp-entry:last-child{ margin-bottom:0; }
+
+.exp-role{
+  font-family:"Playfair Display",serif;
+  font-size:24px;
+  margin-bottom:4px;
+}
+
+.exp-role span{
+  opacity:.7;
+  font-family:Inter,sans-serif;
+  font-size:16px;
+  font-weight:400;
+}
+
+.exp-role span a{
+  color:inherit;
+  text-decoration:underline;
+  text-decoration-color:rgba(255,255,255,.35);
+}
+
+.exp-role span a:hover{
+  color:#93c5fd;
+  text-decoration-color:#93c5fd;
+}
+
+.exp-meta{
+  font-size:14px;
+  opacity:.6;
+  margin-bottom:16px;
+}
+
+.exp-entry ul{
+  padding-left:20px;
+  opacity:.9;
+}
+
+.exp-entry li{
+  margin-bottom:10px;
+}
+
+.exp-entry li strong{ color:#93c5fd; }
+
+/* EARLIER CAREER */
+.earlier-career{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:24px 30px;
+}
+
+.earlier-career .row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:15px;
+  flex-wrap:wrap;
+}
+
+.earlier-career .row:last-child{ border-bottom:none; }
+.earlier-career .role{ opacity:.9; }
+.earlier-career .dates{ opacity:.55; font-size:13px; }
+
+/* TECH STACK */
+.tech-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+
+.tech-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:22px 26px;
+}
+
+.tech-card h4{
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:#93c5fd;
+  margin-bottom:10px;
+}
+
+.tech-card p{
+  font-size:14px;
+  opacity:.85;
+  margin:0;
+}
+
+/* PATENTS */
+.patent-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:24px;
+}
+
+.patent-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:26px 28px;
+}
+
+.patent-badge{
+  display:inline-block;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  padding:4px 12px;
+  border-radius:20px;
+  margin-bottom:14px;
+}
+
+.patent-badge.granted{ background:rgba(34,197,94,.15); color:#4ade80; }
+.patent-badge.filed{ background:rgba(59,130,246,.15); color:#93c5fd; }
+
+.patent-card h4{ font-size:17px; margin-bottom:8px; }
+.patent-card p{ font-size:14px; opacity:.85; margin:0; }
+
+/* EDUCATION */
+.edu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+}
+
+.edu-grid h4{
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:#93c5fd;
+  margin-bottom:16px;
+}
+
+.edu-grid ul{ list-style:none; }
+.edu-grid li{
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:15px;
+  opacity:.9;
+}
+.edu-grid li:last-child{ border-bottom:none; }
+
+/* CTA */
+.portfolio-cta p{ margin-bottom:10px; }
+.portfolio-cta .btn{ display:inline-block; margin-top:24px; }
+
+@media (max-width:900px){
+  .portfolio-hero{ grid-template-columns:1fr; text-align:center; }
+  .portfolio-contact{ justify-content:center; }
+  .hero-buttons{ justify-content:center; }
+  .edu-grid{ grid-template-columns:1fr; }
+}
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div><a href="/" class="brand-link">Coach Dinesh</a></div>
+
+<div class="menu-toggle">
+<span></span>
+<span></span>
+<span></span>
+</div>
+
+<div class="nav-links">
+<a href="/">Home</a>
+</div>
+
+</nav>
+
+<!-- HERO -->
+<section class="hero portfolio-hero" id="top">
+
+<div>
+<img src="images/hero-dinesh.png" alt="Dinesh Wadhwani" class="portfolio-photo">
+</div>
+
+<div>
+<h1>Dinesh Wadhwani</h1>
+<p class="portfolio-title">
+Senior Engineering Leader | AI &amp; LLM Transformation | GCC Build &amp; Operations | Cloud | Multi-Tenant SaaS
+</p>
+<p class="portfolio-subtitle">
+Customer Experience &middot; Payments &amp; Fraud &middot; Education &middot; Health and Insurance
+</p>
+
+<div class="portfolio-contact">
+<a href="tel:+919767676738">+91 9767 6767 38</a>
+<a href="mailto:dinesh.k.wadhwani@gmail.com">dinesh.k.wadhwani@gmail.com</a>
+<a href="https://linkedin.com/in/dineshkwadhwani" target="_blank" rel="noopener">linkedin.com/in/dineshkwadhwani</a>
+<span>Pune, India</span>
+<span>Open to All Roles/Locations</span>
+</div>
+
+<div class="hero-buttons">
+<a class="btn" href="files/Dinesh_Wadhwani_Resume.pdf" download="Dinesh_Wadhwani_Resume.pdf">Download Resume</a>
+<a class="btn-outline" href="#experience">View Experience</a>
+</div>
+
+</div>
+
+</section>
+
+<!-- PROFESSIONAL SUMMARY -->
+<section id="summary">
+<h2 class="section-title">Professional Summary</h2>
+
+<div class="summary-card">
+<p>
+AI-driven Senior Engineering Leader with 25+ years progressing from engineer to Senior Director, building and scaling
+enterprise software organisations across Customer Experience (CX), Payments &amp; Fraud (Actimize), and Education. Led
+Global Capability Centres of 400+ engineers across India, US, Europe, and APAC. Deep expertise in leading GCC teams,
+end-to-end product development and delivery ownership, operationalising LLM and Agentic/Generative AI, driving
+cloud-native transformation and multi-tenant SaaS modernisation on Azure and AWS platforms with governance, security,
+and FinOps discipline. Accountable for $500M+ revenue influence at NICE, £125M at Capita, and $100M+ at IBM — a
+consistent track record of translating engineering excellence into commercial impact.
+</p>
+<p>
+Built and scaled engineering organisations from the ground up, growing teams from 50 to 400+ across India, the US,
+Europe, and APAC — consistently achieving ESAT scores in the 90s and single-digit attrition, rare outcomes at this
+scale. Worked closely with global stakeholders across product, business, HR, finance, and operations to align
+engineering direction with commercial priorities, ensuring delivery outcomes that resonate at the CEO, board, and
+executive level.
+</p>
+</div>
+</section>
+
+<!-- CORE COMPETENCIES -->
+<section id="skills">
+<h2 class="section-title">Core Competencies &amp; Skills</h2>
+
+<div class="skills-grid">
+<div class="skill-chip">LLM &amp; Agentic AI at Enterprise Scale</div>
+<div class="skill-chip">Generative AI</div>
+<div class="skill-chip">GCC Build, Scale &amp; Full Operations</div>
+<div class="skill-chip">Large-Scale Team Leadership (400+)</div>
+<div class="skill-chip">AI/ML Operationalization &amp; MLOps</div>
+<div class="skill-chip">Multi-Tenant SaaS Architecture</div>
+<div class="skill-chip">People Management &amp; Org Development</div>
+<div class="skill-chip">Payments, Fraud &amp; Financial Crime, Compliance</div>
+<div class="skill-chip">SaaS, Cloud-Native Modernization (Azure/AWS)</div>
+<div class="skill-chip">Global Team Leadership (India/US/EU/APAC)</div>
+<div class="skill-chip">Revenue Scaling &amp; Commercial Ownership</div>
+<div class="skill-chip">HR Ops, Fin Ops &amp; IT Ops Governance</div>
+<div class="skill-chip">High ESAT &amp; Single-Digit Attrition</div>
+<div class="skill-chip">Budget &amp; P&amp;L Ownership</div>
+<div class="skill-chip">DevOps, FinOps &amp; Engineering Excellence</div>
+<div class="skill-chip">Product Engineering</div>
+</div>
+</section>
+
+<!-- PROFESSIONAL EXPERIENCE -->
+<section id="experience">
+<h2 class="section-title">Professional Experience</h2>
+
+<div class="timeline">
+
+<div class="exp-entry">
+<h3 class="exp-role">Senior Director, R&amp;D <span>&mdash; <a href="https://www.nice.com" target="_blank" rel="noopener">NICE Ltd</a>, Pune GCC</span></h3>
+<div class="exp-meta">September 2021 &ndash; Present &nbsp;|&nbsp; Customer Experience (WFM) &middot; Actimize (Payments &amp; Fraud &middot; Financial Crime) &middot; 400+ engineers &middot; 5 product lines &middot; India / US / Europe / APAC</div>
+<ul>
+<li><strong>Revenue &amp; Business Impact:</strong> Influencing $500M+ in annual revenue across CX workforce management (forecasting, scheduling, adherence, quality, recording) and Actimize financial crime and fraud detection product lines.</li>
+<li><strong>AI &amp; LLM Transformation:</strong> Operationalised LLM and Agentic AI capabilities across CX and Actimize portfolios on Azure/AWS multi-tenant platforms, RAG pipelines, AI agents for quality evaluation and fraud signal detection, prompt governance frameworks, MLOps, cost controls, and 99.9x availability SLA.</li>
+<li><strong>People Leadership &amp; Culture:</strong> Built and sustained a 400+ person global R&amp;D organisation (India, US, Europe, APAC) with ESAT consistently in the 90s and single-digit attrition — sustained over multiple years through structured career frameworks, leadership development pipelines, and engineering culture programmes.</li>
+<li><strong>GCC Operations:</strong> Full GCC accountability spanning engineering delivery, HR Ops (workforce planning, performance management, L&amp;D), Fin Ops (P&amp;L, budget stewardship, vendor optimisation), and IT Ops (infrastructure governance, toolchain, FedRAMP compliance).</li>
+<li><strong>Engineering Excellence:</strong> Drove DevOps at scale, observability, Agile/SAFe governance, and platform modernisation across 5 product lines, improving release velocity, quality, and operational resilience while reducing cost per delivery unit.</li>
+<li><strong>Cross-Domain Integration:</strong> Directed cross-product integration between CX and Actimize portfolios, enabling unified AI-driven insights for global enterprise clients across banking, financial services, telecom, and retail.</li>
+</ul>
+</div>
+
+<div class="exp-entry">
+<h3 class="exp-role">Head of Engineering &mdash; GCC India <span>&mdash; <a href="https://www.capita.co.uk" target="_blank" rel="noopener">Capita</a> SIMS (India) Pvt. Ltd.</span></h3>
+<div class="exp-meta">May 2016 &ndash; September 2021 &nbsp;|&nbsp; Education Software (SIMS) &middot; £400M business &middot; 20,000+ schools &middot; India / UK / Europe &middot; Full GCC ownership</div>
+<ul>
+<li><strong>Revenue &amp; Strategic Ownership:</strong> Directly influenced £125M in annual revenue as GCC Head — owning end-to-end product roadmap, engineering delivery, and operational execution aligned with UK product and business leadership.</li>
+<li><strong>Domain &mdash; Education at Scale:</strong> Engineered and scaled the SIMS platform, the UK's leading school MIS solution serving 20,000+ educational institutions with MIS analytics, reporting, curriculum management, and ecosystem integrations.</li>
+<li><strong>People &amp; Culture:</strong> Maintained ESAT in the 90s and single-digit attrition across the India GCC through talent density programmes, structured L&amp;D, internal mobility, and a high-performance engineering culture — across a distributed team spanning India and the UK/Europe.</li>
+<li><strong>GCC Operations:</strong> End-to-end GCC operating model — HR Ops (hiring, performance management, workforce planning), Fin Ops (cost centre P&amp;L, vendor management, budget governance), and IT Ops (infrastructure, security, toolchain) in partnership with UK central functions.</li>
+<li><strong>Delivery Excellence:</strong> Scaled multi-product delivery across distributed teams, strengthening release predictability, observability, QA maturity, and cost efficiency — driving measurable improvement in time-to-market and platform stability.</li>
+</ul>
+</div>
+
+<div class="exp-entry">
+<h3 class="exp-role">Senior Manager, Product Development <span>&mdash; <a href="https://www.ibm.com" target="_blank" rel="noopener">IBM</a> India Pvt. Ltd.</span></h3>
+<div class="exp-meta">March 2010 &ndash; May 2016 &nbsp;|&nbsp; Procurement &amp; Spend Management &middot; 3 enterprise platforms &middot; 100+ engineers &middot; Joined via Emptoris acquisition</div>
+<ul>
+<li>Joined IBM through the acquisition of Emptoris (Director of Engineering) and progressively expanded scope from one product to three revenue-generating IBM Smarter Commerce platforms — Contract Management, Sourcing, and Spend Analysis — driving $100M+ in annual business impact.</li>
+<li>Led distributed 100+ engineer organisation across product strategy execution, release governance, SaaS platform modernisation, and architectural standardisation — serving global enterprise clients including AMEX, FedEx, Citi, Cisco, Avery, Turner, and GE.</li>
+<li>Institutionalised Agile delivery governance, DevOps toolchain adoption, and engineering excellence frameworks across distributed teams spanning India, US, and Europe.</li>
+</ul>
+</div>
+
+<div class="exp-entry">
+<h3 class="exp-role">Earlier Career</h3>
+<div class="earlier-career">
+<div class="row"><span class="role">Engineering Manager &mdash; Coreobjects India</span><span class="dates">Oct 2008 &ndash; Mar 2010 &middot; 1.5 yrs</span></div>
+<div class="row"><span class="role">Program Manager &mdash; Xpanxion International</span><span class="dates">Jan 2006 &ndash; Sep 2008 &middot; 2.5 yrs</span></div>
+<div class="row"><span class="role">Development Lead &mdash; Zensar Technologies</span><span class="dates">Mar 2002 &ndash; Jan 2006 &middot; 4 yrs</span></div>
+<div class="row"><span class="role">Software Developer &mdash; Ajilon LLC / Diaspark Inc. / Power Infosys</span><span class="dates">Jul 1997 &ndash; Mar 2002 &middot; ~5 yrs</span></div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- TECHNOLOGY STACK -->
+<section id="tech-stack">
+<h2 class="section-title">Technology Stack</h2>
+
+<div class="tech-grid">
+<div class="tech-card"><h4>Cloud</h4><p>Microsoft Azure &middot; AWS &middot; IBM Cloud &middot; Kubernetes &middot; Docker &middot; Serverless &middot; Multi-Tenant SaaS &middot; Cloud-Native Architecture</p></div>
+<div class="tech-card"><h4>AI / LLM</h4><p>LLM Operationalization &middot; Agentic AI &middot; Generative AI &middot; RAG Pipelines &middot; MLOps &middot; AI Governance &middot; Prompt Engineering &middot; Fraud AI &middot; Quality AI</p></div>
+<div class="tech-card"><h4>Architecture</h4><p>Microservices &middot; Event-Driven &middot; Distributed Systems &middot; REST APIs &middot; DevOps &amp; CI/CD &middot; Observability &amp; SRE &middot; Legacy Modernisation</p></div>
+<div class="tech-card"><h4>Languages</h4><p>Java &middot; Python &middot; C# &middot; C/C++</p></div>
+<div class="tech-card"><h4>Frontend</h4><p>React &middot; Angular &middot; TypeScript &middot; JavaScript (ES6+) &middot; HTML5 &middot; CSS3</p></div>
+<div class="tech-card"><h4>Data</h4><p>Oracle &middot; DB2 &middot; MySQL &middot; PostgreSQL &middot; MongoDB</p></div>
+<div class="tech-card"><h4>Enterprise</h4><p>SAP R/3 (ABAP) &middot; Enterprise Integrations &middot; Apache &middot; Tomcat &middot; JBoss &middot; WebSphere &middot; IIS</p></div>
+<div class="tech-card"><h4>Toolchain</h4><p>IntelliJ &middot; VS Code &middot; Git &middot; Jenkins &middot; JUnit &middot; Agile/SAFe Tooling</p></div>
+</div>
+</section>
+
+<!-- PATENTS -->
+<section id="patents">
+<h2 class="section-title">Patents &amp; Intellectual Property</h2>
+
+<div class="patent-grid">
+
+<div class="patent-card">
+<span class="patent-badge granted">Granted Patent</span>
+<h4>US US12645831</h4>
+<p>System and methods for providing interactions with removed personally identifiable information (PII), involving extracting from an interaction recording using an automatic speech recognition engine powered by Artificial Intelligence.</p>
+</div>
+
+<div class="patent-card">
+<span class="patent-badge filed">Disclosure Filed</span>
+<h4>INV/0700 &mdash; Intelligent Supervisor Task Orchestration and Triaging</h4>
+<p>AI urgency coefficient engine for dynamic supervisor alert prioritisation using real-time urgency and availability signals. Disclosure approved, proceeding to patent attorney, 2026.</p>
+</div>
+
+<div class="patent-card">
+<span class="patent-badge filed">Disclosure Filed</span>
+<h4>INV/0549 &mdash; Continuous Quality Improvement (AQM)</h4>
+<p>System and method to assist continuous quality improvement — GenAI-powered real-time insights for Quality Managers in contact centres. Co-inventor, filed 2024.</p>
+</div>
+
+</div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+<h2 class="section-title">Education &amp; Certifications</h2>
+
+<div class="edu-grid">
+
+<div>
+<h4>Education</h4>
+<ul>
+<li>MBA (Systems &amp; Marketing) &mdash; Indore University, 1998</li>
+<li>Bachelor of Science &mdash; Indore University, 1995</li>
+<li>Hons. Diploma in Systems Management &mdash; NIIT Indore, 1999</li>
+</ul>
+</div>
+
+<div>
+<h4>Certifications</h4>
+<ul>
+<li>Certified SAFe Practitioner</li>
+<li>Certified Agile Coach</li>
+<li>Certified Scrum Master (CSM)</li>
+<li>PMP Certified</li>
+<li>Sun Certified Java Architect</li>
+<li>Sun Certified Java Developer</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta portfolio-cta">
+<h2>Want the full picture?</h2>
+<p>Download the complete resume for a detailed record of roles, impact, and credentials.</p>
+<a class="btn" href="files/Dinesh_Wadhwani_Resume.pdf" download="Dinesh_Wadhwani_Resume.pdf">Download Resume</a>
+</section>
+
+<footer>
+<div>
+© 2026 Dinesh Wadhwani
+</div>
+</footer>
+
+<script>
+document.querySelector('.menu-toggle').addEventListener('click', function () {
+    document.querySelector('.nav-links').classList.toggle('active');
+});
+</script>
+
+</body>
+</html>

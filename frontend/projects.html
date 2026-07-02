@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Projects | Coach Dinesh</title>
+
+<style>
+.projects-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:30px;
+  max-width:1000px;
+  margin:0 auto;
+}
+
+.project-tile{
+  background:rgba(255,255,255,.04);
+  padding:40px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.08);
+  display:flex;
+  flex-direction:column;
+  transition:.25s;
+}
+
+.project-tile:hover{
+  transform:translateY(-6px);
+  border-color:#3b82f6;
+  box-shadow:0 20px 40px rgba(0,0,0,.35);
+}
+
+.project-icon{
+  width:56px;
+  height:56px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#3b82f6,#6366f1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:22px;
+  box-shadow:0 10px 24px rgba(59,130,246,.35);
+}
+
+.project-icon svg{
+  width:28px;
+  height:28px;
+  stroke:white;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.project-tile h3{
+  font-family:"Playfair Display",serif;
+  font-size:24px;
+  margin-bottom:4px;
+}
+
+.project-domain{
+  font-size:13px;
+  opacity:.55;
+  margin-bottom:16px;
+  letter-spacing:.02em;
+}
+
+.project-tile p{
+  flex:1;
+  opacity:.85;
+  margin-bottom:0;
+}
+
+.project-tile .btn-small{
+  margin-top:24px;
+  align-self:flex-start;
+}
+
+@media (max-width:700px){
+  .projects-grid{ grid-template-columns:1fr; }
+}
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div><a href="/" class="brand-link">Coach Dinesh</a></div>
+
+<div class="menu-toggle">
+<span></span>
+<span></span>
+<span></span>
+</div>
+
+<div class="nav-links">
+<a href="/">Home</a>
+</div>
+
+</nav>
+
+<section class="hero" id="top" style="grid-template-columns:1fr;text-align:center;padding-top:160px;min-height:auto;">
+
+<div>
+
+<h1>Projects I'm Building</h1>
+
+<p>
+A look at the products and platforms I'm currently building outside of coaching —
+spanning AI-native studios, algorithmic trading, and personalized learning.
+</p>
+
+</div>
+
+</section>
+
+<section id="projects">
+
+<div class="projects-grid">
+
+<div class="project-tile">
+<div class="project-icon">
+<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+</div>
+<h3>StudioVerse</h3>
+<div class="project-domain">thestudioverse.in</div>
+<p>
+A platform of AI-native studios — starting with Coaching Studio, a marketplace
+enabling coaches to deliver, scale, and monetize their expertise.
+</p>
+<a class="btn-small" href="https://www.thestudioverse.in" target="_blank" rel="noopener">Visit Site</a>
+</div>
+
+<div class="project-tile">
+<div class="project-icon">
+<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+</div>
+<h3>Dinesh Trade</h3>
+<div class="project-domain">dineshtrade.online</div>
+<p>
+An AI-powered algorithmic trading platform that connects with Zerodha, places
+trades based on research, and uses guardrails to manage risk automatically.
+</p>
+<a class="btn-small" href="https://dineshtrade.online" target="_blank" rel="noopener">Visit Site</a>
+</div>
+
+<div class="project-tile">
+<div class="project-icon">
+<svg viewBox="0 0 24 24"><path d="M12 6c-1.5-1.5-4-2-8-2v14c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2V4c-4 0-6.5.5-8 2z"/><line x1="12" y1="6" x2="12" y2="20"/></svg>
+</div>
+<h3>MyStudy Platform</h3>
+<div class="project-domain">dakshkipadhai.online</div>
+<p>
+A student-first study platform where learners build their own schedule, upload
+textbook PDFs, and instantly generate summaries and practice exercises — with
+progress and test results tracked for both students and parents.
+</p>
+<a class="btn-small" href="https://dakshkipadhai.online" target="_blank" rel="noopener">Visit Site</a>
+</div>
+
+<div class="project-tile">
+<div class="project-icon">
+<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+</div>
+<h3>Coaching Studio</h3>
+<div class="project-domain">coachingstudio.in</div>
+<p>
+A marketplace enabling coaches to deliver, scale, and monetize their expertise.
+</p>
+<a class="btn-small" href="https://coachingstudio.in" target="_blank" rel="noopener">Visit Site</a>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+<div>
+© 2026 Coach Dinesh
+</div>
+</footer>
+
+<script>
+document.querySelector('.menu-toggle').addEventListener('click', function () {
+    document.querySelector('.nav-links').classList.toggle('active');
+});
+</script>
+
+</body>
+</html>
