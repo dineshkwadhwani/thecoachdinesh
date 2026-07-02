@@ -778,6 +778,12 @@ app.get('/portfolio', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/portfolio.html'));
 });
 
+// COACHING PROFILE / RESUME PAGE (standalone, not linked from the main site nav)
+app.get('/profile', (req, res) => {
+    setPageCacheHeaders(res);
+    res.sendFile(path.join(__dirname, '../frontend/profile.html'));
+});
+
 // ADMIN LOGIN PAGE
 app.get('/admin', (req, res) => {
     if (isAdminAuthenticated(req)) {

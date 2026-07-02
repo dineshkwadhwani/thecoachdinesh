@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Profile | Dinesh Wadhwani, Executive Leadership Coach</title>
+
+<style>
+
+/* SECTION SPACING (tighter than the marketing-page default) */
+section{
+  padding:60px 10%;
+}
+
+.section-title{
+  margin-bottom:35px;
+}
+
+/* HERO */
+.profile-hero{
+  grid-template-columns:1fr 1.3fr;
+  padding-top:150px;
+  padding-bottom:20px;
+  align-items:center;
+}
+
+.profile-hero .profile-photo{
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid rgba(255,255,255,.15);
+  box-shadow:0 20px 50px rgba(0,0,0,.45);
+  margin:0 auto;
+  display:block;
+}
+
+.profile-title{
+  font-size:19px;
+  color:#93c5fd;
+  margin-bottom:8px;
+  font-weight:500;
+}
+
+.profile-tagline{
+  font-size:16px;
+  opacity:.75;
+  margin-bottom:20px;
+  font-style:italic;
+}
+
+.profile-contact{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px 26px;
+  font-size:14px;
+  opacity:.85;
+  margin-bottom:30px;
+}
+
+.profile-contact a{
+  color:white;
+  opacity:.9;
+  text-decoration:none;
+}
+
+.profile-contact a:hover{ opacity:1; text-decoration:underline; }
+
+.hero-buttons{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.hero-buttons .btn,
+.hero-buttons .btn-outline{
+  padding:15px 36px;
+  border-radius:40px;
+  font-weight:500;
+  text-decoration:none;
+}
+
+.hero-buttons .btn-outline{
+  background:transparent;
+  color:white;
+  border:1px solid rgba(255,255,255,.35);
+}
+
+.hero-buttons .btn-outline:hover{
+  border-color:#3b82f6;
+  background:rgba(255,255,255,.06);
+}
+
+/* STATS */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:24px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:34px 20px;
+}
+
+.stat{
+  text-align:center;
+}
+
+.stat .num{
+  font-family:"Playfair Display",serif;
+  font-size:38px;
+  color:#93c5fd;
+  margin-bottom:6px;
+}
+
+.stat .label{
+  font-size:13px;
+  opacity:.7;
+  letter-spacing:.02em;
+}
+
+/* SUMMARY / PHILOSOPHY */
+.summary-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,.1);
+  padding:40px;
+  border-radius:18px;
+  backdrop-filter:blur(10px);
+}
+
+.summary-card p{ margin-bottom:18px; opacity:.9; }
+.summary-card p:last-child{ margin-bottom:0; }
+
+/* FIVE PILLARS */
+.pillars-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:24px;
+}
+
+.pillar-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:26px 22px;
+  transition:.25s;
+}
+
+.pillar-card:hover{
+  transform:translateY(-6px);
+  border-color:#3b82f6;
+}
+
+.pillar-num{
+  font-family:"Playfair Display",serif;
+  font-size:26px;
+  color:#3b82f6;
+  opacity:.8;
+  margin-bottom:10px;
+}
+
+.pillar-card h4{
+  font-size:17px;
+  margin-bottom:8px;
+}
+
+.pillar-card p{
+  font-size:14px;
+  opacity:.8;
+  margin:0;
+}
+
+/* SERVICES */
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:26px;
+}
+
+.service-tile{
+  background:rgba(255,255,255,.04);
+  padding:32px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.08);
+  transition:.25s;
+}
+
+.service-tile:hover{
+  transform:translateY(-6px);
+  border-color:#3b82f6;
+}
+
+.service-icon{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#3b82f6,#6366f1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:18px;
+}
+
+.service-icon svg{
+  width:24px;
+  height:24px;
+  stroke:white;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.service-tile h3{
+  font-family:"Playfair Display",serif;
+  font-size:21px;
+  margin-bottom:10px;
+}
+
+.service-tile p{
+  font-size:15px;
+  opacity:.85;
+  margin:0;
+}
+
+/* INDUSTRY BACKGROUND */
+.industry-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:22px;
+}
+
+.industry-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:26px 28px;
+}
+
+.industry-card h4{
+  font-size:17px;
+  margin-bottom:2px;
+}
+
+.industry-card .industry-dates{
+  font-size:13px;
+  opacity:.55;
+  margin-bottom:12px;
+}
+
+.industry-card p{
+  font-size:14px;
+  opacity:.85;
+  margin:0;
+}
+
+/* IP + MENTORING */
+.two-col-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+}
+
+.info-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:30px 32px;
+}
+
+.info-card h3{
+  font-family:"Playfair Display",serif;
+  font-size:20px;
+  margin-bottom:20px;
+}
+
+.info-card ul{
+  list-style:none;
+}
+
+.info-card li{
+  padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:14px;
+  opacity:.9;
+}
+
+.info-card li:last-child{ border-bottom:none; }
+.info-card li strong{ color:#93c5fd; }
+
+/* EDUCATION */
+.edu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+}
+
+.edu-grid h4{
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:#93c5fd;
+  margin-bottom:16px;
+}
+
+.edu-grid ul{ list-style:none; }
+.edu-grid li{
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:15px;
+  opacity:.9;
+}
+.edu-grid li:last-child{ border-bottom:none; }
+
+/* CLIENT / PARTNER CHIPS */
+.clients-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+}
+
+.client-chip{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  padding:10px 20px;
+  border-radius:30px;
+  font-size:14px;
+  opacity:.9;
+}
+
+/* CTA */
+.profile-cta p{ margin-bottom:10px; }
+.profile-cta .btn{ display:inline-block; margin-top:24px; }
+
+@media (max-width:900px){
+  .profile-hero{ grid-template-columns:1fr; text-align:center; }
+  .profile-contact{ justify-content:center; }
+  .hero-buttons{ justify-content:center; }
+  .stats-grid{ grid-template-columns:repeat(2,1fr); }
+  .services-grid{ grid-template-columns:1fr; }
+  .industry-grid{ grid-template-columns:1fr; }
+  .two-col-grid{ grid-template-columns:1fr; }
+  .edu-grid{ grid-template-columns:1fr; }
+}
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div><a href="/" class="brand-link">Coach Dinesh</a></div>
+
+<div class="menu-toggle">
+<span></span>
+<span></span>
+<span></span>
+</div>
+
+<div class="nav-links">
+<a href="/">Home</a>
+</div>
+
+</nav>
+
+<!-- HERO -->
+<section class="hero profile-hero" id="top">
+
+<div>
+<img src="images/hero-dinesh.png" alt="Dinesh Wadhwani" class="profile-photo">
+</div>
+
+<div>
+<h1>Dinesh Wadhwani</h1>
+<p class="profile-title">Executive Leadership Coach</p>
+<p class="profile-tagline">Helping leaders navigate complexity, build presence, and drive transformation</p>
+
+<div class="profile-contact">
+<a href="https://www.thecoachdinesh.com" target="_blank" rel="noopener">www.thecoachdinesh.com</a>
+<a href="mailto:dinesh.k.wadhwani@gmail.com">dinesh.k.wadhwani@gmail.com</a>
+<a href="tel:+919767676738">+91 9767676738</a>
+</div>
+
+<div class="hero-buttons">
+<a class="btn" href="files/Dinesh_Wadhwani_Coach_Resume.pdf" download="Dinesh_Wadhwani_Coach_Resume.pdf">Download Resume</a>
+<a class="btn-outline" href="#philosophy">Coaching Philosophy</a>
+</div>
+
+</div>
+
+</section>
+
+<!-- STATS -->
+<section id="stats">
+<div class="stats-grid">
+<div class="stat"><div class="num">150+</div><div class="label">Coaching Hours</div></div>
+<div class="stat"><div class="num">20+</div><div class="label">Leaders Coached</div></div>
+<div class="stat"><div class="num">40+</div><div class="label">Programmes Delivered</div></div>
+<div class="stat"><div class="num">25+</div><div class="label">Yrs Industry Experience</div></div>
+</div>
+</section>
+
+<!-- COACHING PHILOSOPHY -->
+<section id="philosophy">
+<h2 class="section-title">Coaching Philosophy</h2>
+
+<div class="summary-card">
+<p>
+Leadership is not a destination! It is a practice. And like any practice, it improves with deliberate reflection,
+honest feedback, and sustained commitment.
+</p>
+<p>
+Over 25 years working inside leadership, not observing it from the outside, I have probably sat in every chair at
+the table. I have been the junior engineer trying to find my voice, the first-time manager navigating the shift
+from doing to leading, the senior director building a 400-person global organisation across four continents, and
+the executive accountable for hundreds of millions in revenue. I have led through rapid growth, through AI
+transformation, through cultural clashes between engineering teams in Israel, the UK, the US, and India, and
+through the organisational turbulence that comes with acquisition, restructuring, and change.
+</p>
+<p>
+That breadth of lived experience is what I bring to coaching. I have worked with leaders at every level — from
+graduate engineers finding their first leadership voice, to directors navigating their first P&amp;L, to Senior VPs
+shaping organisational strategy. I understand what each transition feels like from the inside, because I have made
+most of them myself.
+</p>
+<p>
+The leaders I work with are self-aware, introspective, and committed to growth. They are willing to step back from
+the daily grind, examine the gap between who they are and who they want to become, and do the hard work of
+changing. My role is not to give them answers — it is to ask better questions, hold up a mirror, and hold them
+accountable to the change they say they want to make.
+</p>
+</div>
+</section>
+
+<!-- FIVE PILLAR APPROACH -->
+<section id="pillars">
+<h2 class="section-title">The Five-Pillar Approach</h2>
+
+<div class="pillars-grid">
+
+<div class="pillar-card">
+<div class="pillar-num">01</div>
+<h4>Leadership Reflection</h4>
+<p>Examine impact vs intent. Identify patterns.</p>
+</div>
+
+<div class="pillar-card">
+<div class="pillar-num">02</div>
+<h4>Clarity &amp; Perspective</h4>
+<p>Signal from noise. Reactive to intentional.</p>
+</div>
+
+<div class="pillar-card">
+<div class="pillar-num">03</div>
+<h4>Leadership Presence</h4>
+<p>Show up with influence. Command without dominating.</p>
+</div>
+
+<div class="pillar-card">
+<div class="pillar-num">04</div>
+<h4>Systems Thinking</h4>
+<p>See interdependencies. Think beyond linear.</p>
+</div>
+
+<div class="pillar-card">
+<div class="pillar-num">05</div>
+<h4>Action &amp; Integration</h4>
+<p>Insights become behaviour. Accountability drives change.</p>
+</div>
+
+</div>
+</section>
+
+<!-- COACHING SERVICES -->
+<section id="services">
+<h2 class="section-title">Coaching Services</h2>
+
+<div class="services-grid">
+
+<div class="service-tile">
+<div class="service-icon">
+<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+</div>
+<h3>1-1 Executive Coaching</h3>
+<p>
+For senior leaders navigating complex roles, strategic transitions, or significant leadership challenges.
+Multi-month engagement moving through various pillars. Outcomes: sharper clarity, stronger presence,
+demonstrable impact.
+</p>
+</div>
+
+<div class="service-tile">
+<div class="service-icon">
+<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+</div>
+<h3>Leadership Coaching for Managers</h3>
+<p>
+For managers stepping into director roles. Focus on strategic thinking, stakeholder influence, team
+development, and navigating organisational complexity with confidence.
+</p>
+</div>
+
+<div class="service-tile">
+<div class="service-icon">
+<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+</div>
+<h3>Leadership Transitions</h3>
+<p>
+For leaders stepping into new or expanded responsibilities. IC to manager, manager to director —
+transitions are critical and often underestimated. Mindset shift and capability building for the next level.
+</p>
+</div>
+
+<div class="service-tile">
+<div class="service-icon">
+<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="3"/><path d="M2 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M16 14.5a4 4 0 0 1 5 3.87V20"/></svg>
+</div>
+<h3>Cohort Programs &amp; Offsites</h3>
+<p>
+Leadership cohorts, strategic offsites, and workshops for organisations developing leaders at scale. Culture
+transformations, AI readiness, leadership incubation programmes. 20+ programmes delivered.
+</p>
+</div>
+
+</div>
+</section>
+
+<!-- INDUSTRY BACKGROUND -->
+<section id="industry">
+<h2 class="section-title">Industry Background &mdash; Coaching From Experience</h2>
+
+<div class="industry-grid">
+
+<div class="industry-card">
+<h4>Senior Director R&amp;D &mdash; <a href="https://www.nice.com" target="_blank" rel="noopener">NICE Ltd</a></h4>
+<div class="industry-dates">2021 &ndash; Present</div>
+<p>400+ person global R&amp;D org across India, US, Europe &amp; APAC. $500M+ revenue influence. AI/LLM transformation at enterprise scale. Daily cross-cultural leadership across Israeli, US, UK, and Indian teams.</p>
+</div>
+
+<div class="industry-card">
+<h4>Senior Manager &mdash; <a href="https://www.ibm.com" target="_blank" rel="noopener">IBM</a> India (via Emptoris)</h4>
+<div class="industry-dates">2010 &ndash; 2016</div>
+<p>100+ engineers across India, US, Europe. $100M+ impact. Enterprise clients: AMEX, FedEx, Citi, Cisco, GE. Multi-continent team leadership.</p>
+</div>
+
+<div class="industry-card">
+<h4>GCC Head &mdash; <a href="https://www.capita.co.uk" target="_blank" rel="noopener">Capita</a> SIMS India</h4>
+<div class="industry-dates">2016 &ndash; 2021</div>
+<p>Built India GCC from ground up. £125M revenue. 20,000+ UK schools. India&ndash;UK cross-cultural engineering and business leadership.</p>
+</div>
+
+<div class="industry-card">
+<h4>Earlier Career</h4>
+<div class="industry-dates">1997 &ndash; 2010</div>
+<p>Engineering and program roles spanning India and the US — New York, Philadelphia, Atlanta. Built the cross-cultural and technical foundation that informs the coaching practice.</p>
+</div>
+
+</div>
+</section>
+
+<!-- INTELLECTUAL PROPERTY + ACADEMIC MENTORING -->
+<section id="ip-mentoring">
+<div class="two-col-grid">
+
+<div class="info-card">
+<h3>Intellectual Property</h3>
+<ul>
+<li><strong>Granted Patent:</strong> US US12645831 &mdash; System and methods for providing interactions with removed personally identifiable information (PII), involving extracting from an interaction recording using an automatic speech recognition engine powered by Artificial Intelligence.</li>
+<li><strong>Disclosure INV/0700:</strong> Intelligent Supervisor Task Orchestration using AI urgency coefficients (Approved, 2026).</li>
+<li><strong>Disclosure INV/0549:</strong> GenAI-powered Quality Management insights for contact centres (co-inventor, 2024).</li>
+</ul>
+</div>
+
+<div class="info-card">
+<h3>Academic Mentoring</h3>
+<ul>
+<li><strong>Industry Mentor</strong> &mdash; COEP, DY Patil, VIT Chennai and other leading engineering institutions.</li>
+<li><strong>Panelist &amp; Jury</strong> &mdash; VIT, Flame University, MIT University, Symbiosis — engineering and MBA programmes.</li>
+<li><strong>Guest Speaker</strong> &mdash; AI Transformation, GCC Leadership, Cross-Cultural Leadership, Career Development.</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+<h2 class="section-title">Education &amp; Certifications</h2>
+
+<div class="edu-grid">
+
+<div>
+<h4>Education</h4>
+<ul>
+<li>MBA (Systems &amp; Marketing) &mdash; Devi Ahilya Vishwavidyalaya, 1998</li>
+<li>Bachelor of Science &mdash; Devi Ahilya Vishwavidyalaya, 1995</li>
+<li>Honours Diploma in System Management &mdash; NIIT, 1995</li>
+</ul>
+</div>
+
+<div>
+<h4>Certifications</h4>
+<ul>
+<li>Certified SAFe Practitioner &middot; Certified Agile Coach</li>
+<li>Certified Scrum Master (CSM) &mdash; Scrum Alliance &middot; PMP</li>
+<li>Microsoft Certified: Azure Fundamentals</li>
+<li>Sun Certified Java Architect &amp; Developer</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+<!-- CROSS-INDUSTRY EXPERIENCE -->
+<section id="clients">
+<h2 class="section-title" style="text-align:center;">Cross-Industry Experience</h2>
+<div class="clients-grid">
+<div class="client-chip">Cisco</div>
+<div class="client-chip">Verizon</div>
+<div class="client-chip">Capita</div>
+<div class="client-chip">NICE</div>
+<div class="client-chip">Symbiosis International University</div>
+<div class="client-chip">IBM</div>
+<div class="client-chip">Turner</div>
+<div class="client-chip">SAP</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta profile-cta">
+<h2>Ready to start the conversation?</h2>
+<p>Download the complete coaching resume, or reach out directly to explore working together.</p>
+<a class="btn" href="files/Dinesh_Wadhwani_Coach_Resume.pdf" download="Dinesh_Wadhwani_Coach_Resume.pdf">Download Resume</a>
+</section>
+
+<footer>
+<div>
+© 2026 Dinesh Wadhwani
+</div>
+</footer>
+
+<script>
+document.querySelector('.menu-toggle').addEventListener('click', function () {
+    document.querySelector('.nav-links').classList.toggle('active');
+});
+</script>
+
+</body>
+</html>
