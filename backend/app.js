@@ -784,6 +784,12 @@ app.get('/profile', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/profile.html'));
 });
 
+// INTRO PAGE (standalone, not linked from the main site nav)
+app.get('/intro', (req, res) => {
+    setPageCacheHeaders(res);
+    res.sendFile(path.join(__dirname, '../frontend/intro.html'));
+});
+
 // ADMIN LOGIN PAGE
 app.get('/admin', (req, res) => {
     if (isAdminAuthenticated(req)) {
