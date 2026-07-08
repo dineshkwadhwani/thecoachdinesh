@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session 5: Retrieval-Augmented Generation (RAG) | The Coach Dinesh AI Course</title>
+  <meta name="description" content="Grounding AI with real knowledge — embeddings, vector search, and citation-backed answers">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    /* Session page specific styles */
+    .session-hero {
+      padding: 80px 60px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .session-num-large {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .session-num-large::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .session-hero h1 { color: var(--white); margin-bottom: 12px; }
+    .session-subtitle { font-size: 1.1rem; margin-bottom: 28px; max-width: 640px; }
+
+    .session-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    .session-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Resource cards */
+    .resources-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      min-width: 280px;
+    }
+
+    .resources-panel h3 {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .resource-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      text-decoration: none;
+      transition: all var(--transition);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .resource-link:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.18);
+      transform: translateX(3px);
+    }
+
+    .resource-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .resource-info .resource-type {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .resource-info .resource-name {
+      font-size: 0.875rem;
+      color: var(--off-white);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* Topics section */
+    .topics-section {
+      padding: 0 60px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 60px;
+    }
+
+    .topic-row {
+      display: flex;
+      gap: 20px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topic-row:last-child { border-bottom: none; }
+
+    .topic-marker {
+      width: 8px;
+      height: 8px;
+      background: var(--blue-lt);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    .topic-title { color: var(--white); margin-bottom: 6px; font-size: 1rem; }
+    .topic-desc { font-size: 0.88rem; }
+
+    /* Lab section */
+    .lab-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.03));
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+
+    .lab-card-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent2);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .lab-card h3 { color: var(--white); margin-bottom: 12px; font-family: var(--font-body); font-size: 1.1rem; font-weight: 600; }
+    .lab-card .lab-desc { font-size: 0.9rem; margin-bottom: 20px; }
+
+    .deliverable-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .deliverable-box .deliverable-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent2);
+      margin-bottom: 6px;
+    }
+
+    .deliverable-box p { font-size: 0.88rem; color: var(--off-white); }
+
+    /* Takeaways */
+    .takeaways-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+
+    .takeaways-card h3 { font-family: var(--font-body); font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 16px; }
+
+    .takeaways-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .takeaways-card li {
+      font-size: 0.88rem;
+      color: var(--off-white);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .takeaways-card li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    /* Session nav */
+    .session-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 40px 60px;
+      border-top: 1px solid var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .nav-arrow {
+      display: flex;
+      flex-direction: column;
+      padding: 16px 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: all var(--transition);
+      max-width: 300px;
+      background: var(--card-bg);
+    }
+
+    .nav-arrow:hover {
+      background: var(--card-hover);
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-2px);
+    }
+
+    .arrow-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .arrow-title {
+      font-size: 0.9rem;
+      color: var(--off-white);
+      font-weight: 500;
+    }
+
+    .next-session { margin-left: auto; text-align: right; }
+
+    /* Progress bar */
+    .progress-bar-container {
+      padding: 0 60px;
+      max-width: 1200px;
+      margin: 0 auto 0;
+    }
+
+    .progress-track {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .progress-pip {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border);
+    }
+
+    .progress-pip.done { background: var(--blue); }
+    .progress-pip.current { background: var(--accent); }
+
+    .progress-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .session-hero { grid-template-columns: 1fr; padding: 48px 24px 40px; }
+      .resources-panel { min-width: auto; }
+      .topics-section { grid-template-columns: 1fr; padding: 0 24px 60px; gap: 32px; }
+      .session-nav { padding: 32px 24px; flex-direction: column; }
+      .nav-arrow { max-width: 100%; }
+      .next-session { margin-left: 0; text-align: left; }
+      .progress-bar-container { padding: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../curriculum.html">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#" class="active">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+        
+      </div>
+    </li>
+    <li><a href="../lab-tests.html">Lab Tests</a></li>
+    <li><a href="https://www.thecoachdinesh.com" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ── PROGRESS ─────────────────────────────────────── -->
+<div style="height:68px;"></div>
+<div class="progress-bar-container">
+  <div class="progress-track">
+    <div class="progress-pip done"></div><div class="progress-pip done"></div><div class="progress-pip done"></div><div class="progress-pip done"></div><div class="progress-pip current"></div><div class="progress-pip "></div><div class="progress-pip "></div><div class="progress-pip "></div><div class="progress-pip "></div><div class="progress-pip "></div><div class="progress-pip "></div><div class="progress-pip "></div>
+  </div>
+  <div class="progress-label">Session 5 of 12</div>
+</div>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<div class="session-hero">
+  <div>
+    <div class="session-num-large">Session 05</div>
+    <h1>Retrieval-Augmented Generation (RAG)</h1>
+    <p class="session-subtitle">Grounding AI with real knowledge — embeddings, vector search, and citation-backed answers</p>
+
+    <div class="session-meta">
+      <span class="meta-item">⏱ 60 minutes</span>
+      <span class="meta-item tag tag-blue">Intermediate</span>
+      <span class="meta-item">📊 Presentation + Study Notes + Lab</span>
+    </div>
+
+    <div class="session-actions">
+      <a href="../files/sessions/Session5_Presentation.pptx" class="btn btn-primary" target="_blank">
+        📊 Open Presentation
+      </a>
+      <a href="../files/sessions/Session_5_Comprehensive_Study_Notes.pdf" class="btn btn-outline" target="_blank">
+        📄 Study Notes (PDF)
+      </a>
+      <a href="../files/sessions/Session5_Speaker_Script_Full.pdf" class="btn btn-outline" target="_blank">
+        🎙 Speaker Script
+      </a>
+    </div>
+  </div>
+
+  <div class="resources-panel">
+    <h3>Session Resources</h3>
+
+    <a href="../files/sessions/Session5_Presentation.pptx" class="resource-link" target="_blank">
+      <span class="resource-icon">📊</span>
+      <div class="resource-info">
+        <div class="resource-type">Presentation</div>
+        <div class="resource-name">Session 5 Slides (.pptx)</div>
+      </div>
+    </a>
+
+    <a href="../files/sessions/Session_5_Comprehensive_Study_Notes.pdf" class="resource-link" target="_blank">
+      <span class="resource-icon">📄</span>
+      <div class="resource-info">
+        <div class="resource-type">Study Notes</div>
+        <div class="resource-name">Comprehensive Notes (PDF)</div>
+      </div>
+    </a>
+
+    <a href="../files/sessions/Session5_Speaker_Script_Full.pdf" class="resource-link" target="_blank">
+      <span class="resource-icon">🎙</span>
+      <div class="resource-info">
+        <div class="resource-type">Speaker Script</div>
+        <div class="resource-name">Full Session Script (PDF)</div>
+      </div>
+    </a>
+
+    <a href="../curriculum.html" class="resource-link">
+      <span class="resource-icon">📋</span>
+      <div class="resource-info">
+        <div class="resource-type">Course Overview</div>
+        <div class="resource-name">Full Curriculum & Session Plan</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ── DIVIDER ─────────────────────────────────────── -->
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── TOPICS + SIDEBAR ──────────────────────────── -->
+<div class="topics-section">
+  <div>
+    <span class="section-eyebrow">What This Session Covers</span>
+    <h2 style="margin-bottom:32px;font-size:1.5rem;">Session Topics</h2>
+
+    
+        <div class="topic-row reveal">
+          <div class="topic-marker"></div>
+          <div>
+            <h4 class="topic-title">Why RAG?</h4>
+            <p class="topic-desc">LLMs hallucinate when they don't know something. RAG replaces hallucination with retrieval — grounding answers in real, citable documents.</p>
+          </div>
+        </div>
+        <div class="topic-row reveal">
+          <div class="topic-marker"></div>
+          <div>
+            <h4 class="topic-title">Embeddings</h4>
+            <p class="topic-desc">What embedding vectors are, how semantic similarity works, and why 'king - man + woman = queen' is more than a curiosity.</p>
+          </div>
+        </div>
+        <div class="topic-row reveal">
+          <div class="topic-marker"></div>
+          <div>
+            <h4 class="topic-title">Semantic Search</h4>
+            <p class="topic-desc">Moving beyond keyword matching to meaning-based retrieval. Cosine similarity, nearest-neighbour search, and re-ranking.</p>
+          </div>
+        </div>
+        <div class="topic-row reveal">
+          <div class="topic-marker"></div>
+          <div>
+            <h4 class="topic-title">Vector Databases</h4>
+            <p class="topic-desc">Pinecone, Weaviate, Chroma — how they store and search millions of embedding vectors at speed.</p>
+          </div>
+        </div>
+        <div class="topic-row reveal">
+          <div class="topic-marker"></div>
+          <div>
+            <h4 class="topic-title">RAG Architecture</h4>
+            <p class="topic-desc">The complete retrieve-augment-generate pipeline: chunking, indexing, query embedding, retrieval, context assembly, and generation.</p>
+          </div>
+        </div>
+  </div>
+
+  <div>
+    <!-- LAB EXERCISE -->
+    <div class="lab-card reveal" style="margin-bottom:20px;">
+      <div class="lab-card-eyebrow">🧪 Lab Exercise</div>
+      <h3>Build Your Resume RAG System</h3>
+      <p class="lab-desc">Build a functioning Retrieval-Augmented Generation system using your resume as the knowledge base. Answer questions about the resume with citations. Compare RAG vs non-RAG responses to see the power of grounding. This is what LinkedIn, Bing, and legal tech use.</p>
+      <div class="deliverable-box">
+        <div class="deliverable-label">Deliverable</div>
+        <p>Compare a resume against 3 job descriptions using embeddings, and present which job is the closest fit with evidence.</p>
+      </div>
+    </div>
+
+    <!-- KEY TAKEAWAYS -->
+    <div class="takeaways-card reveal">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>RAG is the single most impactful technique for reducing LLM hallucination</li>
+            <li>Embeddings convert meaning into geometry — similar meanings cluster together</li>
+            <li>Chunking strategy dramatically affects retrieval quality</li>
+            <li>RAG + structured output + prompt engineering = most enterprise AI stacks</li>
+            
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── SESSION NAV ────────────────────────────────── -->
+<div class="session-nav">
+  <a href="session-4.html" class="nav-arrow prev-session"><span class="arrow-label">← Previous</span><span class="arrow-title">Session 4: Structured Outputs</span></a>
+  <a href="session-6.html" class="nav-arrow next-session"><span class="arrow-label">Next →</span><span class="arrow-title">Session 6: Fine-Tuning & Specialization</span></a>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="https://www.thecoachdinesh.com" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="../index.html">AI Course Home</a>
+    <a href="../about.html">About</a>
+    <a href="../curriculum.html">Curriculum</a>
+    <a href="../lab-tests.html">Lab Tests</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+
+  // Reveal animation
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

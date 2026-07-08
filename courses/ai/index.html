@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous AI Systems & Agentic Computing | The Coach Dinesh</title>
+  <meta name="description" content="A 12-session, hands-on course on Generative AI, LLMs, RAG, Agentic Systems and production deployment — taught by Dinesh Wadhwani, 25+ years in software industry.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ── HERO ────────────────────────────────────────── */
+    .hero {
+      min-height: calc(100vh - 68px);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 60px;
+      padding: 80px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .hero h1 { color: var(--white); margin-bottom: 24px; }
+    .hero h1 em { font-style: normal; color: var(--blue-lt); }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: 520px;
+    }
+
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
+
+    .hero-stats {
+      display: flex;
+      gap: 36px;
+      padding-top: 36px;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-item .stat-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .stat-item .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Hero visual */
+    .hero-visual {
+      position: relative;
+    }
+
+    .circuit-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .circuit-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 30px; right: 30px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--accent), var(--accent2));
+      border-radius: 0 0 3px 3px;
+    }
+
+    .session-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .session-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .session-pill:hover {
+      background: rgba(26, 86, 219, 0.12);
+      border-color: rgba(59, 130, 246, 0.3);
+      color: inherit;
+      transform: translateX(4px);
+    }
+
+    .session-pill-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      min-width: 22px;
+    }
+
+    .session-pill-title {
+      font-size: 0.85rem;
+      color: var(--off-white);
+      flex: 1;
+    }
+
+    .session-pill-arrow {
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: transform var(--transition);
+    }
+
+    .session-pill:hover .session-pill-arrow { transform: translateX(3px); }
+
+    /* ── WHAT YOU'LL LEARN ─────────────────────────── */
+    .outcomes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .outcome-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: all var(--transition);
+    }
+
+    .outcome-card:hover {
+      background: var(--card-hover);
+      transform: translateY(-3px);
+    }
+
+    .outcome-icon {
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .outcome-card h4 { color: var(--white); margin-bottom: 8px; }
+    .outcome-card p { font-size: 0.88rem; }
+
+    /* ── COURSE JOURNEY ────────────────────────────── */
+    .journey-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .phase-block { margin-bottom: 36px; }
+
+    .phase-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .phase-title { color: var(--white); margin-bottom: 4px; font-size: 1.1rem; }
+
+    .phase-sessions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .phase-session-tag {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .journey-cta-box {
+      background: linear-gradient(135deg, rgba(26, 86, 219, 0.15), rgba(16, 185, 129, 0.08));
+      border: 1px solid rgba(26, 86, 219, 0.25);
+      border-radius: var(--radius);
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .journey-cta-box h3 { color: var(--white); }
+
+    /* ── LAB TESTS PREVIEW ─────────────────────────── */
+    .labs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .lab-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all var(--transition);
+    }
+
+    .lab-card:hover { background: var(--card-hover); border-color: rgba(16,185,129,0.25); }
+
+    .lab-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent2);
+      margin-bottom: 10px;
+    }
+
+    .lab-card h4 { color: var(--white); margin-bottom: 8px; }
+    .lab-card p { font-size: 0.88rem; margin-bottom: 16px; }
+
+    /* ── INSTRUCTOR ────────────────────────────────── */
+    .instructor-section {
+      background: linear-gradient(135deg, rgba(26,86,219,0.08), rgba(245,158,11,0.04));
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .instructor-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .instructor-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      color: var(--white);
+      flex-shrink: 0;
+      border: 3px solid rgba(255,255,255,0.1);
+    }
+
+    .instructor-name {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .instructor-title {
+      font-size: 0.88rem;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      margin-bottom: 16px;
+    }
+
+    .instructor-bio { font-size: 0.95rem; margin-bottom: 20px; }
+
+    .instructor-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding: 48px 24px; gap: 40px; }
+      .outcomes-grid { grid-template-columns: 1fr 1fr; }
+      .labs-grid { grid-template-columns: 1fr; }
+      .journey-container { grid-template-columns: 1fr; }
+      .instructor-grid { grid-template-columns: 1fr; text-align: center; }
+      .instructor-avatar { margin: 0 auto; }
+      .instructor-tags { justify-content: center; }
+      .hero-stats { flex-wrap: wrap; gap: 24px; }
+    }
+
+    @media (max-width: 600px) {
+      .outcomes-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="about.html">About</a></li>
+    <li><a href="curriculum.html">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="sessions/session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="sessions/session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="sessions/session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="sessions/session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="sessions/session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="sessions/session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="sessions/session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="sessions/session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="sessions/session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="sessions/session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="sessions/session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="sessions/session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+      </div>
+    </li>
+    <li><a href="lab-tests.html">Lab Tests</a></li>
+    <li><a href="https://www.thecoachdinesh.com" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ── HERO ─────────────────────────────────────────────── -->
+<div class="hero">
+  <div>
+    <div class="hero-eyebrow">Autonomous AI Systems &amp; Agent-Based Computing</div>
+    <h1>Build Real AI Systems.<br><em>From Concepts to Production.</em></h1>
+    <p class="hero-desc">
+      A 12-session, deeply hands-on course covering Generative AI, Large Language Models, Retrieval-Augmented Generation, and Autonomous Agentic Systems — taught by a software industry expert with over 25 years of experience.
+    </p>
+    <div class="hero-actions">
+      <a href="curriculum.html" class="btn btn-primary">View Full Curriculum</a>
+      <a href="sessions/session-1.html" class="btn btn-outline">Start Session 1 →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Lab Tests</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">60+</div>
+        <div class="stat-label">Hours of Content</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">25+</div>
+        <div class="stat-label">Yrs Industry XP</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="circuit-card">
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);margin-bottom:18px;letter-spacing:0.1em;">COURSE SESSIONS</div>
+      <div class="session-stack">
+        <a href="sessions/session-1.html" class="session-pill">
+          <span class="session-pill-num">01</span>
+          <span class="session-pill-title">Intro to AI, GenAI & Agentic AI</span>
+          <span class="session-pill-arrow">→</span>
+        </a>
+        <a href="sessions/session-2.html" class="session-pill">
+          <span class="session-pill-num">02</span>
+          <span class="session-pill-title">LLM Fundamentals & Output Behavior</span>
+          <span class="session-pill-arrow">→</span>
+        </a>
+        <a href="sessions/session-3.html" class="session-pill">
+          <span class="session-pill-num">03</span>
+          <span class="session-pill-title">Prompt Engineering</span>
+          <span class="session-pill-arrow">→</span>
+        </a>
+        <a href="sessions/session-4.html" class="session-pill">
+          <span class="session-pill-num">04</span>
+          <span class="session-pill-title">Structured Outputs & Parsing</span>
+          <span class="session-pill-arrow">→</span>
+        </a>
+        <a href="sessions/session-5.html" class="session-pill">
+          <span class="session-pill-num">05</span>
+          <span class="session-pill-title">Retrieval-Augmented Generation</span>
+          <span class="session-pill-arrow">→</span>
+        </a>
+        <div style="text-align:center;padding:8px 0;font-size:0.8rem;color:var(--muted);">+ 7 more sessions →</div>
+        <a href="curriculum.html" class="btn btn-outline btn-sm" style="justify-content:center;">View All 12 Sessions</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── WHAT YOU'LL LEARN ──────────────────────────────── -->
+<section>
+  <span class="section-eyebrow">Learning Outcomes</span>
+  <h2 class="section-title">What You'll Build & Learn</h2>
+  <p class="section-subtitle">Every session produces a working artifact. You don't just study AI — you build it, test it, and understand why it works.</p>
+
+  <div class="outcomes-grid">
+    <div class="outcome-card reveal">
+      <span class="outcome-icon">🧠</span>
+      <h4>Understand LLMs & GenAI</h4>
+      <p>Grasp how large language models think, hallucinate, tokenize, and respond — the mechanics behind ChatGPT, Claude, and Gemini.</p>
+    </div>
+    <div class="outcome-card reveal">
+      <span class="outcome-icon">🎯</span>
+      <h4>Master Prompt Engineering</h4>
+      <p>Move from ad-hoc prompts to systematic, production-ready prompt design using role priming, few-shot learning, and chain-of-thought techniques.</p>
+    </div>
+    <div class="outcome-card reveal">
+      <span class="outcome-icon">🔍</span>
+      <h4>Build RAG Systems</h4>
+      <p>Design and build Retrieval-Augmented Generation pipelines using embeddings, vector databases, and semantic search — the backbone of enterprise AI.</p>
+    </div>
+    <div class="outcome-card reveal">
+      <span class="outcome-icon">🤖</span>
+      <h4>Create Agentic AI</h4>
+      <p>Build autonomous AI agents that plan, reason, use external tools, and act with real agency — going far beyond simple chatbots.</p>
+    </div>
+    <div class="outcome-card reveal">
+      <span class="outcome-icon">🚀</span>
+      <h4>Deploy to Production</h4>
+      <p>Understand the infrastructure, scaling strategies, cost optimization, and monitoring required to run AI systems that serve real users.</p>
+    </div>
+    <div class="outcome-card reveal">
+      <span class="outcome-icon">⚖️</span>
+      <h4>AI Safety & Ethics</h4>
+      <p>Apply bias mitigation, explainability, human-in-the-loop patterns, and responsible deployment practices from the ground up.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── COURSE JOURNEY ─────────────────────────────────── -->
+<section>
+  <span class="section-eyebrow">Course Architecture</span>
+  <h2 class="section-title">A Progressive, Project-Driven Journey</h2>
+  <p class="section-subtitle">Every session builds on the last. You maintain a single running project — a hiring AI system — that evolves from a simple resume to a fully autonomous agent.</p>
+
+  <div class="journey-container">
+    <div>
+      <div class="phase-block reveal">
+        <div class="phase-label">Unit 1 · Sessions 1–3</div>
+        <div class="phase-title">Foundations of Modern AI</div>
+        <p style="font-size:0.88rem;margin-top:8px;">AI evolution, GenAI vs Agentic AI, LLM mechanics, tokens, temperature, context windows, and systematic prompt engineering.</p>
+        <div class="phase-sessions">
+          <span class="phase-session-tag">Intro to AI</span>
+          <span class="phase-session-tag">LLM Fundamentals</span>
+          <span class="phase-session-tag">Prompt Engineering</span>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-label">Unit 2 · Sessions 4–5</div>
+        <div class="phase-title">Structured Data & Retrieval</div>
+        <p style="font-size:0.88rem;margin-top:8px;">JSON schema design, output parsing, pipeline construction, embeddings, vector databases, and building your first RAG system.</p>
+        <div class="phase-sessions">
+          <span class="phase-session-tag">Structured Outputs</span>
+          <span class="phase-session-tag">RAG</span>
+          <span class="phase-session-tag">Embeddings</span>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-label">Unit 3 · Sessions 6–7</div>
+        <div class="phase-title">Specialization & Measurement</div>
+        <p style="font-size:0.88rem;margin-top:8px;">When and how to fine-tune models (LoRA, QLoRA), creating training datasets, rigorous evaluation, benchmarking, and A/B testing.</p>
+        <div class="phase-sessions">
+          <span class="phase-session-tag">Fine-Tuning</span>
+          <span class="phase-session-tag">Evaluation</span>
+          <span class="phase-session-tag">Benchmarking</span>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-label">Unit 4–5 · Sessions 8–12</div>
+        <div class="phase-title">Production, Safety & Agentic Systems</div>
+        <p style="font-size:0.88rem;margin-top:8px;">Scaling to production, cost optimization, AI safety, multi-agent architectures, tool use, memory systems, and the full capstone.</p>
+        <div class="phase-sessions">
+          <span class="phase-session-tag">Deployment</span>
+          <span class="phase-session-tag">Safety & Bias</span>
+          <span class="phase-session-tag">Multi-Agent</span>
+          <span class="phase-session-tag">Capstone</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="journey-cta-box reveal">
+      <div>
+        <div class="phase-label">The Running Project</div>
+        <h3>From Resume to Autonomous Hiring AI</h3>
+      </div>
+      <p style="font-size:0.9rem;">Session 1 starts with creating a fictional student resume using ChatGPT. By Session 12, you'll have built a fully autonomous AI system that reviews, tailors, and finalizes resumes against job descriptions — completely on its own.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:0.85rem;">
+          <span style="color:var(--accent2);">✓</span>
+          <span>Session 1–3: Generate & refine the resume with GenAI</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:0.85rem;">
+          <span style="color:var(--accent2);">✓</span>
+          <span>Session 4–5: Parse, structure, and build a RAG pipeline</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:0.85rem;">
+          <span style="color:var(--accent2);">✓</span>
+          <span>Session 6–9: Fine-tune, evaluate, scale, optimize</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:0.85rem;">
+          <span style="color:var(--accent2);">✓</span>
+          <span>Session 10–12: Safety audit, advanced architecture, capstone</span>
+        </div>
+      </div>
+      <a href="curriculum.html" class="btn btn-accent">Download Full Curriculum →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── LAB TESTS ──────────────────────────────────────── -->
+<section>
+  <span class="section-eyebrow">Hands-On Assessment</span>
+  <h2 class="section-title">Lab Tests</h2>
+  <p class="section-subtitle">Four primary lab tests assess your ability to build, not just describe. Each test is a real engineering challenge tied to the course's running project.</p>
+
+  <div class="labs-grid">
+    <div class="lab-card reveal">
+      <div class="lab-num">LAB TEST 1</div>
+      <h4>Generative AI & ChatGPT/Groq</h4>
+      <p>Use Generative AI tools to produce structured, high-quality outputs. Explore prompt sensitivity and model behaviour across different platforms.</p>
+      <a href="lab-tests.html#lab1" class="btn btn-outline btn-sm">View Lab Details →</a>
+    </div>
+    <div class="lab-card reveal">
+      <div class="lab-num">LAB TEST 2</div>
+      <h4>AI Agents with n8n & Llama</h4>
+      <p>Build your first autonomous AI agent using n8n workflow automation and Llama open-source models. Real automation, no hand-holding.</p>
+      <a href="lab-tests.html#lab2" class="btn btn-outline btn-sm">View Lab Details →</a>
+    </div>
+    <div class="lab-card reveal">
+      <div class="lab-num">LAB TEST 3</div>
+      <h4>End-to-End AI Application</h4>
+      <p>Architect and build a complete end-to-end AI application integrating retrieval, generation, and structured outputs into a coherent system.</p>
+      <a href="lab-tests.html#lab3" class="btn btn-outline btn-sm">View Lab Details →</a>
+    </div>
+    <div class="lab-card reveal">
+      <div class="lab-num">LAB TEST 4</div>
+      <h4>Production AI System Design</h4>
+      <p>Design a scalable, safe, production-ready AI system with a complete architecture review, deployment plan, and safety audit.</p>
+      <a href="lab-tests.html#lab4" class="btn btn-outline btn-sm">View Lab Details →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── INSTRUCTOR ─────────────────────────────────────── -->
+<section class="instructor-section" style="max-width:100%;padding:80px 0;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 60px;">
+    <span class="section-eyebrow">Your Instructor</span>
+    <div class="instructor-grid">
+      <div class="instructor-avatar">D</div>
+      <div>
+        <div class="instructor-name">Dinesh Wadhwani</div>
+        <div class="instructor-title">Software Industry Expert · Leadership Coach · AI Educator</div>
+        <p class="instructor-bio">
+          With over <strong>25 years in the software industry</strong>, Dinesh has built, shipped, and scaled technology products across global organisations. He brings deep engineering credibility to every concept — not as a researcher, but as someone who has navigated real production systems, led engineering teams, and coached executives. His teaching philosophy: <em>you only truly understand AI when you've broken it and fixed it yourself.</em>
+        </p>
+        <div class="instructor-tags">
+          <span class="tag tag-blue">Software Architecture</span>
+          <span class="tag tag-blue">AI Systems</span>
+          <span class="tag tag-amber">Executive Coaching</span>
+          <span class="tag tag-amber">Leadership Development</span>
+          <span class="tag tag-green">25+ Years Industry</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CTA ────────────────────────────────────────────── -->
+<section style="text-align:center;">
+  <span class="section-eyebrow">Get Started</span>
+  <h2 class="section-title" style="margin:0 auto 16px;">Ready to Build Real AI?</h2>
+  <p style="max-width:480px;margin:0 auto 36px;font-size:1rem;">Start with Session 1 — no prerequisites beyond curiosity and a willingness to build.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+    <a href="sessions/session-1.html" class="btn btn-primary">Begin Session 1 →</a>
+    <a href="curriculum.html" class="btn btn-outline">View Curriculum</a>
+    <a href="about.html" class="btn btn-outline">About Dinesh</a>
+  </div>
+</section>
+
+</main>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="https://www.thecoachdinesh.com" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="index.html">AI Course Home</a>
+    <a href="about.html">About</a>
+    <a href="curriculum.html">Curriculum</a>
+    <a href="lab-tests.html">Lab Tests</a>
+    <a href="https://www.thecoachdinesh.com">Main Site</a>
+  </nav>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

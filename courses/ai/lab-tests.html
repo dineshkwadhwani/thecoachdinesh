@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab Tests | Autonomous AI Systems | The Coach Dinesh</title>
+  <meta name="description" content="Four hands-on lab tests assessing real AI engineering capability — from GenAI basics to production system design.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .page-hero {
+      padding: 100px 60px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Lab cards */
+    .lab-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px 80px;
+      display: grid;
+      gap: 32px;
+    }
+
+    .lab-full-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+
+    .lab-full-card:hover { border-color: rgba(16,185,129,0.3); }
+
+    .lab-card-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 20px;
+      padding: 32px 32px 0;
+    }
+
+    .lab-number {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 8px;
+    }
+
+    .lab-full-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .lab-tagline {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 0;
+    }
+
+    .lab-download-btn {
+      white-space: nowrap;
+    }
+
+    .lab-card-body {
+      padding: 28px 32px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .lab-desc-full { font-size: 0.9rem; line-height: 1.75; }
+    .lab-desc-full p { margin-bottom: 12px; }
+
+    .lab-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .lab-info-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+    }
+
+    .lab-info-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .lab-info-box p { font-size: 0.87rem; color: var(--off-white); }
+
+    .lab-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .lab-skill {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      background: rgba(16,185,129,0.1);
+      color: var(--accent2);
+      border: 1px solid rgba(16,185,129,0.2);
+      padding: 3px 9px;
+      border-radius: 4px;
+    }
+
+    .deliverable-full {
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.18);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .deliverable-full .deliverable-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .deliverable-full p { font-size: 0.87rem; color: var(--off-white); }
+
+    /* Separator for lab sections */
+    .lab-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 60px;
+    }
+
+    /* Secondary labs section */
+    .secondary-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 60px 80px;
+    }
+
+    .secondary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .secondary-lab-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all var(--transition);
+    }
+
+    .secondary-lab-card:hover {
+      background: var(--card-hover);
+      border-color: rgba(59,130,246,0.25);
+    }
+
+    .secondary-lab-card h4 { color: var(--white); margin: 10px 0 8px; }
+    .secondary-lab-card p { font-size: 0.87rem; margin-bottom: 16px; }
+
+    @media (max-width: 900px) {
+      .page-hero { padding: 80px 24px 40px; }
+      .lab-grid { padding: 0 24px 60px; }
+      .lab-card-header { grid-template-columns: 1fr; }
+      .lab-card-body { grid-template-columns: 1fr; }
+      .lab-divider { margin: 0 24px; }
+      .secondary-section { padding: 48px 24px 60px; }
+      .secondary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="about.html">About</a></li>
+    <li><a href="curriculum.html">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="sessions/session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="sessions/session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="sessions/session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="sessions/session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="sessions/session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="sessions/session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="sessions/session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="sessions/session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="sessions/session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="sessions/session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="sessions/session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="sessions/session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+      </div>
+    </li>
+    <li><a href="lab-tests.html" class="active">Lab Tests</a></li>
+    <li><a href="https://www.thecoachdinesh.com" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<div class="page-hero">
+  <span class="section-eyebrow">Hands-On Assessment</span>
+  <h1>Lab Tests</h1>
+  <p class="section-subtitle" style="margin-bottom:0;">Four real engineering challenges. No multiple-choice questions. Every lab produces something you built — an artifact that proves capability, not just comprehension.</p>
+</div>
+
+<div class="divider" style="margin:0 60px 48px;"></div>
+
+<!-- ── PRIMARY LAB TESTS ──────────────────────────── -->
+<div class="lab-grid">
+
+  <!-- LAB 1 -->
+  <div class="lab-full-card reveal" id="lab1">
+    <div class="lab-card-header">
+      <div>
+        <div class="lab-number">Primary Lab Test 1</div>
+        <h2>Generative AI with ChatGPT & Groq</h2>
+        <p class="lab-tagline">Experience the full GenAI production cycle — from prompt to structured output to analysis.</p>
+      </div>
+      <a href="files/labs/Lab Test1.pdf" class="btn btn-outline btn-sm lab-download-btn" target="_blank">📄 Download Lab PDF</a>
+    </div>
+
+    <div class="lab-card-body">
+      <div class="lab-desc-full">
+        <p>This lab immerses you in the practical reality of working with Generative AI tools at a production level. You'll move from simple prompt-and-response to systematic experimentation — testing how different phrasings, system messages, and model parameters (temperature, top_p) produce meaningfully different outputs.</p>
+        <p>Using both ChatGPT (OpenAI) and Groq's fast inference API, you'll compare output quality, speed, and cost across platforms for the same task — exactly the kind of decision engineering teams face when selecting AI infrastructure.</p>
+        <div class="deliverable-full">
+          <div class="deliverable-label">What You'll Deliver</div>
+          <p>A structured comparison report showing prompt variations, temperature experiments, cross-platform comparisons, and your analysis of output quality, hallucination risk, and production suitability.</p>
+        </div>
+      </div>
+
+      <div class="lab-sidebar">
+        <div class="lab-info-box">
+          <div class="lab-info-label">Related Sessions</div>
+          <p>Sessions 1, 2 & 3 — AI fundamentals, LLM mechanics, prompt engineering</p>
+        </div>
+        <div class="lab-info-box">
+          <div class="lab-info-label">Skills Tested</div>
+          <div class="lab-skills">
+            <span class="lab-skill">Prompt Design</span>
+            <span class="lab-skill">Temperature Tuning</span>
+            <span class="lab-skill">Model Comparison</span>
+            <span class="lab-skill">Output Analysis</span>
+            <span class="lab-skill">API Usage</span>
+          </div>
+        </div>
+        <div class="lab-info-box">
+          <div class="lab-info-label">Tools</div>
+          <p>ChatGPT (OpenAI), Groq API, Python or no-code interface</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 2 -->
+  <div class="lab-full-card reveal" id="lab2">
+    <div class="lab-card-header">
+      <div>
+        <div class="lab-number">Primary Lab Test 2</div>
+        <h2>AI Agents with n8n & Llama</h2>
+        <p class="lab-tagline">Build your first autonomous AI agent — no hand-holding, real automation.</p>
+      </div>
+      <a href="files/labs/Lab Test2.pdf" class="btn btn-outline btn-sm lab-download-btn" target="_blank">📄 Download Lab PDF</a>
+    </div>
+
+    <div class="lab-card-body">
+      <div class="lab-desc-full">
+        <p>This lab takes you from talking to AI to building AI that acts. Using n8n (a visual workflow automation tool) and Llama (Meta's open-source LLM family), you'll design and deploy an AI agent that can execute a multi-step workflow autonomously — without you pressing each button.</p>
+        <p>The shift from "GenAI as a chat tool" to "AI as an automated worker" is one of the most significant in the field. This lab gives you hands-on experience with that shift, including the debugging, edge cases, and design decisions that come with building agentic systems.</p>
+        <div class="deliverable-full">
+          <div class="deliverable-label">What You'll Deliver</div>
+          <p>A working n8n workflow that uses Llama to autonomously process inputs and produce structured outputs, with documentation of design decisions and observed failure modes.</p>
+        </div>
+      </div>
+
+      <div class="lab-sidebar">
+        <div class="lab-info-box">
+          <div class="lab-info-label">Related Sessions</div>
+          <p>Sessions 3, 4 & 11 — Prompt engineering, structured outputs, multi-agent systems</p>
+        </div>
+        <div class="lab-info-box">
+          <div class="lab-info-label">Skills Tested</div>
+          <div class="lab-skills">
+            <span class="lab-skill">Workflow Design</span>
+            <span class="lab-skill">Agent Architecture</span>
+            <span class="lab-skill">Open-Source LLMs</span>
+            <span class="lab-skill">Tool Integration</span>
+            <span class="lab-skill">Error Handling</span>
+          </div>
+        </div>
+        <div class="lab-info-box">
+          <div class="lab-info-label">Tools</div>
+          <p>n8n, Llama (via Ollama or Groq), optional: LangChain</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 3 -->
+  <div class="lab-full-card reveal" id="lab3">
+    <div class="lab-card-header">
+      <div>
+        <div class="lab-number">Primary Lab Test 3</div>
+        <h2>End-to-End AI Application</h2>
+        <p class="lab-tagline">Architect and ship a complete AI system — retrieval, generation, structure, all connected.</p>
+      </div>
+      <a href="files/labs/Lab Test3.pdf" class="btn btn-outline btn-sm lab-download-btn" target="_blank">📄 Download Lab PDF</a>
+    </div>
+
+    <div class="lab-card-body">
+      <div class="lab-desc-full">
+        <p>This is where everything from Sessions 1–8 converges. You'll build a complete, end-to-end AI application — not a demo, not a single prompt, but a system with distinct components that work together: a retrieval layer, a generation layer, structured output parsing, and basic error handling.</p>
+        <p>The hiring AI running project provides a natural template: a system that takes a candidate profile and a job description, retrieves the most relevant criteria via RAG, generates a structured assessment, and returns a formatted, machine-readable result. You may adapt this to any domain you choose.</p>
+        <div class="deliverable-full">
+          <div class="deliverable-label">What You'll Deliver</div>
+          <p>A working application (script, notebook, or simple API) with architecture documentation, test cases demonstrating correct behaviour, and a documented failure analysis.</p>
+        </div>
+      </div>
+
+      <div class="lab-sidebar">
+        <div class="lab-info-box">
+          <div class="lab-info-label">Related Sessions</div>
+          <p>Sessions 4, 5, 6, 7 & 8 — Structured outputs, RAG, fine-tuning, evaluation, deployment</p>
+        </div>
+        <div class="lab-info-box">
+          <div class="lab-info-label">Skills Tested</div>
+          <div class="lab-skills">
+            <span class="lab-skill">System Architecture</span>
+            <span class="lab-skill">RAG Pipeline</span>
+            <span class="lab-skill">JSON Parsing</span>
+            <span class="lab-skill">End-to-End Testing</span>
+            <span class="lab-skill">Documentation</span>
+          </div>
+        </div>
+        <div class="lab-info-box">
+          <div class="lab-info-label">Tools</div>
+          <p>Python, OpenAI/Anthropic API, Chroma or Pinecone, any vector embedding model</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 4 -->
+  <div class="lab-full-card reveal" id="lab4">
+    <div class="lab-card-header">
+      <div>
+        <div class="lab-number">Primary Lab Test 4</div>
+        <h2>Production AI System Design</h2>
+        <p class="lab-tagline">Design, document, and defend a production-ready AI system from first principles.</p>
+      </div>
+      <a href="files/labs/Lab Test4.pdf" class="btn btn-outline btn-sm lab-download-btn" target="_blank">📄 Download Lab PDF</a>
+    </div>
+
+    <div class="lab-card-body">
+      <div class="lab-desc-full">
+        <p>The final lab is a capstone engineering design challenge. You'll design a complete production AI system — from architecture and data pipeline through to deployment strategy, monitoring plan, safety audit, and cost model. This is what senior AI engineers and architects do before a single line of code is written.</p>
+        <p>Your design will cover: model selection rationale, infrastructure choices, scaling strategy (to 100K+ requests/day), caching plan, safety and bias testing approach, and cost optimisation. You'll also identify failure modes and document your mitigation strategies.</p>
+        <div class="deliverable-full">
+          <div class="deliverable-label">What You'll Deliver</div>
+          <p>A production system design document (10–20 pages or equivalent) covering architecture, infrastructure, deployment, monitoring, safety, cost, and scaling — ready for stakeholder review.</p>
+        </div>
+      </div>
+
+      <div class="lab-sidebar">
+        <div class="lab-info-box">
+          <div class="lab-info-label">Related Sessions</div>
+          <p>Sessions 8, 9, 10, 11 & 12 — Production, optimisation, safety, advanced architectures, capstone</p>
+        </div>
+        <div class="lab-info-box">
+          <div class="lab-info-label">Skills Tested</div>
+          <div class="lab-skills">
+            <span class="lab-skill">System Design</span>
+            <span class="lab-skill">Infra Planning</span>
+            <span class="lab-skill">Safety Audit</span>
+            <span class="lab-skill">Cost Modelling</span>
+            <span class="lab-skill">Stakeholder Comms</span>
+          </div>
+        </div>
+        <div class="lab-info-box">
+          <div class="lab-info-label">Format</div>
+          <p>Design document + optional architectural diagram. Defend your choices.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="lab-divider"></div>
+
+<!-- ── SECONDARY LAB TESTS ────────────────────────── -->
+<div class="secondary-section">
+  <span class="section-eyebrow">Secondary Lab Tests</span>
+  <h2 class="section-title">Session-Integrated Assessments</h2>
+  <p style="margin-bottom:0;">In addition to the four primary lab tests, each session includes a focused 12-minute hands-on exercise. Four of these are designated as secondary lab tests with formal deliverables.</p>
+
+  <div class="secondary-grid">
+    <div class="secondary-lab-card reveal">
+      <span class="tag tag-blue">Secondary Lab 1</span>
+      <h4>Prompt Variations & Output Behaviour</h4>
+      <p>From Session 2 — test your Session 1 resume with 3 prompt variations and 1 temperature experiment. Document and analyse the differences.</p>
+      <a href="sessions/session-2.html" class="btn btn-outline btn-sm">View Session 2 →</a>
+    </div>
+
+    <div class="secondary-lab-card reveal">
+      <span class="tag tag-blue">Secondary Lab 2</span>
+      <h4>RAG System Construction</h4>
+      <p>From Session 5 — build a functioning RAG system using your resume as the knowledge base. Answer questions with citations and compare RAG vs non-RAG.</p>
+      <a href="sessions/session-5.html" class="btn btn-outline btn-sm">View Session 5 →</a>
+    </div>
+
+    <div class="secondary-lab-card reveal">
+      <span class="tag tag-blue">Secondary Lab 3</span>
+      <h4>Rigorous Evaluation Report</h4>
+      <p>From Session 7 — benchmark your hiring AI against a baseline, run statistical significance tests, and produce a formal evaluation report.</p>
+      <a href="sessions/session-7.html" class="btn btn-outline btn-sm">View Session 7 →</a>
+    </div>
+
+    <div class="secondary-lab-card reveal">
+      <span class="tag tag-blue">Secondary Lab 4</span>
+      <h4>Safety & Bias Audit</h4>
+      <p>From Session 10 — conduct a comprehensive safety and fairness audit of your hiring AI, identifying biases, testing for them, and proposing mitigations.</p>
+      <a href="sessions/session-10.html" class="btn btn-outline btn-sm">View Session 10 →</a>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<section style="text-align:center;padding:60px;">
+  <span class="section-eyebrow">Ready to Start</span>
+  <h2 style="margin-bottom:16px;">Begin with Session 1</h2>
+  <p style="max-width:460px;margin:0 auto 32px;">The lab tests build progressively. Start at the beginning — each session prepares you for the next lab.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+    <a href="sessions/session-1.html" class="btn btn-primary">Begin Session 1 →</a>
+    <a href="curriculum.html" class="btn btn-outline">Full Curriculum</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="https://www.thecoachdinesh.com" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="index.html">AI Course Home</a>
+    <a href="about.html">About</a>
+    <a href="curriculum.html">Curriculum</a>
+    <a href="lab-tests.html">Lab Tests</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

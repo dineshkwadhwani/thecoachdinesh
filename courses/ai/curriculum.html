@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curriculum | Autonomous AI Systems | The Coach Dinesh</title>
+  <meta name="description" content="Full 12-session curriculum for Autonomous AI Systems & Agent-Based Computing — from LLM fundamentals to multi-agent capstone.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .page-hero {
+      padding: 100px 60px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .download-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    /* Unit sections */
+    .unit-block {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px 60px;
+    }
+
+    .unit-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .unit-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .unit-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: var(--white);
+    }
+
+    .session-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .session-row {
+      display: grid;
+      grid-template-columns: 48px 1fr 180px 120px;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .session-row:hover { background: var(--card-hover); }
+
+    .session-row > div {
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .session-row .num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      justify-content: center;
+    }
+
+    .session-row .title-cell {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .session-row .title-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .session-row .subtitle-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .session-row .topics-cell {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .session-row .action-cell {
+      justify-content: flex-end;
+    }
+
+    .session-row .action-cell a {
+      font-size: 0.78rem;
+      color: var(--blue-lt);
+      padding: 5px 12px;
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 20px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .session-row .action-cell a:hover { background: rgba(59,130,246,0.1); }
+
+    /* Course objectives */
+    .objectives-section {
+      background: linear-gradient(135deg, rgba(26,86,219,0.07), transparent);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .objectives-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .objective-item {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+    }
+
+    .objective-item .check { color: var(--accent2); flex-shrink: 0; }
+
+    @media (max-width: 900px) {
+      .page-hero { padding: 80px 24px 40px; }
+      .unit-block { padding: 0 24px 48px; }
+      .session-row { grid-template-columns: 40px 1fr; }
+      .session-row .topics-cell, .session-row .action-cell { display: none; }
+      .objectives-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="about.html">About</a></li>
+    <li><a href="curriculum.html" class="active">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="sessions/session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="sessions/session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="sessions/session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="sessions/session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="sessions/session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="sessions/session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="sessions/session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="sessions/session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="sessions/session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="sessions/session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="sessions/session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="sessions/session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+      </div>
+    </li>
+    <li><a href="lab-tests.html">Lab Tests</a></li>
+    <li><a href="https://www.thecoachdinesh.com" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<div class="page-hero">
+  <span class="section-eyebrow">Full Course Curriculum</span>
+  <h1>Autonomous AI Systems &amp;<br>Agent-Based Computing</h1>
+  <p class="section-subtitle" style="margin-bottom:0;">12 sessions · 4 lab tests · One running project that evolves from a resume to a fully autonomous AI system.</p>
+
+  <div class="download-bar">
+    <a href="files/Session Plan.pdf" class="btn btn-primary" target="_blank">📄 Download Session Plan (PDF)</a>
+    <a href="files/Agentic AI Syllabus.docx" class="btn btn-outline" target="_blank">📋 Download Full Syllabus (.docx)</a>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px 40px;"></div>
+
+<!-- ── UNIT 1 ────────────────────────────────────────── -->
+<div class="unit-block">
+  <div class="unit-header">
+    <span class="unit-label">Unit 1 · Sessions 1–3</span>
+    <span class="unit-title">Foundations of Modern AI</span>
+  </div>
+
+  <div>
+    <a href="sessions/session-1.html" class="session-row reveal">
+      <div class="num">01</div>
+      <div class="title-cell">
+        <span class="title-text">Introduction to AI, Generative AI & Agentic AI</span>
+        <span class="subtitle-text">AI history, evolution ladder, three types of AI, LLM overview</span>
+      </div>
+      <div class="topics-cell">Intro · Concepts · History</div>
+      <div class="action-cell"><a href="sessions/session-1.html">View Session →</a></div>
+    </a>
+
+    <a href="sessions/session-2.html" class="session-row reveal">
+      <div class="num">02</div>
+      <div class="title-cell">
+        <span class="title-text">LLM Fundamentals & Output Behavior</span>
+        <span class="subtitle-text">Tokens, temperature, context windows, system messages, prompt injection</span>
+      </div>
+      <div class="topics-cell">LLMs · Tokenisation · Params</div>
+      <div class="action-cell"><a href="sessions/session-2.html">View Session →</a></div>
+    </a>
+
+    <a href="sessions/session-3.html" class="session-row reveal">
+      <div class="num">03</div>
+      <div class="title-cell">
+        <span class="title-text">Prompt Engineering Fundamentals</span>
+        <span class="subtitle-text">Role prompting, few-shot, chain-of-thought, production prompt design</span>
+      </div>
+      <div class="topics-cell">Prompting · Few-shot · CoT</div>
+      <div class="action-cell"><a href="sessions/session-3.html">View Session →</a></div>
+    </a>
+  </div>
+</div>
+
+<!-- ── UNIT 2 ────────────────────────────────────────── -->
+<div class="unit-block">
+  <div class="unit-header">
+    <span class="unit-label">Unit 2 · Sessions 4–5</span>
+    <span class="unit-title">Structured Data & Retrieval</span>
+  </div>
+
+  <div>
+    <a href="sessions/session-4.html" class="session-row reveal">
+      <div class="num">04</div>
+      <div class="title-cell">
+        <span class="title-text">Structured Outputs & Parsing</span>
+        <span class="subtitle-text">JSON schema design, output formatting, error handling, pipeline construction</span>
+      </div>
+      <div class="topics-cell">JSON · Parsing · Pipelines</div>
+      <div class="action-cell"><a href="sessions/session-4.html">View Session →</a></div>
+    </a>
+
+    <a href="sessions/session-5.html" class="session-row reveal">
+      <div class="num">05</div>
+      <div class="title-cell">
+        <span class="title-text">Retrieval-Augmented Generation (RAG)</span>
+        <span class="subtitle-text">Embeddings, semantic search, vector databases, RAG architecture</span>
+      </div>
+      <div class="topics-cell">RAG · Embeddings · VectorDB</div>
+      <div class="action-cell"><a href="sessions/session-5.html">View Session →</a></div>
+    </a>
+  </div>
+</div>
+
+<!-- ── UNIT 3 ────────────────────────────────────────── -->
+<div class="unit-block">
+  <div class="unit-header">
+    <span class="unit-label">Unit 3 · Sessions 6–7</span>
+    <span class="unit-title">Specialization & Measurement</span>
+  </div>
+
+  <div>
+    <a href="sessions/session-6.html" class="session-row reveal">
+      <div class="num">06</div>
+      <div class="title-cell">
+        <span class="title-text">Fine-Tuning & Specialization</span>
+        <span class="subtitle-text">Pre-training vs fine-tuning, LoRA, QLoRA, instruction optimisation, training data</span>
+      </div>
+      <div class="topics-cell">LoRA · Fine-tuning · Data</div>
+      <div class="action-cell"><a href="sessions/session-6.html">View Session →</a></div>
+    </a>
+
+    <a href="sessions/session-7.html" class="session-row reveal">
+      <div class="num">07</div>
+      <div class="title-cell">
+        <span class="title-text">Evaluation & Benchmarking</span>
+        <span class="subtitle-text">Metrics, benchmark creation, A/B testing, performance monitoring, failure analysis</span>
+      </div>
+      <div class="topics-cell">BLEU · A/B Testing · Metrics</div>
+      <div class="action-cell"><a href="sessions/session-7.html">View Session →</a></div>
+    </a>
+  </div>
+</div>
+
+<!-- ── UNIT 4 ────────────────────────────────────────── -->
+<div class="unit-block">
+  <div class="unit-header">
+    <span class="unit-label">Unit 4 · Sessions 8–9</span>
+    <span class="unit-title">Production & Optimization</span>
+  </div>
+
+  <div>
+    <a href="sessions/session-8.html" class="session-row reveal">
+      <div class="num">08</div>
+      <div class="title-cell">
+        <span class="title-text">Scaling & Production Deployment</span>
+        <span class="subtitle-text">Infrastructure, horizontal scaling, caching, cost optimisation, observability</span>
+      </div>
+      <div class="topics-cell">Infra · Scaling · Cost</div>
+      <div class="action-cell"><a href="sessions/session-8.html">View Session →</a></div>
+    </a>
+
+    <a href="sessions/session-9.html" class="session-row reveal">
+      <div class="num">09</div>
+      <div class="title-cell">
+        <span class="title-text">Advanced Techniques & Optimization</span>
+        <span class="subtitle-text">Ensembling, prompt optimisation, knowledge distillation, retrieval optimisation</span>
+      </div>
+      <div class="topics-cell">Ensembling · Distillation · DSPy</div>
+      <div class="action-cell"><a href="sessions/session-9.html">View Session →</a></div>
+    </a>
+  </div>
+</div>
+
+<!-- ── UNIT 5 ────────────────────────────────────────── -->
+<div class="unit-block">
+  <div class="unit-header">
+    <span class="unit-label">Unit 5 · Sessions 10–12</span>
+    <span class="unit-title">Safety, Agentic AI & Capstone</span>
+  </div>
+
+  <div>
+    <a href="sessions/session-10.html" class="session-row reveal">
+      <div class="num">10</div>
+      <div class="title-cell">
+        <span class="title-text">AI Safety & Alignment</span>
+        <span class="subtitle-text">Bias detection, explainability, human-in-the-loop, AI governance & regulation</span>
+      </div>
+      <div class="topics-cell">Safety · Bias · Ethics</div>
+      <div class="action-cell"><a href="sessions/session-10.html">View Session →</a></div>
+    </a>
+
+    <a href="sessions/session-11.html" class="session-row reveal">
+      <div class="num">11</div>
+      <div class="title-cell">
+        <span class="title-text">Advanced Architectures</span>
+        <span class="subtitle-text">Multi-agent systems, tool use, memory, planning, agent frameworks</span>
+      </div>
+      <div class="topics-cell">Multi-Agent · ReAct · Tools</div>
+      <div class="action-cell"><a href="sessions/session-11.html">View Session →</a></div>
+    </a>
+
+    <a href="sessions/session-12.html" class="session-row reveal">
+      <div class="num">12</div>
+      <div class="title-cell">
+        <span class="title-text">Real-World Case Studies & Capstone</span>
+        <span class="subtitle-text">Production architectures, recommendation systems, autonomous systems, capstone project</span>
+      </div>
+      <div class="topics-cell">Case Studies · Capstone</div>
+      <div class="action-cell"><a href="sessions/session-12.html">View Session →</a></div>
+    </a>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── COURSE OBJECTIVES ───────────────────────────── -->
+<section class="objectives-section">
+  <div style="max-width:1200px;margin:0 auto;padding:60px;">
+    <span class="section-eyebrow">Course Objectives</span>
+    <h2 class="section-title">What Students Will Be Able To Do</h2>
+
+    <div class="objectives-grid">
+      <div class="objective-item reveal"><span class="check">✓</span><span>Understand the fundamentals of Generative AI and how Large Language Models work at a mechanistic level</span></div>
+      <div class="objective-item reveal"><span class="check">✓</span><span>Design effective prompts for diverse production use cases using systematic engineering techniques</span></div>
+      <div class="objective-item reveal"><span class="check">✓</span><span>Build AI-powered applications using both proprietary APIs (OpenAI, Anthropic) and open-source tools</span></div>
+      <div class="objective-item reveal"><span class="check">✓</span><span>Architect Retrieval-Augmented Generation systems with embeddings, vector databases, and semantic search</span></div>
+      <div class="objective-item reveal"><span class="check">✓</span><span>Evaluate AI systems rigorously — create benchmarks, run A/B tests, and monitor production performance</span></div>
+      <div class="objective-item reveal"><span class="check">✓</span><span>Deploy AI systems to production with appropriate infrastructure, scaling, and cost optimisation strategies</span></div>
+      <div class="objective-item reveal"><span class="check">✓</span><span>Assess AI systems for bias, explain decisions, and implement responsible AI governance practices</span></div>
+      <div class="objective-item reveal"><span class="check">✓</span><span>Design multi-agent systems that plan, use tools, maintain memory, and act with genuine autonomy</span></div>
+    </div>
+  </div>
+</section>
+
+<section style="text-align:center;padding:60px;">
+  <span class="section-eyebrow">Begin the Journey</span>
+  <h2 style="margin-bottom:16px;">Start With Session 1</h2>
+  <p style="max-width:460px;margin:0 auto 32px;">All sessions, presentations, and study notes are ready. Start whenever you are.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+    <a href="sessions/session-1.html" class="btn btn-primary">Begin Session 1 →</a>
+    <a href="lab-tests.html" class="btn btn-outline">View Lab Tests</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="https://www.thecoachdinesh.com" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="index.html">AI Course Home</a>
+    <a href="about.html">About</a>
+    <a href="curriculum.html">Curriculum</a>
+    <a href="lab-tests.html">Lab Tests</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
