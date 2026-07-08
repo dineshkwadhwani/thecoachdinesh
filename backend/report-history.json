@@ -1,1 +1,128 @@
-{"leads": {}}
+{
+  "leads": {
+    "dinesh.k.wadhwani@gmail.com::+919767676738": {
+      "name": "Dinesh",
+      "email": "dinesh.k.wadhwani@gmail.com",
+      "mobile": "+919767676738",
+      "reports": [
+        {
+          "timestamp": "2026-07-08T17:46:21.192Z",
+          "name": "Dinesh",
+          "email": "dinesh.k.wadhwani@gmail.com",
+          "mobile": "+919767676738",
+          "quizType": "quick",
+          "dominantStyle": "Coaching",
+          "secondaryStyle": "Democratic",
+          "report": "You have a dominant leadership style of Coaching, which means you excel at developing and guiding others to achieve their full potential. Your approach is supportive and encouraging, focusing on helping team members grow and learn. This style is a significant strength, as it fosters a positive and collaborative work environment. You're likely adept at providing constructive feedback, active listening, and empowering your team to make decisions.\n\nYour secondary style, Democratic, suggests that you also value input and involvement from your team members. This approach helps you build consensus and ensure that everyone is on board with decisions. Your strengths in this style include being open-minded, flexible, and able to balance different perspectives.\n\nTo grow and develop, consider working on delegating tasks more efficiently and establishing clear goals and deadlines. While your Coaching style is beneficial, it's essential to strike a balance between guidance and autonomy. By doing so, you'll help your team members develop a sense of ownership and accountability, ultimately leading to greater success."
+        },
+        {
+          "timestamp": "2026-07-08T17:46:39.375Z",
+          "name": "Dinesh",
+          "email": "dinesh.k.wadhwani@gmail.com",
+          "mobile": "+919767676738",
+          "quizType": "transformation",
+          "assessmentType": "Transformation Action Plan",
+          "summary": "Based on the analysis of 1 assessment, Dinesh demonstrates a consistent Coaching leadership style with a supportive and encouraging approach. Although the assessment history is limited, it highlights Dinesh's strength in",
+          "sourceReportCount": 1,
+          "sourceQuizTypes": [
+            "quick"
+          ],
+          "assessmentSummary": {
+            "takenTests": [
+              "quick"
+            ],
+            "totalAssessmentsAnalysed": 1,
+            "style": {
+              "taken": true,
+              "attemptCount": 1,
+              "dominantStyle": "Coaching",
+              "secondaryStyle": "Democratic",
+              "summary": "You have a dominant leadership style of Coaching, which means you excel at developing and guiding others to achieve their full potential. Your approach is supportive and encouraging, focusing on helping team members grow"
+            },
+            "clarity": {
+              "taken": false,
+              "attemptCount": 0
+            },
+            "presence": {
+              "taken": false,
+              "attemptCount": 0
+            },
+            "systems": {
+              "taken": false,
+              "attemptCount": 0
+            }
+          },
+          "plan": {
+            "executiveSummary": "Based on the analysis of 1 assessment, Dinesh demonstrates a consistent Coaching leadership style with a supportive and encouraging approach. Although the assessment history is limited, it highlights Dinesh's strength in developing and guiding others. To further enhance his leadership capabilities, it is essential to focus on complementary skills that can augment his Coaching style.",
+            "industryComparison": "In comparison to industry-standard high-performing leadership behaviors, Dinesh's Coaching style is a valuable asset. However, to excel in his role, he needs to demonstrate a broader range of skills, including strategic thinking, communication, and influencing abilities.",
+            "optimalBehaviours": "To achieve optimal leadership behaviors, Dinesh should focus on developing skills that complement his Coaching style, such as setting clear goals, prioritizing tasks, and driving results. He should also work on building a stronger network of peers and mentors to provide support and guidance.",
+            "gapAnalysis": "The assessment reveals that Dinesh may benefit from developing skills in areas such as strategic planning, decision-making, and delegating tasks, as these are not explicitly mentioned as part of his dominant Coaching style. Additionally, there is a need to explore how Dinesh can balance his supportive approach with the ability to drive results and make tough decisions when necessary.",
+            "coachingAcceleration": "Coaching can play a significant role in accelerating Dinesh's development by providing him with personalized feedback, guidance, and support to address the identified gaps. A coaching program can help Dinesh develop a more nuanced understanding of his leadership style and its applications in various situations.",
+            "learningMix": [
+              "Self-paced learning",
+              "Classroom sessions",
+              "Coaching"
+            ],
+            "actionItems": [
+              {
+                "area": "Strategic Focus",
+                "keyAction": "Run a weekly strategic signal-vs-noise review and publish the top three priorities for execution.",
+                "deliveryMode": "Self-paced learning",
+                "benefit": "Enhanced ability to drive results and make informed decisions",
+                "startDate": "15-07-2026",
+                "reviewDate": "30-08-2026",
+                "reviewType": "Coach"
+              },
+              {
+                "area": "Leadership Style Adaptability",
+                "keyAction": "Apply one situational leadership shift each week and document outcomes with your team.",
+                "deliveryMode": "Classroom session",
+                "benefit": "Improved ability to make informed, timely decisions",
+                "startDate": "20-07-2026",
+                "reviewDate": "15-09-2026",
+                "reviewType": "Peer"
+              },
+              {
+                "area": "Executive Presence",
+                "keyAction": "Rehearse high-stakes messages using concise framing, confident delivery, and explicit asks.",
+                "deliveryMode": "Coaching",
+                "benefit": "Enhanced ability to empower team members and free up time for strategic tasks",
+                "startDate": "25-07-2026",
+                "reviewDate": "30-09-2026",
+                "reviewType": "Mentor"
+              },
+              {
+                "area": "Systems Diagnosis",
+                "keyAction": "Map one recurring business challenge using causes, dependencies, and leverage points.",
+                "deliveryMode": "Self-paced learning",
+                "benefit": "Improved ability to communicate effectively and build strong relationships",
+                "startDate": "01-08-2026",
+                "reviewDate": "15-10-2026",
+                "reviewType": "Self"
+              },
+              {
+                "area": "Stakeholder Influence",
+                "keyAction": "Schedule structured alignment conversations with critical stakeholders every fortnight.",
+                "deliveryMode": "Classroom session",
+                "benefit": "Enhanced ability to influence others and drive results",
+                "startDate": "10-08-2026",
+                "reviewDate": "30-10-2026",
+                "reviewType": "Blended"
+              },
+              {
+                "area": "Execution Accountability",
+                "keyAction": "Maintain a 30-day execution tracker with measurable goals and review checkpoints.",
+                "deliveryMode": "Self-paced learning",
+                "benefit": "Improved ability to build strong relationships with peers and mentors",
+                "startDate": "15-08-2026",
+                "reviewDate": "15-11-2026",
+                "reviewType": "Coach"
+              }
+            ]
+          },
+          "report": "Executive Summary\nBased on the analysis of 1 assessment, Dinesh demonstrates a consistent Coaching leadership style with a supportive and encouraging approach. Although the assessment history is limited, it highlights Dinesh's strength in developing and guiding others. To further enhance his leadership capabilities, it is essential to focus on complementary skills that can augment his Coaching style.\n\nConsolidated Assessment Summary\nTests Taken: quick\nStyle: Coaching (Secondary: Democratic)\nClarity: Not available\nPresence Summary: Not available\nSystems Summary: Not available\n\nIndustry Benchmark Comparison\nIn comparison to industry-standard high-performing leadership behaviors, Dinesh's Coaching style is a valuable asset. However, to excel in his role, he needs to demonstrate a broader range of skills, including strategic thinking, communication, and influencing abilities.\n\nMost Optimal Behaviours\nTo achieve optimal leadership behaviors, Dinesh should focus on developing skills that complement his Coaching style, such as setting clear goals, prioritizing tasks, and driving results. He should also work on building a stronger network of peers and mentors to provide support and guidance.\n\nGap Analysis\nThe assessment reveals that Dinesh may benefit from developing skills in areas such as strategic planning, decision-making, and delegating tasks, as these are not explicitly mentioned as part of his dominant Coaching style. Additionally, there is a need to explore how Dinesh can balance his supportive approach with the ability to drive results and make tough decisions when necessary.\n\nHow Coaching Accelerates Growth\nCoaching can play a significant role in accelerating Dinesh's development by providing him with personalized feedback, guidance, and support to address the identified gaps. A coaching program can help Dinesh develop a more nuanced understanding of his leadership style and its applications in various situations.\n\nRecommended Learning Mix\nSelf-paced learning\nClassroom sessions\nCoaching\n\nAction Plan Table\n1. Strategic Focus: Run a weekly strategic signal-vs-noise review and publish the top three priorities for execution. | Mode: Self-paced learning | Benefit: Enhanced ability to drive results and make informed decisions | Start: 15-07-2026 | Review: 30-08-2026 | Review Type: Coach\n2. Leadership Style Adaptability: Apply one situational leadership shift each week and document outcomes with your team. | Mode: Classroom session | Benefit: Improved ability to make informed, timely decisions | Start: 20-07-2026 | Review: 15-09-2026 | Review Type: Peer\n3. Executive Presence: Rehearse high-stakes messages using concise framing, confident delivery, and explicit asks. | Mode: Coaching | Benefit: Enhanced ability to empower team members and free up time for strategic tasks | Start: 25-07-2026 | Review: 30-09-2026 | Review Type: Mentor\n4. Systems Diagnosis: Map one recurring business challenge using causes, dependencies, and leverage points. | Mode: Self-paced learning | Benefit: Improved ability to communicate effectively and build strong relationships | Start: 01-08-2026 | Review: 15-10-2026 | Review Type: Self\n5. Stakeholder Influence: Schedule structured alignment conversations with critical stakeholders every fortnight. | Mode: Classroom session | Benefit: Enhanced ability to influence others and drive results | Start: 10-08-2026 | Review: 30-10-2026 | Review Type: Blended\n6. Execution Accountability: Maintain a 30-day execution tracker with measurable goals and review checkpoints. | Mode: Self-paced learning | Benefit: Improved ability to build strong relationships with peers and mentors | Start: 15-08-2026 | Review: 15-11-2026 | Review Type: Coach"
+        }
+      ]
+    }
+  }
+}
