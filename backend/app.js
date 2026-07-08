@@ -659,6 +659,22 @@ app.get('/ping', (req, res) => {
   res.status(200).send('Coach is awake!');
 });
 
+// Diagnostic endpoint to check environment and system status
+app.get('/debug/status', (req, res) => {
+  res.json({
+    timestamp: new Date().toISOString(),
+    nodeEnv: process.env.NODE_ENV,
+    hasSupabaseUrl: !!process.env.SUPABASE_URL,
+    hasSupabaseKey: !!process.env.SUPABASE_SERVICE_KEY,
+    hasGroqKey: !!process.env.GROQ_API_KEY,
+    hasTelegramToken: !!process.env.TELEGRAM_TOKEN,
+    usingSupabase: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY),
+    message: process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY
+      ? '✓ Ready to save reports to Supabase'
+      : '⚠️ Missing Supabase credentials - reports will go to file storage'
+  });
+});
+
 // CHECK IF A PHONE NUMBER HAS ALREADY TAKEN A SPECIFIC QUIZ
 app.get('/check-existing-report', async (req, res) => {
     try {
