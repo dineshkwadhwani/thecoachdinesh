@@ -1921,22 +1921,28 @@ Using ALL ${sourceReports.length} assessments above, generate a comprehensive tr
     }
 });
 
-const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => {
-    console.log(`Coach is online at http://localhost:${PORT}`);
-    console.log('Server is running. Press Ctrl+C to stop.\n');
-});
+// Export app for serverless (Vercel) and traditional Node.js (Render)
+module.exports = app;
 
-// Catch any unhandled errors
-process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-    process.exit(1);
-});
+// Only listen if running in traditional Node.js (not serverless)
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000;
+    const server = app.listen(PORT, () => {
+        console.log(`Coach is online at http://localhost:${PORT}`);
+        console.log('Server is running. Press Ctrl+C to stop.\n');
+    });
 
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
+    // Catch any unhandled errors
+    process.on('uncaughtException', (error) => {
+        console.error('Uncaught Exception:', error);
+        process.exit(1);
+    });
 
-server.on('error', (error) => {
-    console.error('Server error:', error);
-});
+    process.on('unhandledRejection', (reason, promise) => {
+        console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    });
+
+    server.on('error', (error) => {
+        console.error('Server error:', error);
+    });
+}
