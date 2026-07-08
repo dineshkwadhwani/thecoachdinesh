@@ -1,8 +1,18 @@
 {
   "version": 2,
-  "buildCommand": "cd backend && npm install",
-  "outputDirectory": "backend",
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": "backend/**"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.js"
+    }
+  ]
 }
