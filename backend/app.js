@@ -8,6 +8,7 @@ const cors = require('cors');
 const fs = require('fs');
 const OpenAI = require('openai');
 const { askDinesh } = require('./coachService');
+const reportService = require('./src/services/reportService');
 
 const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
@@ -16,8 +17,6 @@ const REFLECT_YOUR_STYLE_KEY = 'reflectYourStyle';
 const STRATEGIC_CLARITY_KEY = 'strategicClarity';
 const EXECUTIVE_PRESENCE_KEY = 'executivePresence';
 const SYSTEMS_THINKING_KEY = 'systemsThinking';
-const REPORT_HISTORY_PATH = path.join(__dirname, 'report-history.json');
-const TRANSFORMATION_SUMMARY_PATH = path.join(__dirname, 'transformation-summary.json');
 const TRANSFORMATION_SOURCE_QUIZ_TYPES = new Set(['quick', 'deep', 'clarity', 'presence', 'systems']);
 
 // Function to generate today's admin password in ddmmyyyy format
@@ -139,59 +138,29 @@ function createLeadKey(email, mobile) {
     return `${String(email || '').trim().toLowerCase()}::${String(mobile || '').trim()}`;
 }
 
-function loadReportHistory() {
-    if (!fs.existsSync(REPORT_HISTORY_PATH)) {
-        return { leads: {} };
-    }
-
-    try {
-        const historyData = fs.readFileSync(REPORT_HISTORY_PATH, 'utf-8');
-        const parsedHistory = JSON.parse(historyData);
-
-        return parsedHistory && typeof parsedHistory === 'object' && parsedHistory.leads
-            ? parsedHistory
-            : { leads: {} };
-    } catch (error) {
-        console.error('Error loading report history:', error.message);
-        return { leads: {} };
-    }
+async function loadReportHistory() {
+    return reportService.loadReportHistory();
 }
 
-function saveReportHistory(history) {
-    fs.writeFileSync(REPORT_HISTORY_PATH, JSON.stringify(history, null, 2));
+async function saveReportHistory(history) {
+    return reportService.saveReportHistory(history);
 }
 
 // Transformation summary: tracks assessment count at time of last plan generation, keyed by phone
-function loadTransformationSummary() {
-    try {
-        if (fs.existsSync(TRANSFORMATION_SUMMARY_PATH)) {
-            const data = fs.readFileSync(TRANSFORMATION_SUMMARY_PATH, 'utf-8');
-            const parsed = JSON.parse(data);
-            return parsed && typeof parsed === 'object' ? parsed : {};
-        }
-    } catch (error) {
-        console.error('Error loading transformation summary:', error.message);
-    }
-    return {};
+async function loadTransformationSummary() {
+    return reportService.loadTransformationSummary();
 }
 
-function saveTransformationSummary(summary) {
-    fs.writeFileSync(TRANSFORMATION_SUMMARY_PATH, JSON.stringify(summary, null, 2));
+async function saveTransformationSummary(summary) {
+    return reportService.saveTransformationSummary(summary);
 }
 
-function getTransformationAssessmentCount(phone) {
-    const summary = loadTransformationSummary();
-    const entry = summary[String(phone || '').trim()];
-    return entry && typeof entry.assessmentCount === 'number' ? entry.assessmentCount : null;
+async function getTransformationAssessmentCount(phone) {
+    return reportService.getTransformationAssessmentCount(phone);
 }
 
-function setTransformationAssessmentCount(phone, count) {
-    const summary = loadTransformationSummary();
-    summary[String(phone || '').trim()] = {
-        assessmentCount: count,
-        updatedAt: new Date().toISOString()
-    };
-    saveTransformationSummary(summary);
+async function setTransformationAssessmentCount(phone, count) {
+    return reportService.setTransformationAssessmentCount(phone, count);
 }
 
 function getLatestStoredReport(history, email, mobile, quizType) {
@@ -691,7 +660,7 @@ app.get('/ping', (req, res) => {
 });
 
 // CHECK IF A PHONE NUMBER HAS ALREADY TAKEN A SPECIFIC QUIZ
-app.get('/check-existing-report', (req, res) => {
+app.get('/check-existing-report', async (req, res) => {
     try {
         const phone = String(req.query.phone || '').replace(/\s+/g, '');
         const quizType = String(req.query.quizType || '').trim();
@@ -701,7 +670,7 @@ app.get('/check-existing-report', (req, res) => {
             return res.status(400).json({ error: 'Valid phone and quizType required.' });
         }
 
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
         let found = null;
 
         Object.values(history.leads || {}).some((lead) => {
@@ -1093,13 +1062,13 @@ app.get('/admin-reports', (req, res) => {
 });
 
 // Protected Leadership Reports Endpoints
-app.get('/leadership-reports/all', (req, res) => {
+app.get('/leadership-reports/all', async (req, res) => {
     if (!isAdminAuthenticated(req)) {
         return res.status(401).json({ error: 'Unauthorized access' });
     }
 
     try {
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
         const allLeads = Object.values(history.leads || {});
         const allReports = allLeads.flatMap(lead =>
             (lead.reports || []).map(reportEntry => ({
@@ -1117,7 +1086,7 @@ app.get('/leadership-reports/all', (req, res) => {
     }
 });
 
-app.get('/leadership-reports', (req, res) => {
+app.get('/leadership-reports', async (req, res) => {
     if (!isAdminAuthenticated(req)) {
         return res.status(401).json({ error: 'Unauthorized access' });
     }
@@ -1130,7 +1099,7 @@ app.get('/leadership-reports', (req, res) => {
             return res.status(400).json({ error: 'email and valid mobile are required' });
         }
 
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
         const leadKey = createLeadKey(email, mobile);
         const leadEntry = history.leads[leadKey];
         const reports = leadEntry && Array.isArray(leadEntry.reports)
@@ -1151,7 +1120,7 @@ app.get('/leadership-reports', (req, res) => {
     }
 });
 
-app.delete('/leadership-reports', (req, res) => {
+app.delete('/leadership-reports', async (req, res) => {
     if (!isAdminAuthenticated(req)) {
         return res.status(401).json({ error: 'Unauthorized access' });
     }
@@ -1165,7 +1134,7 @@ app.delete('/leadership-reports', (req, res) => {
             return res.status(400).json({ error: 'At least one report identifier is required' });
         }
 
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
         let deletedCount = 0;
 
         requestedReports.forEach((reportIdentifier) => {
@@ -1198,7 +1167,7 @@ app.delete('/leadership-reports', (req, res) => {
             }
         });
 
-        saveReportHistory(history);
+        await saveReportHistory(history);
         res.json({ deletedCount });
     } catch (error) {
         console.error('Error deleting leadership reports:', error.message);
@@ -1216,7 +1185,7 @@ app.post('/analyze-leadership', async (req, res) => {
         const isValidMobile = /^\+\d{7,15}$/.test(normalizedMobile);
         const validAnswerCounts = [...new Set([quizConfig.quickQuestionCount, quizConfig.deepQuestionCount])];
         const normalizedQuizType = quizType === 'deep' ? 'deep' : 'quick';
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
         const previousQuickReport = normalizedQuizType === 'deep'
             ? getLatestStoredReport(history, email, normalizedMobile, 'quick')
             : null;
@@ -1348,7 +1317,7 @@ Style breakdown: ${styleBreakdownText}`;
             secondaryStyle: secondaryStyleName,
             report: aiReport
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         // Log in the required format (summary only, not full report)
         const reportSummary = String(aiReport || '').replace(/\s+/g, ' ').trim().slice(0, 220);
@@ -1441,7 +1410,7 @@ End with a natural invitation to a 1-on-1 Clarity Session to explore their blind
         }
 
         const timestamp = new Date().toISOString();
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
 
         appendStoredReport(history, {
             timestamp,
@@ -1457,7 +1426,7 @@ End with a natural invitation to a 1-on-1 Clarity Session to explore their blind
             totalSignals,
             report: aiReport
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         const reportSummary = String(aiReport || '').replace(/\s+/g, ' ').trim().slice(0, 220);
         console.log(`[CLARITY_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Phone: ${normalizedPhone} | Email: ${email} | NoiseScore: ${noiseScore}% | NoiseCleared: ${noiseCleared}/${totalNoise} | SignalsMissed: ${signalsMissed}/${totalSignals} | Summary: ${reportSummary}`);
@@ -1541,7 +1510,7 @@ ${validPowerMoves.map((move, index) => `${index + 1}. ${move}`).join('\n')}`;
 
         const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Presence profile generated';
         const timestamp = new Date().toISOString();
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
 
         appendStoredReport(history, {
             timestamp,
@@ -1554,7 +1523,7 @@ ${validPowerMoves.map((move, index) => `${index + 1}. ${move}`).join('\n')}`;
             powerMoves: validPowerMoves,
             report: aiReport
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         console.log(`[PRESENCE_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | PowerMoves: ${validPowerMoves.join(', ')} | Summary: ${aiSummary}`);
 
@@ -1666,7 +1635,7 @@ ${rankingSummary}`;
 
         const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Systems thinking profile generated';
         const timestamp = new Date().toISOString();
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
 
         appendStoredReport(history, {
             timestamp,
@@ -1679,7 +1648,7 @@ ${rankingSummary}`;
             rankings: normalizedRankings,
             report: aiReport
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         console.log(`[SYSTEMS_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | Responses: ${normalizedRankings.length} | Summary: ${aiSummary}`);
 
@@ -1715,7 +1684,7 @@ app.post('/analyze-transformation', async (req, res) => {
             return res.status(400).json({ error: 'Valid name and mobile number are required.' });
         }
 
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
         const { sourceReports, latestByType } = getAssessmentReportsByMobile(history, normalizedPhone);
 
         if (!sourceReports.length) {
@@ -1726,7 +1695,7 @@ app.post('/analyze-transformation', async (req, res) => {
 
         // Check if a transformation report already exists for this phone
         // using the summary file (keyed by phone) to compare assessment counts
-        const summaryCount = getTransformationAssessmentCount(normalizedPhone);
+        const summaryCount = await getTransformationAssessmentCount(normalizedPhone);
         if (summaryCount !== null && summaryCount === sourceReports.length) {
             return res.json({
                 alreadyCreated: true,
@@ -1895,10 +1864,10 @@ Using ALL ${sourceReports.length} assessments above, generate a comprehensive tr
             plan: normalizedPlan,
             report: buildTransformationReportText(normalizedPlan, assessmentSummary)
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         // Save the assessment count used for this plan so we can skip regeneration next time
-        setTransformationAssessmentCount(normalizedPhone, sourceReports.length);
+        await setTransformationAssessmentCount(normalizedPhone, sourceReports.length);
 
         const telegramSummary = normalizedPlan.executiveSummary.replace(/\s+/g, ' ').trim().slice(0, 220);
         const telegramText = `New Lead\nName: ${name}\nPhone: ${normalizedPhone}\nEmail: ${primaryEmail}\nTest: Transformation Action Plan\nTime: ${timestamp}`;

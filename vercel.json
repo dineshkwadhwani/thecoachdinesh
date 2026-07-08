@@ -1,7 +1,12 @@
 {
   "version": 2,
   "buildCommand": "npm install --prefix backend",
-  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.js"
+    }
+  ],
   "env": {
     "NODE_ENV": "production"
   }
