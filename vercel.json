@@ -1,13 +1,26 @@
 {
   "version": 2,
-  "buildCommand": "npm install --prefix backend",
-  "outputDirectory": ".",
-  "rewrites": [
+  "installCommand": "npm install --prefix backend",
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/api/index.js"
+      "src": "api/index.js",
+      "use": "@vercel/node"
     }
   ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.js"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "includeFiles": [
+        "backend/**",
+        "frontend/**"
+      ]
+    }
+  },
   "env": {
     "NODE_ENV": "production"
   }
