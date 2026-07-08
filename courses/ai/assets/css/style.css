@@ -169,10 +169,26 @@ a:hover { color: var(--accent); }
   border-radius: var(--radius);
   padding: 8px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  z-index: 1001;
+}
+
+/* Invisible hover bridge to keep dropdown open */
+.nav-item-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 12px;
+  pointer-events: auto;
 }
 
 .nav-item-dropdown:hover .dropdown-menu {
   display: block;
+}
+
+.nav-item-dropdown:hover::before {
+  pointer-events: auto;
 }
 
 .dropdown-menu a {
