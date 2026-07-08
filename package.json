@@ -1,0 +1,11 @@
+{
+  "name": "thecoachdinesh",
+  "version": "1.0.0",
+  "description": "Coach Dinesh - Executive Leadership Coaching Platform",
+  "private": true,
+  "scripts": {
+    "install-all": "cd backend && npm install",
+    "dev": "cd backend && npm start",
+    "start": "cd backend && npm start"
+  }
+}
