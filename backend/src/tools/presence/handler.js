@@ -106,7 +106,7 @@ async function handlePresenceAnalysis(req, res) {
 
         const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Presence profile generated';
         const timestamp = new Date().toISOString();
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
 
         appendStoredReport(history, {
             timestamp,
@@ -119,7 +119,7 @@ async function handlePresenceAnalysis(req, res) {
             powerMoves: validPowerMoves,
             report: aiReport
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         console.log(`[PRESENCE_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | PowerMoves: ${validPowerMoves.join(', ')} | Summary: ${aiSummary}`);
 

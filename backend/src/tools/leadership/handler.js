@@ -201,7 +201,7 @@ async function handleLeadershipAnalysis(req, res) {
             });
         }
 
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
         const previousQuickReport = normalizedQuizType === 'deep'
             ? getLatestStoredReport(history, email, normalizedMobile, 'quick')
             : null;
@@ -230,7 +230,7 @@ async function handleLeadershipAnalysis(req, res) {
             secondaryStyle: secondaryStyleName,
             report: aiReport
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         // Log
         const reportSummary = String(aiReport || '').replace(/\s+/g, ' ').trim().slice(0, 220);

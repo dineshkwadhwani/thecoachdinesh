@@ -368,7 +368,7 @@ async function handleTransformationAnalysis(req, res) {
             return res.status(400).json({ error: 'Valid name and mobile number are required.' });
         }
 
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
         const { sourceReports, latestByType } = getAssessmentReportsByMobile(history, normalizedPhone);
 
         if (!sourceReports.length) {
@@ -378,7 +378,7 @@ async function handleTransformationAnalysis(req, res) {
         }
 
         // Check if transformation report already exists using summary
-        const summaryCount = getTransformationAssessmentCount(normalizedPhone);
+        const summaryCount = await getTransformationAssessmentCount(normalizedPhone);
         if (summaryCount !== null && summaryCount === sourceReports.length) {
             return res.json({
                 alreadyCreated: true,
@@ -545,10 +545,10 @@ Using ALL ${sourceReports.length} assessments above, generate a comprehensive tr
             plan: normalizedPlan,
             report: buildTransformationReportText(normalizedPlan, assessmentSummary)
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         // Save assessment count for future comparisons
-        setTransformationAssessmentCount(normalizedPhone, sourceReports.length);
+        await setTransformationAssessmentCount(normalizedPhone, sourceReports.length);
 
         const telegramText = `New Lead\nName: ${name}\nPhone: ${normalizedPhone}\nEmail: ${primaryEmail}\nTest: Transformation Action Plan\nTime: ${timestamp}`;
         try {

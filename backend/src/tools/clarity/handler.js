@@ -83,7 +83,7 @@ async function handleClarityAnalysis(req, res) {
         }
 
         const timestamp = new Date().toISOString();
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
 
         appendStoredReport(history, {
             timestamp,
@@ -99,7 +99,7 @@ async function handleClarityAnalysis(req, res) {
             totalSignals,
             report: aiReport
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         const reportSummary = String(aiReport || '').replace(/\s+/g, ' ').trim().slice(0, 220);
         console.log(`[CLARITY_GENERATE] | Timestamp: ${timestamp} | Name: ${name} | Phone: ${normalizedPhone} | Email: ${email} | NoiseScore: ${noiseScore}% | NoiseCleared: ${noiseCleared}/${totalNoise} | SignalsMissed: ${signalsMissed}/${totalSignals} | Summary: ${reportSummary}`);

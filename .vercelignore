@@ -1,0 +1,35 @@
+# Dependencies and build artifacts
+**/node_modules
+.npm
+npm-debug.log
+yarn-error.log
+
+# Development and local files
+.env.local
+.env.*.local
+.DS_Store
+.vscode
+.idea
+*.swp
+*.swo
+
+# JSON files (now stored in Supabase)
+report-history.json
+transformation-summary.json
+
+# Documentation
+.git
+.gitignore
+README.md
+documentation/
+
+# Test files
+*.test.js
+*.spec.js
+jest.config.js
+
+# Scripts (only needed locally)
+backend/scripts/
+
+# Backend dependencies (will be installed by Vercel)
+# but keep the source code

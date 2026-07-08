@@ -130,7 +130,7 @@ async function handleSystemsAnalysis(req, res) {
 
         const aiSummary = aiReport.split(/\.|\n/)[0].trim().slice(0, 180) || 'Systems thinking profile generated';
         const timestamp = new Date().toISOString();
-        const history = loadReportHistory();
+        const history = await loadReportHistory();
 
         appendStoredReport(history, {
             timestamp,
@@ -143,7 +143,7 @@ async function handleSystemsAnalysis(req, res) {
             rankings: normalizedRankings,
             report: aiReport
         });
-        saveReportHistory(history);
+        await saveReportHistory(history);
 
         console.log(`[SYSTEMS_GENERATE] | Timestamp: ${timestamp} | Name: ${normalizedName} | Phone: ${normalizedPhone} | Email: ${normalizedEmail} | Responses: ${normalizedRankings.length} | Summary: ${aiSummary}`);
 
