@@ -15,10 +15,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "includeFiles": [
-        "backend/**",
-        "frontend/**"
-      ]
+      "includeFiles": "{backend/**,frontend/**}"
     }
   },
   "env": {
