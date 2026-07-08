@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "install-all": "cd backend && npm install",
+    "build": "npm run build --prefix backend",
     "dev": "cd backend && npm start",
     "start": "cd backend && npm start"
   }
