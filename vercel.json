@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "buildCommand": "cd backend && npm install",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
