@@ -13,6 +13,10 @@ if (useSupabase) {
         console.warn('Failed to load Supabase service, falling back to file storage:', error.message);
         supabaseService = null;
     }
+} else {
+    console.warn('⚠️  Supabase not configured (missing SUPABASE_URL or SUPABASE_SERVICE_KEY). Reports will be stored in local file storage.');
+    if (!process.env.SUPABASE_URL) console.warn('  - SUPABASE_URL is missing');
+    if (!process.env.SUPABASE_SERVICE_KEY) console.warn('  - SUPABASE_SERVICE_KEY is missing');
 }
 
 const REPORT_HISTORY_PATH = path.join(__dirname, '../../report-history.json');
