@@ -39,7 +39,8 @@ nav a:hover{opacity:1}
 
 /* BRAND LINK */
 nav .brand-link {
-  font-weight: bold;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
   opacity: 1;
   font-size: 1.4em;
 }

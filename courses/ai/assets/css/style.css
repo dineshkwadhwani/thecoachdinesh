@@ -90,8 +90,9 @@ a:hover { color: var(--accent); }
 }
 
 .navbar-brand .logo-text {
-  font-family: var(--font-display);
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: 1.3rem;
+  font-weight: 600;
   color: var(--white);
   letter-spacing: -0.02em;
 }
