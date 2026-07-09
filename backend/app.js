@@ -651,7 +651,13 @@ app.use(express.static(path.join(__dirname, '../frontend'), {
     }
 }));
 
-// Serve courses folder under /courses path
+// COURSES LANDING PAGE
+app.get('/courses', (req, res) => {
+    setPageCacheHeaders(res);
+    res.sendFile(path.join(__dirname, '../courses/index.html'));
+});
+
+// COURSES ROUTES - serve static files
 app.use('/courses', express.static(path.join(__dirname, '../courses'), {
     maxAge: '15m',
     setHeaders: (res) => {
