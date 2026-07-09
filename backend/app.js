@@ -651,8 +651,8 @@ app.use(express.static(path.join(__dirname, '../frontend'), {
     }
 }));
 
-// Also serve courses folder
-app.use(express.static(path.join(__dirname, '../courses'), {
+// Serve courses folder under /courses path
+app.use('/courses', express.static(path.join(__dirname, '../courses'), {
     maxAge: '15m',
     setHeaders: (res) => {
         setPageCacheHeaders(res);
