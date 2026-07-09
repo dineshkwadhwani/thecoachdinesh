@@ -4,10 +4,308 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Courses | The Coach Dinesh</title>
-  <meta http-equiv="refresh" content="0; url=ai/index.html">
-  <link rel="canonical" href="ai/index.html">
+  <meta name="description" content="Learn leadership, engineering, and technology from industry experts. Explore our courses.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:    #0a1628;
+      --navy2:   #0f2040;
+      --blue:    #1a56db;
+      --blue-lt: #3b82f6;
+      --accent:  #f59e0b;
+      --accent2: #10b981;
+      --white:   #ffffff;
+      --off-white: #e8edf5;
+      --muted:   #8fa3bc;
+      --border:  rgba(255,255,255,0.08);
+      --card-bg: rgba(255,255,255,0.04);
+      --card-hover: rgba(255,255,255,0.07);
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: 0.22s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--navy);
+      color: var(--off-white);
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 0%, #1a56db18, transparent),
+        radial-gradient(ellipse 40% 60% at 90% 100%, #f59e0b0a, transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    h1 { font-size: clamp(2rem, 5vw, 3.4rem); }
+    h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); }
+    h3 { font-size: 1.3rem; }
+
+    p { color: var(--muted); }
+    p strong { color: var(--white); }
+
+    a { color: var(--blue-lt); text-decoration: none; transition: color var(--transition); }
+    a:hover { color: var(--accent); }
+
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 60px;
+      height: 68px;
+      background: rgba(10, 22, 40, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .navbar-brand .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .navbar-brand .logo-dot {
+      color: var(--accent);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      padding-top: 68px;
+    }
+
+    section {
+      padding: 80px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .section-title {
+      margin-bottom: 16px;
+      color: var(--white);
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      max-width: 620px;
+      margin-bottom: 56px;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .course-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all var(--transition);
+    }
+
+    .course-tile:hover:not(.disabled) {
+      background: var(--card-hover);
+      border-color: rgba(255,255,255,0.14);
+      transform: translateY(-2px);
+    }
+
+    .course-tile.disabled {
+      opacity: 0.7;
+    }
+
+    .course-icon {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+
+    .course-tile h3 {
+      color: var(--white);
+      margin: 0;
+    }
+
+    .course-tile p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .course-tile .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+      border: none;
+      background: var(--blue);
+      color: var(--white);
+      text-align: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .course-tile .btn:hover:not(:disabled) {
+      background: var(--blue-lt);
+      color: var(--white);
+    }
+
+    .course-tile .btn.coming-soon {
+      background: rgba(255,255,255,0.1);
+      color: var(--muted);
+      cursor: not-allowed;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .course-tile .btn.coming-soon:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--muted);
+    }
+
+    .site-footer {
+      position: relative;
+      z-index: 1;
+      padding: 48px 60px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .site-footer p {
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .navbar { padding: 0 24px; }
+      section { padding: 56px 24px; }
+      .site-footer { padding: 32px 24px; }
+      .courses-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecting to <a href="ai/index.html">AI Course</a>…</p>
+
+<nav class="navbar">
+  <a href="https://www.thecoachdinesh.com" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+  </a>
+</nav>
+
+<main>
+
+<section>
+  <span class="section-eyebrow">Learning Platform</span>
+  <h2 class="section-title">Our Courses</h2>
+  <p class="section-subtitle">Build leadership depth, engineering excellence, and stay ahead in the AI era. Learn from industry practitioners with 25+ years of real-world experience.</p>
+
+  <div class="courses-grid">
+
+    <!-- AI Course -->
+    <div class="course-tile">
+      <div class="course-icon">🤖</div>
+      <div>
+        <h3>AI & LLM Engineering</h3>
+        <p>Master Large Language Models, retrieval-augmented generation, agentic AI, and production deployment. Build a hiring AI system from scratch across 12 hands-on sessions.</p>
+      </div>
+      <a href="/courses/ai/" class="btn">Learn Now →</a>
+    </div>
+
+    <!-- Cloud Computing -->
+    <div class="course-tile disabled">
+      <div class="course-icon">☁️</div>
+      <div>
+        <h3>Cloud Computing Fundamentals</h3>
+        <p>Design, deploy, and manage scalable systems on AWS, GCP, and Azure. From infrastructure basics to distributed architecture patterns.</p>
+      </div>
+      <button class="btn coming-soon" disabled>Coming Soon</button>
+    </div>
+
+    <!-- Creating Agents -->
+    <div class="course-tile disabled">
+      <div class="course-icon">🧠</div>
+      <div>
+        <h3>Creating Intelligent Agents</h3>
+        <p>Build autonomous agents that reason, plan, and execute. Learn multi-agent orchestration, tool calling, and agentic workflows in production.</p>
+      </div>
+      <button class="btn coming-soon" disabled>Coming Soon</button>
+    </div>
+
+    <!-- Vibe Coding -->
+    <div class="course-tile disabled">
+      <div class="course-icon">✨</div>
+      <div>
+        <h3>Vibe Coding</h3>
+        <p>Write code that flows with clarity and intent. Master naming, structure, and patterns that make your code feel right and read beautifully.</p>
+      </div>
+      <button class="btn coming-soon" disabled>Coming Soon</button>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="https://www.thecoachdinesh.com" style="color:var(--muted);">thecoachdinesh.com</a></p>
+</footer>
+
 </body>
 </html>
