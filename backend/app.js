@@ -1209,7 +1209,11 @@ app.post('/analyze-leadership', async (req, res) => {
         const isValidMobile = /^\+\d{7,15}$/.test(normalizedMobile);
         const validAnswerCounts = [...new Set([quizConfig.quickQuestionCount, quizConfig.deepQuestionCount])];
         const normalizedQuizType = quizType === 'deep' ? 'deep' : 'quick';
+
+        console.log('[LEADERSHIP] Starting analysis for:', name, email, normalizedMobile);
         const history = await loadReportHistory();
+        console.log('[LEADERSHIP] Loaded history, lead count:', Object.keys(history.leads || {}).length);
+
         const previousQuickReport = normalizedQuizType === 'deep'
             ? getLatestStoredReport(history, email, normalizedMobile, 'quick')
             : null;
@@ -1304,6 +1308,7 @@ Dominant Style Indicated: ${dominantStyleName}
 Secondary Style Indicated: ${secondaryStyleName || 'None'}
 Style breakdown: ${styleBreakdownText}`;
         
+        console.log('[LEADERSHIP] Groq API key present:', !!process.env.GROQ_API_KEY);
         const groq = new OpenAI({
             apiKey: process.env.GROQ_API_KEY,
             baseURL: "https://api.groq.com/openai/v1"
@@ -1311,6 +1316,7 @@ Style breakdown: ${styleBreakdownText}`;
 
         let aiReport;
         try {
+            console.log('[LEADERSHIP] Calling Groq API for', normalizedQuizType, 'report...');
             const completion = await groq.chat.completions.create({
                 messages: [
                     {
@@ -1324,9 +1330,16 @@ Style breakdown: ${styleBreakdownText}`;
                 ],
                 model: "llama-3.3-70b-versatile",
             });
+            console.log('[LEADERSHIP] Groq API success');
             aiReport = completion.choices[0].message.content;
         } catch (aiError) {
-            console.error('Leadership AI fallback activated:', aiError.message);
+            console.error('[LEADERSHIP] Groq API error:', aiError.message);
+            console.error('[LEADERSHIP] Error details:', {
+                status: aiError.status,
+                code: aiError.code,
+                type: aiError.type
+            });
+            console.log('[LEADERSHIP] Using fallback report');
             aiReport = createFallbackLeadershipReport(name, dominantStyleName, secondaryStyleName, normalizedQuizType);
         }
         const timestamp = new Date().toISOString();
