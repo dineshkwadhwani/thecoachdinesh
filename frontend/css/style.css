@@ -217,6 +217,77 @@ section{
   margin-bottom:25px;
 }
 
+/* PROJECTS SECTION */
+#projects {
+  padding: 100px 10%;
+  border-top: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+#projects .section-title {
+  font-family: "Playfair Display", serif;
+  font-size: 42px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+#projects > p {
+  margin-bottom: 50px;
+}
+
+.project-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.project-card:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  border-color: rgba(255,255,255,.2);
+  transform: translateY(-4px);
+}
+
+.project-icon {
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+.project-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 5px;
+}
+
+.project-card p {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+.project-link {
+  display: inline-block;
+  margin-top: auto;
+  padding: 8px 16px;
+  background: rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.project-card:hover .project-link {
+  background: rgba(59, 130, 246, 0.5);
+  border-color: rgba(59, 130, 246, 0.8);
+}
+
 /* FOOTER */
 footer{
   padding:20px 10%;

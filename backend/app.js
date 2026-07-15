@@ -700,6 +700,19 @@ app.get('/debug/status', (req, res) => {
   });
 });
 
+// Get site configuration (projects section visibility)
+app.get('/api/config', (req, res) => {
+  res.json({
+    projects: {
+      enabled: String(process.env.PROJECTS || 'ON').toUpperCase() === 'ON',
+      coachingStudio: String(process.env.PROJECTS_COACHINGSTUDIO || 'ON').toUpperCase() === 'ON',
+      searchMyJob: String(process.env.PROJECTS_SEARCHMYJOB || 'ON').toUpperCase() === 'ON',
+      dineshtrade: String(process.env.PROJECTS_DINESHTRADE || 'ON').toUpperCase() === 'ON',
+      aiCourse: String(process.env.PROJECTS_AICOURSE || 'ON').toUpperCase() === 'ON'
+    }
+  });
+});
+
 // CHECK IF A PHONE NUMBER HAS ALREADY TAKEN A SPECIFIC QUIZ
 app.get('/check-existing-report', async (req, res) => {
     try {
