@@ -796,12 +796,14 @@ app.get('/intro', (req, res) => {
 // ADMIN LOGIN PAGE
 app.get('/admin', (req, res) => {
     if (isAdminAuthenticated(req)) {
-        // Already authenticated, redirect to reports
-        return res.redirect('/admin-reports');
+        // Already authenticated, redirect to original page or reports
+        const redirect = req.query.redirect || '/admin-reports';
+        return res.redirect(redirect);
     }
 
     const hasLoginError = String(req.query.error || '') === '1';
-    
+    const redirect = req.query.redirect || '/admin-reports';
+
     // Serve login page
     const loginHTML = `<!DOCTYPE html>
 <html lang="en">
@@ -942,15 +944,16 @@ app.get('/admin', (req, res) => {
             </div>
 
             <form id="login-form" method="POST" action="/admin-login">
+                <input type="hidden" name="redirect" value="${redirect}">
                 <div id="error-message" class="error-message ${hasLoginError ? 'show' : ''}">${hasLoginError ? 'Invalid password. Please try again.' : ''}</div>
-                
+
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input 
-                        type="password" 
+                    <input
+                        type="password"
                         name="password"
-                        id="password" 
-                        placeholder="Enter password" 
+                        id="password"
+                        placeholder="Enter password"
                         autocomplete="off"
                         required
                     >
@@ -970,12 +973,13 @@ app.get('/admin', (req, res) => {
 // ADMIN LOGIN API
 app.post('/admin-login', (req, res) => {
     const password = String(req.body && req.body.password || '').trim();
+    const redirect = String(req.body && req.body.redirect || '').trim() || '/admin-reports';
     const todaysPassword = getTodaysAdminPassword();
     const prefersHtml = (req.headers.accept || '').includes('text/html');
-    
+
     if (!password) {
         if (prefersHtml) {
-            return res.redirect('/admin?error=1');
+            return res.redirect(`/admin?error=1&redirect=${encodeURIComponent(redirect)}`);
         }
         return res.status(400).json({ success: false, message: 'Password is required' });
     }
@@ -984,13 +988,13 @@ app.post('/admin-login', (req, res) => {
         // Set authentication cookie
         res.setHeader('Set-Cookie', `${ADMIN_AUTH_COOKIE}=true; Path=/; HttpOnly; SameSite=Strict`);
         if (prefersHtml) {
-            return res.redirect('/admin-reports');
+            return res.redirect(redirect);
         }
         return res.json({ success: true, message: 'Authentication successful' });
     }
 
     if (prefersHtml) {
-        return res.redirect('/admin?error=1');
+        return res.redirect(`/admin?error=1&redirect=${encodeURIComponent(redirect)}`);
     }
     res.status(401).json({ success: false, message: 'Invalid password' });
 });
@@ -1105,7 +1109,7 @@ app.get('/get-questions', (req, res) => {
 // ADMIN REPORTS PAGE - Protected
 app.get('/admin-reports', (req, res) => {
     if (!isAdminAuthenticated(req)) {
-        return res.redirect('/admin');
+        return res.redirect(`/admin?redirect=${encodeURIComponent('/admin-reports')}`);
     }
 
     res.sendFile(path.join(__dirname, '../frontend/admin-reports.html'));
@@ -1114,7 +1118,7 @@ app.get('/admin-reports', (req, res) => {
 // VISITOR LOG PAGE - Protected
 app.get('/visitorlog', (req, res) => {
     if (!isAdminAuthenticated(req)) {
-        return res.redirect('/admin');
+        return res.redirect(`/admin?redirect=${encodeURIComponent('/visitorlog')}`);
     }
 
     res.sendFile(path.join(__dirname, '../frontend/visitorlog.html'));
