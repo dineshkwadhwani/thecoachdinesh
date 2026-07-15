@@ -1,7 +1,13 @@
 const path = require('path');
 
 // Load environment variables FIRST, before anything else
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+// Make it optional in case dotenv is not installed
+try {
+    require('dotenv').config({ path: path.join(__dirname, '.env') });
+} catch (e) {
+    // dotenv not available - environment variables should be set via Vercel/system
+    console.log('Note: dotenv not available, using system environment variables');
+}
 
 const express = require('express');
 const cors = require('cors');

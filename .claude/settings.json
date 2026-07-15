@@ -11,7 +11,8 @@
       "Bash(git commit -m 'Remove cookie-parser dependency and simplify visitor tracking *)",
       "Bash(git commit -m 'Fix admin login redirect to respect original page *)",
       "Bash(git commit -m 'Add IP geolocation to visitor tracking and dashboard *)",
-      "Bash(git commit -m 'Add device type and browser detection to visitor tracking *)"
+      "Bash(git commit -m 'Add device type and browser detection to visitor tracking *)",
+      "Bash(git commit -m 'Make dotenv optional for Vercel deployment *)"
     ]
   }
 }
