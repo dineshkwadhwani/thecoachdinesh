@@ -29,7 +29,8 @@
       "Bash(git commit -m 'Fix Coaching Studio project link URL *)",
       "Bash(git commit -m 'Add two new tiles to '\\\\''How I Help Leaders'\\\\'' section *)",
       "Bash(git commit -m 'Update section heading to '\\\\''How I Help Leaders and Organizations'\\\\'' *)",
-      "Bash(git commit -m 'Update '\\\\''What I'\\\\''m Building These Days'\\\\'' tagline *)"
+      "Bash(git commit -m 'Update '\\\\''What I'\\\\''m Building These Days'\\\\'' tagline *)",
+      "Bash(git commit -m 'Fix admin authentication - prevent page caching *)"
     ]
   }
 }
