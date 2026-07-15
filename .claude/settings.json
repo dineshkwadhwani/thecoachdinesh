@@ -9,7 +9,8 @@
       "Bash(curl -s \"https://www.thecoachdinesh.com/\")",
       "Bash(git commit -m 'Fix visitor tracking middleware and ensure dependencies are installed *)",
       "Bash(git commit -m 'Remove cookie-parser dependency and simplify visitor tracking *)",
-      "Bash(git commit -m 'Fix admin login redirect to respect original page *)"
+      "Bash(git commit -m 'Fix admin login redirect to respect original page *)",
+      "Bash(git commit -m 'Add IP geolocation to visitor tracking and dashboard *)"
     ]
   }
 }

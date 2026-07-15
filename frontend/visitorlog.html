@@ -139,6 +139,11 @@
             font-size: 0.9rem;
         }
 
+        .location {
+            color: #2e5090;
+            font-weight: 500;
+        }
+
         .ip-address {
             font-family: 'Courier New', monospace;
             color: #1d5da8;
@@ -261,6 +266,7 @@
             <thead>
                 <tr>
                     <th>Timestamp</th>
+                    <th>Location</th>
                     <th>IP Address</th>
                     <th>Page Visited</th>
                 </tr>
@@ -325,13 +331,16 @@
             document.getElementById('lastDay').textContent = last24;
 
             // Populate table
-            tbodyEl.innerHTML = data.map(visitor => `
+            tbodyEl.innerHTML = data.map(visitor => {
+                const location = formatLocation(visitor.city, visitor.country);
+                return `
                 <tr>
                     <td class="timestamp">${formatDateTime(visitor.timestamp)}</td>
+                    <td class="location">${location}</td>
                     <td class="ip-address">${visitor.ip_address}</td>
                     <td class="url">${visitor.url}</td>
                 </tr>
-            `).join('');
+            `}).join('');
 
             tableEl.style.display = 'table';
 
@@ -382,6 +391,14 @@
             hour: '2-digit',
             minute: '2-digit'
         });
+    }
+
+    function formatLocation(city, country) {
+        if (!city && !country) return '<span style="color: #aaa;">Unknown</span>';
+        if (city && country) return `${city}, ${country}`;
+        if (city) return city;
+        if (country) return country;
+        return '<span style="color: #aaa;">Unknown</span>';
     }
 
     // Load on page load

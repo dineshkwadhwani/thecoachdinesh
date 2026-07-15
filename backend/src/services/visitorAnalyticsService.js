@@ -5,6 +5,10 @@ const { supabase } = require('./supabaseClient');
 const activeSessions = new Map();
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
+// Cache for IP location lookups (avoid repeated API calls)
+const locationCache = new Map();
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
 /**
  * Track a visitor's first visit to the site
  * Uses IP + User Agent to identify unique sessions
@@ -57,13 +61,21 @@ async function logVisitorAsync(req, sessionKey) {
             return;
         }
 
+        // Fetch location data (async, don't wait for it)
+        const location = await fetchLocationData(ip);
+
         const { error } = await supabase
             .from('visitor_logs')
             .insert({
                 ip_address: ip,
                 url: url,
                 session_id: sessionKey,
-                user_agent: userAgent
+                user_agent: userAgent,
+                country: location?.country || null,
+                city: location?.city || null,
+                latitude: location?.latitude || null,
+                longitude: location?.longitude || null,
+                isp: location?.isp || null
             });
 
         if (error) {
@@ -72,10 +84,57 @@ async function logVisitorAsync(req, sessionKey) {
                 console.error('[VISITOR_LOG] Insert error:', error.code, error.message);
             }
         } else {
-            console.log('[VISITOR_LOG] Logged:', ip, url.substring(0, 50));
+            const location_str = location ? `${location.city || location.country || 'Unknown'}` : 'Unknown';
+            console.log('[VISITOR_LOG] Logged:', ip, location_str, url.substring(0, 50));
         }
     } catch (error) {
         console.error('[VISITOR_LOG] Exception:', error.message);
+    }
+}
+
+/**
+ * Fetch geolocation data for an IP address using ip-api.com
+ */
+async function fetchLocationData(ip) {
+    try {
+        // Check cache first
+        const cached = locationCache.get(ip);
+        if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+            return cached.data;
+        }
+
+        // Skip lookup for localhost/private IPs
+        if (ip === 'unknown' || ip.startsWith('127.') || ip.startsWith('192.168.') || ip.startsWith('10.')) {
+            return null;
+        }
+
+        const response = await fetch(`http://ip-api.com/json/${ip}?fields=country,city,lat,lon,isp`, {
+            timeout: 5000
+        });
+
+        if (!response.ok) throw new Error('IP lookup failed');
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            const location = {
+                country: data.country || null,
+                city: data.city || null,
+                latitude: data.lat || null,
+                longitude: data.lon || null,
+                isp: data.isp || null,
+                timestamp: Date.now()
+            };
+
+            // Cache the result
+            locationCache.set(ip, { data: location, timestamp: Date.now() });
+            return location;
+        }
+
+        return null;
+    } catch (error) {
+        console.error('[GEOLOCATION] Error fetching location for', ip, ':', error.message);
+        return null;
     }
 }
 
