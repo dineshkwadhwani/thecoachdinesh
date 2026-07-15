@@ -125,20 +125,20 @@ async function fetchLocationData(ip) {
         const url = `https://ip-api.com/json/${ip}?fields=country,city,lat,lon,isp`;
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
         try {
             const response = await fetch(url, { signal: controller.signal });
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                console.warn('[GEOLOCATION] HTTP error', response.status, 'for IP', ip);
+                console.error('[GEOLOCATION_ERROR] HTTP', response.status, 'for IP', ip);
                 return null;
             }
 
             const data = await response.json();
 
-            if (data.status === 'success' && data.country) {
+            if (data.status === 'success') {
                 const location = {
                     country: data.country || null,
                     city: data.city || null,
@@ -147,26 +147,27 @@ async function fetchLocationData(ip) {
                     isp: data.isp || null,
                     timestamp: Date.now()
                 };
-
-                // Cache the result
                 locationCache.set(ip, { data: location, timestamp: Date.now() });
-                console.log('[GEOLOCATION] Found:', ip, data.country, data.city);
+                console.log('[GEOLOCATION_SUCCESS]', ip, data.country, data.city);
                 return location;
+            } else if (data.status === 'fail') {
+                console.error('[GEOLOCATION_ERROR] API fail for IP', ip, '- Query limit or invalid request:', data.message);
+                return null;
             } else {
-                console.warn('[GEOLOCATION] Invalid response for IP', ip, ':', data.status);
+                console.error('[GEOLOCATION_ERROR] Unexpected status for IP', ip, ':', data.status);
                 return null;
             }
         } catch (fetchError) {
             clearTimeout(timeoutId);
             if (fetchError.name === 'AbortError') {
-                console.warn('[GEOLOCATION] Timeout for IP', ip);
+                console.error('[GEOLOCATION_ERROR] Timeout (10s) for IP', ip);
             } else {
-                console.warn('[GEOLOCATION] Fetch error for IP', ip, ':', fetchError.message);
+                console.error('[GEOLOCATION_ERROR] Fetch exception for IP', ip, ':', fetchError.message);
             }
             return null;
         }
     } catch (error) {
-        console.error('[GEOLOCATION] Exception for IP', ip, ':', error.message);
+        console.error('[GEOLOCATION_ERROR] Outer exception for IP', ip, ':', error.message);
         return null;
     }
 }
