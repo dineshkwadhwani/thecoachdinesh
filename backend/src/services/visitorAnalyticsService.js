@@ -121,32 +121,52 @@ async function fetchLocationData(ip) {
             return null;
         }
 
-        const response = await fetch(`http://ip-api.com/json/${ip}?fields=country,city,lat,lon,isp`, {
-            timeout: 5000
-        });
+        // Use HTTPS instead of HTTP for better compatibility
+        const url = `https://ip-api.com/json/${ip}?fields=country,city,lat,lon,isp`;
 
-        if (!response.ok) throw new Error('IP lookup failed');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
 
-        const data = await response.json();
+        try {
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
 
-        if (data.status === 'success') {
-            const location = {
-                country: data.country || null,
-                city: data.city || null,
-                latitude: data.lat || null,
-                longitude: data.lon || null,
-                isp: data.isp || null,
-                timestamp: Date.now()
-            };
+            if (!response.ok) {
+                console.warn('[GEOLOCATION] HTTP error', response.status, 'for IP', ip);
+                return null;
+            }
 
-            // Cache the result
-            locationCache.set(ip, { data: location, timestamp: Date.now() });
-            return location;
+            const data = await response.json();
+
+            if (data.status === 'success' && data.country) {
+                const location = {
+                    country: data.country || null,
+                    city: data.city || null,
+                    latitude: data.lat || null,
+                    longitude: data.lon || null,
+                    isp: data.isp || null,
+                    timestamp: Date.now()
+                };
+
+                // Cache the result
+                locationCache.set(ip, { data: location, timestamp: Date.now() });
+                console.log('[GEOLOCATION] Found:', ip, data.country, data.city);
+                return location;
+            } else {
+                console.warn('[GEOLOCATION] Invalid response for IP', ip, ':', data.status);
+                return null;
+            }
+        } catch (fetchError) {
+            clearTimeout(timeoutId);
+            if (fetchError.name === 'AbortError') {
+                console.warn('[GEOLOCATION] Timeout for IP', ip);
+            } else {
+                console.warn('[GEOLOCATION] Fetch error for IP', ip, ':', fetchError.message);
+            }
+            return null;
         }
-
-        return null;
     } catch (error) {
-        console.error('[GEOLOCATION] Error fetching location for', ip, ':', error.message);
+        console.error('[GEOLOCATION] Exception for IP', ip, ':', error.message);
         return null;
     }
 }
