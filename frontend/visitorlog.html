@@ -139,6 +139,19 @@
             font-size: 0.9rem;
         }
 
+        .device {
+            color: #2e5090;
+            font-weight: 500;
+        }
+
+        .device small {
+            display: block;
+            font-size: 0.8rem;
+            color: #4d5e6f;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
         .location {
             color: #2e5090;
             font-weight: 500;
@@ -266,6 +279,7 @@
             <thead>
                 <tr>
                     <th>Timestamp</th>
+                    <th>Device</th>
                     <th>Location</th>
                     <th>IP Address</th>
                     <th>Page Visited</th>
@@ -333,9 +347,11 @@
             // Populate table
             tbodyEl.innerHTML = data.map(visitor => {
                 const location = formatLocation(visitor.city, visitor.country);
+                const device = formatDevice(visitor.device_type, visitor.browser_name, visitor.os_name);
                 return `
                 <tr>
                     <td class="timestamp">${formatDateTime(visitor.timestamp)}</td>
+                    <td class="device">${device}</td>
                     <td class="location">${location}</td>
                     <td class="ip-address">${visitor.ip_address}</td>
                     <td class="url">${visitor.url}</td>
@@ -391,6 +407,18 @@
             hour: '2-digit',
             minute: '2-digit'
         });
+    }
+
+    function formatDevice(deviceType, browser, os) {
+        const icons = {
+            'Mobile': '📱',
+            'Tablet': '📱',
+            'Desktop': '🖥️'
+        };
+        const icon = icons[deviceType] || '❓';
+        const browserDisplay = browser || 'Unknown';
+        const osDisplay = os || 'Unknown';
+        return `${icon} ${deviceType}<br><small>${browserDisplay} / ${osDisplay}</small>`;
     }
 
     function formatLocation(city, country) {

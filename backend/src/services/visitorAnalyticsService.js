@@ -49,6 +49,8 @@ async function logVisitorAsync(req, sessionKey) {
         const ip = getClientIp(req);
         const url = req.originalUrl || req.url || '/';
         const userAgent = req.get?.('user-agent') || req.headers?.['user-agent'] || '';
+        const referer = req.get?.('referer') || req.headers?.['referer'] || null;
+        const acceptLanguage = req.get?.('accept-language') || req.headers?.['accept-language'] || null;
 
         // Skip logging for favicon, assets, etc.
         if (url.includes('.ico') || url.includes('.png') || url.includes('.css') || url.includes('.js')) {
@@ -61,6 +63,9 @@ async function logVisitorAsync(req, sessionKey) {
             return;
         }
 
+        // Parse User-Agent to get browser, OS, and device type
+        const ua_parsed = parseUserAgent(userAgent);
+
         // Fetch location data (async, don't wait for it)
         const location = await fetchLocationData(ip);
 
@@ -71,6 +76,13 @@ async function logVisitorAsync(req, sessionKey) {
                 url: url,
                 session_id: sessionKey,
                 user_agent: userAgent,
+                browser_name: ua_parsed.browser_name,
+                browser_version: ua_parsed.browser_version,
+                os_name: ua_parsed.os_name,
+                os_version: ua_parsed.os_version,
+                device_type: ua_parsed.device_type,
+                referer: referer,
+                accept_language: acceptLanguage,
                 country: location?.country || null,
                 city: location?.city || null,
                 latitude: location?.latitude || null,
@@ -84,8 +96,9 @@ async function logVisitorAsync(req, sessionKey) {
                 console.error('[VISITOR_LOG] Insert error:', error.code, error.message);
             }
         } else {
+            const device_str = `[${ua_parsed.device_type}] ${ua_parsed.browser_name} / ${ua_parsed.os_name}`;
             const location_str = location ? `${location.city || location.country || 'Unknown'}` : 'Unknown';
-            console.log('[VISITOR_LOG] Logged:', ip, location_str, url.substring(0, 50));
+            console.log('[VISITOR_LOG] Logged:', ip, location_str, device_str, url.substring(0, 40));
         }
     } catch (error) {
         console.error('[VISITOR_LOG] Exception:', error.message);
@@ -149,6 +162,77 @@ function getClientIp(req) {
         req.socket.remoteAddress ||
         'unknown'
     );
+}
+
+/**
+ * Parse User-Agent to extract browser, OS, and device type
+ */
+function parseUserAgent(ua) {
+    const result = {
+        browser_name: 'Unknown',
+        browser_version: '',
+        os_name: 'Unknown',
+        os_version: '',
+        device_type: 'Desktop' // Default to Desktop
+    };
+
+    if (!ua) return result;
+
+    // Detect Device Type (Mobile/Tablet/Desktop)
+    const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    const isTablet = /iPad|Android(?!.*Mobile)|Tablet/i.test(ua);
+
+    if (isTablet) result.device_type = 'Tablet';
+    else if (isMobile) result.device_type = 'Mobile';
+    else result.device_type = 'Desktop';
+
+    // Detect OS
+    if (/Windows NT 10.0/.test(ua)) {
+        result.os_name = 'Windows';
+        result.os_version = '10';
+    } else if (/Windows NT 11.0/.test(ua)) {
+        result.os_name = 'Windows';
+        result.os_version = '11';
+    } else if (/Mac OS X/.test(ua)) {
+        result.os_name = 'macOS';
+        const match = ua.match(/Mac OS X ([\d_]+)/);
+        if (match) result.os_version = match[1].replace(/_/g, '.');
+    } else if (/Android/.test(ua)) {
+        result.os_name = 'Android';
+        const match = ua.match(/Android ([\d.]+)/);
+        if (match) result.os_version = match[1];
+    } else if (/iPhone|iPad|iPod/.test(ua)) {
+        result.os_name = 'iOS';
+        const match = ua.match(/OS ([\d_]+)/);
+        if (match) result.os_version = match[1].replace(/_/g, '.');
+    } else if (/Linux/.test(ua)) {
+        result.os_name = 'Linux';
+    }
+
+    // Detect Browser
+    if (/Chrome|Chromium|CriOS/.test(ua) && !/Edge|Edg|OPR/.test(ua)) {
+        result.browser_name = 'Chrome';
+        const match = ua.match(/Chrome[/\s]([\d.]+)/) || ua.match(/CriOS[/\s]([\d.]+)/);
+        if (match) result.browser_version = match[1].split('.')[0];
+    } else if (/Safari/.test(ua) && !/Chrome|Chromium|CriOS|Edge|Edg|OPR/.test(ua)) {
+        result.browser_name = 'Safari';
+        const match = ua.match(/Version[/\s]([\d.]+)/);
+        if (match) result.browser_version = match[1].split('.')[0];
+    } else if (/Firefox|FxiOS/.test(ua)) {
+        result.browser_name = 'Firefox';
+        const match = ua.match(/Firefox[/\s]([\d.]+)/) || ua.match(/FxiOS[/\s]([\d.]+)/);
+        if (match) result.browser_version = match[1].split('.')[0];
+    } else if (/Edg|Edge/.test(ua)) {
+        result.browser_name = 'Edge';
+        const match = ua.match(/Edg[e/\s]([\d.]+)/);
+        if (match) result.browser_version = match[1].split('.')[0];
+    } else if (/OPR|Opera/.test(ua)) {
+        result.browser_name = 'Opera';
+        const match = ua.match(/OPR[/\s]([\d.]+)/) || ua.match(/Opera[/\s]([\d.]+)/);
+        if (match) result.browser_version = match[1].split('.')[0];
+    }
+
+    return result;
 }
 
 /**
