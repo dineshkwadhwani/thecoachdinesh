@@ -23,7 +23,9 @@
       "Bash(git commit -m 'Add bot conversation logging with accordion UI *)",
       "Bash(grep -E \"\\\\.\\(js|html\\)$\")",
       "Bash(git commit -m 'Add detailed logging for bot conversation debugging *)",
-      "Bash(git commit -m 'Add dynamic projects section with config-based visibility *)"
+      "Bash(git commit -m 'Add dynamic projects section with config-based visibility *)",
+      "Bash(xargs sed -i 's|<link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\">|<link rel=\"icon\" type=\"image/x-icon\" href=\"/favicon.ico\">|g')",
+      "Bash(git commit -m 'Fix favicon links - change from .png to .ico format *)"
     ]
   }
 }
