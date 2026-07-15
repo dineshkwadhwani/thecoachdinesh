@@ -16,6 +16,7 @@ const OpenAI = require('openai');
 const { askDinesh } = require('./coachService');
 const reportService = require('./src/services/reportService');
 const { trackVisitor, getVisitorLogs, deleteAllVisitorLogs } = require('./src/services/visitorAnalyticsService');
+const { logBotConversation, getBotLogs, deleteAllBotLogs } = require('./src/services/botLogsService');
 
 const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
@@ -1044,6 +1045,64 @@ app.delete('/api/visitor-logs', async (req, res) => {
         console.error('Error deleting visitor logs:', error.message);
         res.status(500).json({ success: false, error: 'Failed to delete visitor logs' });
     }
+});
+
+// BOT LOGS ENDPOINTS
+app.post('/api/log-bot-conversation', async (req, res) => {
+    try {
+        const { name, phone, interaction } = req.body;
+
+        if (!name || !phone || !interaction) {
+            return res.status(400).json({ success: false, error: 'Missing required fields' });
+        }
+
+        const result = await logBotConversation(name, phone, interaction);
+        res.json(result);
+    } catch (error) {
+        console.error('Error logging bot conversation:', error.message);
+        res.status(500).json({ success: false, error: 'Failed to log conversation' });
+    }
+});
+
+app.get('/api/bot-logs', async (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const page = parseInt(req.query.page || '1', 10);
+        const filter = req.query.filter || '24h';
+        const result = await getBotLogs(page, 20, filter);
+        res.json(result);
+    } catch (error) {
+        console.error('Error fetching bot logs:', error.message);
+        res.status(500).json({ error: 'Failed to fetch bot logs' });
+    }
+});
+
+app.delete('/api/bot-logs', async (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const result = await deleteAllBotLogs();
+        if (result.success) {
+            res.json({ success: true, message: 'All bot logs deleted' });
+        } else {
+            res.status(500).json({ success: false, error: result.error });
+        }
+    } catch (error) {
+        console.error('Error deleting bot logs:', error.message);
+        res.status(500).json({ success: false, error: 'Failed to delete bot logs' });
+    }
+});
+
+app.get('/botlog', (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.redirect('/admin?redirect=/botlog');
+    }
+    res.sendFile(path.join(__dirname, '../frontend/botlog.html'));
 });
 
 // 3. THE CHAT API
