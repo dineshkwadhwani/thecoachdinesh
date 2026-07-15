@@ -4,7 +4,8 @@
       "Bash(node -e ' *)",
       "Bash(git add *)",
       "Bash(git commit -m 'Fix courses path routing - serve under /courses prefix *)",
-      "Bash(git commit -m 'Add detailed logging for leadership analysis API calls *)"
+      "Bash(git commit -m 'Add detailed logging for leadership analysis API calls *)",
+      "Bash(git commit -m 'Add visitor analytics tracking and dashboard *)"
     ]
   }
 }

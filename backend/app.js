@@ -6,9 +6,11 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
+const cookieParser = require('cookie-parser');
 const OpenAI = require('openai');
 const { askDinesh } = require('./coachService');
 const reportService = require('./src/services/reportService');
+const { trackVisitor, getVisitorLogs } = require('./src/services/visitorAnalyticsService');
 
 const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
@@ -665,9 +667,13 @@ app.use('/courses', express.static(path.join(__dirname, '../courses'), {
     }
 }));
 
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+// Track visitor analytics (must be before other routes)
+app.use(trackVisitor);
 
 app.get('/ping', (req, res) => {
   res.status(200).send('Coach is awake!');
@@ -997,6 +1003,22 @@ app.post('/admin-logout', (req, res) => {
     res.json({ success: true });
 });
 
+// VISITOR LOGS API - Protected
+app.get('/api/visitor-logs', async (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const page = parseInt(req.query.page || '1', 10);
+        const result = await getVisitorLogs(page, 50);
+        res.json(result);
+    } catch (error) {
+        console.error('Error fetching visitor logs:', error.message);
+        res.status(500).json({ error: 'Failed to fetch visitor logs' });
+    }
+});
+
 // 3. THE CHAT API
 app.post('/chat', async (req, res) => {
 
@@ -1087,8 +1109,17 @@ app.get('/admin-reports', (req, res) => {
     if (!isAdminAuthenticated(req)) {
         return res.redirect('/admin');
     }
-    
+
     res.sendFile(path.join(__dirname, '../frontend/admin-reports.html'));
+});
+
+// VISITOR LOG PAGE - Protected
+app.get('/visitorlog', (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.redirect('/admin');
+    }
+
+    res.sendFile(path.join(__dirname, '../frontend/visitorlog.html'));
 });
 
 // Protected Leadership Reports Endpoints

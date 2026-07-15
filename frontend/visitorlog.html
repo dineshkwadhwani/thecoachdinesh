@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Analytics | Coach Dinesh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #f5f8fb 0%, #eef3f8 100%);
+            color: #24313d;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #17212b;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #4d5e6f;
+            font-size: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #e1e8f0;
+            box-shadow: 0 2px 8px rgba(38, 61, 89, 0.04);
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #4d5e6f;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #17212b;
+        }
+
+        .table-section {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e1e8f0;
+            box-shadow: 0 2px 16px rgba(38, 61, 89, 0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid #e1e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #17212b;
+        }
+
+        .status {
+            font-size: 0.85rem;
+            color: #4d5e6f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f5f8fb;
+            border-bottom: 2px solid #e1e8f0;
+        }
+
+        th {
+            padding: 16px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a6177;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e1e8f0;
+            color: #23313d;
+            font-size: 0.95rem;
+        }
+
+        tbody tr:hover {
+            background: #f9fbfd;
+        }
+
+        .timestamp {
+            color: #4d5e6f;
+            font-size: 0.9rem;
+        }
+
+        .ip-address {
+            font-family: 'Courier New', monospace;
+            color: #1d5da8;
+            font-size: 0.9rem;
+        }
+
+        .url {
+            color: #2e5090;
+            word-break: break-all;
+            max-width: 300px;
+        }
+
+        .pagination {
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            border-top: 1px solid #e1e8f0;
+        }
+
+        .pagination button,
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #cfd9e4;
+            border-radius: 8px;
+            background: white;
+            color: #4a6177;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .pagination button:hover,
+        .pagination a:hover {
+            background: #1d5da8;
+            color: white;
+            border-color: #1d5da8;
+        }
+
+        .pagination button.active,
+        .pagination a.active {
+            background: #1d5da8;
+            color: white;
+            border-color: #1d5da8;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #4d5e6f;
+        }
+
+        .error {
+            background: #fef0f0;
+            color: #b33b3b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #b33b3b;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #4d5e6f;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            th, td {
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
+
+            .url {
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Visitor Analytics</h1>
+        <p>Track and analyze site visits in real-time</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="label">Total Visitors</div>
+            <div class="value" id="totalVisitors">-</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Last 24 Hours</div>
+            <div class="value" id="lastDay">-</div>
+        </div>
+    </div>
+
+    <div class="table-section">
+        <div class="table-header">
+            <h2>Recent Visits</h2>
+            <div class="status">Latest on top</div>
+        </div>
+
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        <div id="loadingMessage" class="loading" style="display: none;">Loading visitor data...</div>
+
+        <table id="visitorTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>IP Address</th>
+                    <th>Page Visited</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+
+        <div id="emptyMessage" class="empty" style="display: none;">
+            No visitor data available yet.
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+    </div>
+</div>
+
+<script>
+    let currentPage = 1;
+    const pageSize = 50;
+
+    async function loadVisitorLogs(page = 1) {
+        const errorEl = document.getElementById('errorMessage');
+        const loadingEl = document.getElementById('loadingMessage');
+        const tableEl = document.getElementById('visitorTable');
+        const emptyEl = document.getElementById('emptyMessage');
+        const tbodyEl = document.getElementById('tableBody');
+        const paginationEl = document.getElementById('pagination');
+
+        errorEl.style.display = 'none';
+        loadingEl.style.display = 'block';
+        tableEl.style.display = 'none';
+        emptyEl.style.display = 'none';
+
+        try {
+            const response = await fetch(`/api/visitor-logs?page=${page}`);
+            if (response.status === 401) {
+                errorEl.textContent = 'Unauthorized: Please log in as admin to view this page.';
+                errorEl.style.display = 'block';
+                loadingEl.style.display = 'none';
+                return;
+            }
+
+            if (!response.ok) throw new Error('Failed to load visitor logs');
+
+            const result = await response.json();
+            const { data, total, totalPages } = result;
+
+            loadingEl.style.display = 'none';
+
+            // Update stats
+            document.getElementById('totalVisitors').textContent = total.toLocaleString();
+
+            if (data.length === 0) {
+                emptyEl.style.display = 'block';
+                paginationEl.innerHTML = '';
+                return;
+            }
+
+            // Calculate last 24 hours
+            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+            const last24 = data.filter(v => new Date(v.timestamp).getTime() > oneDayAgo).length;
+            document.getElementById('lastDay').textContent = last24;
+
+            // Populate table
+            tbodyEl.innerHTML = data.map(visitor => `
+                <tr>
+                    <td class="timestamp">${formatDateTime(visitor.timestamp)}</td>
+                    <td class="ip-address">${visitor.ip_address}</td>
+                    <td class="url">${visitor.url}</td>
+                </tr>
+            `).join('');
+
+            tableEl.style.display = 'table';
+
+            // Render pagination
+            let paginationHTML = '';
+            if (page > 1) {
+                paginationHTML += `<button onclick="loadVisitorLogs(${page - 1})">← Previous</button>`;
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === page) {
+                    paginationHTML += `<span class="pagination-active" style="padding: 8px 12px; color: #1d5da8; font-weight: 600;">${i}</span>`;
+                } else if (i >= page - 2 && i <= page + 2) {
+                    paginationHTML += `<button onclick="loadVisitorLogs(${i})">${i}</button>`;
+                }
+            }
+
+            if (page < totalPages) {
+                paginationHTML += `<button onclick="loadVisitorLogs(${page + 1})">Next →</button>`;
+            }
+
+            paginationEl.innerHTML = paginationHTML;
+            currentPage = page;
+        } catch (error) {
+            loadingEl.style.display = 'none';
+            errorEl.textContent = error.message;
+            errorEl.style.display = 'block';
+        }
+    }
+
+    function formatDateTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 1) return 'just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // Load on page load
+    loadVisitorLogs(1);
+
+    // Refresh every 30 seconds
+    setInterval(() => loadVisitorLogs(currentPage), 30000);
+</script>
+
+</body>
+</html>
