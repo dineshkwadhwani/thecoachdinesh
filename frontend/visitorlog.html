@@ -261,6 +261,10 @@
             <div class="value" id="totalVisitors">-</div>
         </div>
         <div class="stat-card">
+            <div class="label">Last 30 Days</div>
+            <div class="value" id="last30Days">-</div>
+        </div>
+        <div class="stat-card">
             <div class="label">Last 24 Hours</div>
             <div class="value" id="lastDay">-</div>
         </div>
@@ -269,7 +273,17 @@
     <div class="table-section">
         <div class="table-header">
             <h2>Recent Visits</h2>
-            <div class="status">Latest on top</div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <select id="filterSelect" onchange="loadVisitorLogs(1)" style="padding: 8px 12px; border: 1px solid #cfd9e4; border-radius: 8px; background: white; color: #4a6177; font-size: 0.9rem; cursor: pointer;">
+                    <option value="24h">Last 24 Hours</option>
+                    <option value="7d">Last 7 Days</option>
+                    <option value="30d">Last 30 Days</option>
+                    <option value="all">All Time</option>
+                </select>
+                <button onclick="resetVisitorLogs()" style="padding: 8px 12px; border: 1px solid #c85a54; border-radius: 8px; background: #c85a54; color: white; font-size: 0.9rem; cursor: pointer; font-weight: 500; transition: all 0.2s ease;">
+                    Reset All
+                </button>
+            </div>
         </div>
 
         <div id="errorMessage" class="error" style="display: none;"></div>
@@ -308,6 +322,7 @@
         const emptyEl = document.getElementById('emptyMessage');
         const tbodyEl = document.getElementById('tableBody');
         const paginationEl = document.getElementById('pagination');
+        const filterSelect = document.getElementById('filterSelect');
 
         errorEl.style.display = 'none';
         loadingEl.style.display = 'block';
@@ -315,7 +330,8 @@
         emptyEl.style.display = 'none';
 
         try {
-            const response = await fetch(`/api/visitor-logs?page=${page}`);
+            const filter = filterSelect.value || '24h';
+            const response = await fetch(`/api/visitor-logs?page=${page}&filter=${filter}`);
             if (response.status === 401) {
                 errorEl.textContent = 'Unauthorized: Please log in as admin to view this page.';
                 errorEl.style.display = 'block';
@@ -326,23 +342,20 @@
             if (!response.ok) throw new Error('Failed to load visitor logs');
 
             const result = await response.json();
-            const { data, total, totalPages } = result;
+            const { data, total, last24Hours, last30Days, totalPages } = result;
 
             loadingEl.style.display = 'none';
 
             // Update stats
             document.getElementById('totalVisitors').textContent = total.toLocaleString();
+            document.getElementById('last30Days').textContent = last30Days.toLocaleString();
+            document.getElementById('lastDay').textContent = last24Hours.toLocaleString();
 
             if (data.length === 0) {
                 emptyEl.style.display = 'block';
                 paginationEl.innerHTML = '';
                 return;
             }
-
-            // Calculate last 24 hours
-            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-            const last24 = data.filter(v => new Date(v.timestamp).getTime() > oneDayAgo).length;
-            document.getElementById('lastDay').textContent = last24;
 
             // Populate table
             tbodyEl.innerHTML = data.map(visitor => {
@@ -427,6 +440,37 @@
         if (city) return city;
         if (country) return country;
         return '<span style="color: #aaa;">Unknown</span>';
+    }
+
+    async function resetVisitorLogs() {
+        const confirmed = confirm('⚠️ Are you sure? This will delete ALL visitor logs and cannot be undone.');
+        if (!confirmed) return;
+
+        const doubleConfirm = confirm('🚨 FINAL WARNING: This will permanently delete all visitor log records. Continue?');
+        if (!doubleConfirm) return;
+
+        try {
+            const response = await fetch('/api/visitor-logs', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.status === 401) {
+                alert('Unauthorized: Please log in as admin.');
+                return;
+            }
+
+            if (!response.ok) {
+                const error = await response.json();
+                alert('Error: ' + (error.error || 'Failed to reset logs'));
+                return;
+            }
+
+            alert('✓ All visitor logs deleted successfully');
+            loadVisitorLogs(1);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
     }
 
     // Load on page load

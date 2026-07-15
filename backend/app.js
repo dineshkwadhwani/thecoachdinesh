@@ -15,7 +15,7 @@ const fs = require('fs');
 const OpenAI = require('openai');
 const { askDinesh } = require('./coachService');
 const reportService = require('./src/services/reportService');
-const { trackVisitor, getVisitorLogs } = require('./src/services/visitorAnalyticsService');
+const { trackVisitor, getVisitorLogs, deleteAllVisitorLogs } = require('./src/services/visitorAnalyticsService');
 
 const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
@@ -1019,11 +1019,30 @@ app.get('/api/visitor-logs', async (req, res) => {
 
     try {
         const page = parseInt(req.query.page || '1', 10);
-        const result = await getVisitorLogs(page, 50);
+        const filter = req.query.filter || '24h'; // '24h', '7d', '30d', 'all'
+        const result = await getVisitorLogs(page, 50, filter);
         res.json(result);
     } catch (error) {
         console.error('Error fetching visitor logs:', error.message);
         res.status(500).json({ error: 'Failed to fetch visitor logs' });
+    }
+});
+
+app.delete('/api/visitor-logs', async (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const result = await deleteAllVisitorLogs();
+        if (result.success) {
+            res.json({ success: true, message: 'All visitor logs deleted' });
+        } else {
+            res.status(500).json({ success: false, error: result.error });
+        }
+    } catch (error) {
+        console.error('Error deleting visitor logs:', error.message);
+        res.status(500).json({ success: false, error: 'Failed to delete visitor logs' });
     }
 });
 

@@ -259,33 +259,71 @@ function parseUserAgent(ua) {
 }
 
 /**
- * Get visitor logs with pagination
+ * Get visitor logs with pagination and optional time filter
  */
-async function getVisitorLogs(page = 1, pageSize = 50) {
+async function getVisitorLogs(page = 1, pageSize = 50, filter = '24h') {
     try {
         const offset = (page - 1) * pageSize;
 
-        // Get total count
-        const { count, error: countError } = await supabase
+        // Calculate cutoff time based on filter
+        let cutoffTime = null;
+        if (filter === '24h') {
+            cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        } else if (filter === '7d') {
+            cutoffTime = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        } else if (filter === '30d') {
+            cutoffTime = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        }
+        // 'all' has no cutoff
+
+        // Get total count (all time, for summary)
+        const { count: totalCount, error: totalCountError } = await supabase
             .from('visitor_logs')
             .select('*', { count: 'exact', head: true });
 
-        if (countError) throw countError;
+        if (totalCountError) throw totalCountError;
 
-        // Get paginated data
-        const { data, error } = await supabase
+        // Get count for last 24 hours (for summary)
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const { count: last24Count, error: last24Error } = await supabase
             .from('visitor_logs')
-            .select('*')
+            .select('*', { count: 'exact', head: true })
+            .gte('timestamp', oneDayAgo.toISOString());
+
+        if (last24Error) throw last24Error;
+
+        // Get count for last 30 days (for summary)
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const { count: last30Count, error: last30Error } = await supabase
+            .from('visitor_logs')
+            .select('*', { count: 'exact', head: true })
+            .gte('timestamp', thirtyDaysAgo.toISOString());
+
+        if (last30Error) throw last30Error;
+
+        // Get filtered and paginated data
+        let query = supabase.from('visitor_logs').select('*');
+
+        if (cutoffTime) {
+            query = query.gte('timestamp', cutoffTime.toISOString());
+        }
+
+        const { data, error, count } = await query
             .order('timestamp', { ascending: false })
-            .range(offset, offset + pageSize - 1);
+            .range(offset, offset + pageSize - 1)
+            .select('*', { count: 'exact' });
 
         if (error) throw error;
 
         return {
             data: data || [],
-            total: count || 0,
+            total: totalCount || 0,
+            last24Hours: last24Count || 0,
+            last30Days: last30Count || 0,
+            filteredCount: count || 0,
             page,
             pageSize,
+            filter,
             totalPages: Math.ceil((count || 0) / pageSize)
         };
     } catch (error) {
@@ -293,16 +331,41 @@ async function getVisitorLogs(page = 1, pageSize = 50) {
         return {
             data: [],
             total: 0,
+            last24Hours: 0,
+            last30Days: 0,
+            filteredCount: 0,
             page,
             pageSize,
+            filter,
             totalPages: 0,
             error: error.message
         };
     }
 }
 
+/**
+ * Delete all visitor logs
+ */
+async function deleteAllVisitorLogs() {
+    try {
+        const { error } = await supabase
+            .from('visitor_logs')
+            .delete()
+            .neq('id', -1); // Delete all rows by matching non-existent condition
+
+        if (error) throw error;
+
+        console.log('[VISITOR_LOG] All logs deleted');
+        return { success: true };
+    } catch (error) {
+        console.error('[VISITOR_LOG] Delete error:', error.message);
+        return { success: false, error: error.message };
+    }
+}
+
 module.exports = {
     trackVisitor,
     getVisitorLogs,
+    deleteAllVisitorLogs,
     getClientIp
 };
