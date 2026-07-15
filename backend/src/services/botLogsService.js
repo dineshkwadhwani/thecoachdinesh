@@ -6,27 +6,31 @@ const { supabase } = require('./supabaseClient');
 async function logBotConversation(name, phone, interaction) {
     try {
         if (!name || !phone) {
-            console.warn('[BOT_LOG] Skipping: missing name or phone');
+            console.error('[BOT_LOG] Skipping: missing name or phone', { name, phone });
             return { success: false, error: 'Missing name or phone' };
         }
 
-        const { error } = await supabase
+        console.log('[BOT_LOG] Inserting conversation for', name, 'phone:', phone, 'messages:', interaction?.length || 0);
+
+        const { data, error } = await supabase
             .from('bot_logs')
             .insert({
                 name,
                 phone,
                 interaction
-            });
+            })
+            .select();
 
         if (error) {
-            console.error('[BOT_LOG] Insert error:', error.message);
+            console.error('[BOT_LOG] Insert error:', error.code, error.message);
+            console.error('[BOT_LOG] Error details:', error);
             return { success: false, error: error.message };
         }
 
-        console.log('[BOT_LOG] Logged conversation for', name, '(' + phone + ')');
-        return { success: true };
+        console.log('[BOT_LOG] ✓ Successfully logged conversation for', name, '- ID:', data?.[0]?.id);
+        return { success: true, data };
     } catch (error) {
-        console.error('[BOT_LOG] Exception:', error.message);
+        console.error('[BOT_LOG] Exception:', error.message, error);
         return { success: false, error: error.message };
     }
 }

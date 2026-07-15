@@ -245,27 +245,37 @@ function appendMessage(sender, text) {
 // Log conversation to database
 async function logConversationToDatabase() {
     if (!userName || !userPhone || conversationMessages.length === 0) {
+        console.log('[BOT_LOG_DEBUG] Skip logging: name=' + userName + ', phone=' + userPhone + ', messages=' + conversationMessages.length);
         return;
     }
 
     try {
+        const payload = {
+            name: userName,
+            phone: userPhone,
+            interaction: conversationMessages
+        };
+
+        console.log('[BOT_LOG_DEBUG] Sending payload:', payload);
+
         const response = await fetch('/api/log-bot-conversation', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: userName,
-                phone: userPhone,
-                interaction: conversationMessages
-            })
+            body: JSON.stringify(payload)
         });
 
-        if (response.ok) {
-            console.log('Conversation logged successfully');
+        console.log('[BOT_LOG_DEBUG] Response status:', response.status);
+
+        const responseData = await response.json();
+        console.log('[BOT_LOG_DEBUG] Response data:', responseData);
+
+        if (response.ok && responseData.success) {
+            console.log('[BOT_LOG] ✓ Conversation logged successfully for', userName);
         } else {
-            console.error('Failed to log conversation:', response.status);
+            console.error('[BOT_LOG] ✗ Failed to log conversation:', responseData.error);
         }
     } catch (error) {
-        console.error('Error logging conversation:', error);
+        console.error('[BOT_LOG] ✗ Error logging conversation:', error);
     }
 }
 
