@@ -3,6 +3,9 @@ let onboardingStep = 'form'; // 'form', 'done'
 let userName = '';
 let userPhone = '';
 
+// Conversation tracking for logging
+let conversationMessages = [];
+
 // Conversation limit
 function getOrCreateBrowserId() {
     const existingId = localStorage.getItem('coachBotBrowserId');
@@ -65,6 +68,11 @@ function toggleBot() {
         // keep the latest messages visible when opened
         const messages = document.getElementById('bot-messages');
         if (messages) messages.scrollTop = messages.scrollHeight;
+    } else {
+        // Log conversation when bot is closed
+        if (conversationMessages.length > 0) {
+            logConversationToDatabase();
+        }
     }
 }
 
@@ -187,6 +195,11 @@ async function sendMessage() {
             appendMessage('System', 'The Coach sent an empty response.');
         }
 
+        // 5. Log conversation to database after each exchange
+        if (conversationMessages.length > 0) {
+            logConversationToDatabase();
+        }
+
     } catch (error) {
         console.error("Fetch Error:", error);
         appendMessage('System', 'Connection to server failed.');
@@ -195,7 +208,7 @@ async function sendMessage() {
 
 function appendMessage(sender, text) {
     const container = document.getElementById('bot-messages');
-    
+
     // Test if container exists
     if (!container) {
         console.error("I can't find the messages div!");
@@ -205,17 +218,55 @@ function appendMessage(sender, text) {
     const msgDiv = document.createElement('div');
     msgDiv.style.padding = "8px";
     msgDiv.style.borderBottom = "1px solid #eee";
-    
+
     // Convert new lines (\n) from AI into HTML breaks (<br>)
     const formattedText = text.replace(/\n/g, '<br>');
-    
+
     msgDiv.innerHTML = `<strong>${sender}:</strong> ${formattedText}`;
-    
+
     // This is the line that actually puts it on the screen!
     container.appendChild(msgDiv);
-    
+
+    // Track message for logging (determine role)
+    let role = 'assistant';
+    if (sender === userName || sender === 'User') {
+        role = 'user';
+    }
+
+    conversationMessages.push({
+        role: role,
+        content: text
+    });
+
     // Auto-scroll so the newest message is visible
     container.scrollTop = container.scrollHeight;
+}
+
+// Log conversation to database
+async function logConversationToDatabase() {
+    if (!userName || !userPhone || conversationMessages.length === 0) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/log-bot-conversation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: userName,
+                phone: userPhone,
+                interaction: conversationMessages
+            })
+        });
+
+        if (response.ok) {
+            console.log('Conversation logged successfully');
+        } else {
+            console.error('Failed to log conversation:', response.status);
+        }
+    } catch (error) {
+        console.error('Error logging conversation:', error);
+    }
 }
 
 function setupEnterKeySend() {
