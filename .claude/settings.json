@@ -5,7 +5,9 @@
       "Bash(git add *)",
       "Bash(git commit -m 'Fix courses path routing - serve under /courses prefix *)",
       "Bash(git commit -m 'Add detailed logging for leadership analysis API calls *)",
-      "Bash(git commit -m 'Add visitor analytics tracking and dashboard *)"
+      "Bash(git commit -m 'Add visitor analytics tracking and dashboard *)",
+      "Bash(curl -s \"https://www.thecoachdinesh.com/\")",
+      "Bash(git commit -m 'Fix visitor tracking middleware and ensure dependencies are installed *)"
     ]
   }
 }

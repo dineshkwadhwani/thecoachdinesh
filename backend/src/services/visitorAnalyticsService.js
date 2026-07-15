@@ -4,52 +4,73 @@ const { supabase } = require('./supabaseClient');
  * Track a visitor's first visit to the site
  * Uses session ID to ensure only one entry per visit
  */
-async function trackVisitor(req, res, next) {
+function trackVisitor(req, res, next) {
     try {
-        // Get or create session ID
-        let sessionId = req.cookies.visitor_session;
+        // Get or create session ID from cookies
+        const sessionId = req.cookies?.visitor_session;
 
+        // If no session, this is a first-time visitor
         if (!sessionId) {
-            // First time visitor - create session and log
-            sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-            const ip = getClientIp(req);
-            const url = req.originalUrl || req.url;
-            const userAgent = req.get('user-agent') || '';
-
-            // Log to Supabase
-            try {
-                const { error } = await supabase
-                    .from('visitor_logs')
-                    .insert({
-                        ip_address: ip,
-                        url: url,
-                        session_id: sessionId,
-                        user_agent: userAgent
-                    });
-
-                if (error && error.code !== '23505') { // Ignore unique constraint errors
-                    console.error('Error logging visitor:', error.message);
-                }
-            } catch (dbError) {
-                console.error('Error tracking visitor:', dbError.message);
-            }
-
-            // Set session cookie (expires in 24 hours)
-            res.cookie('visitor_session', sessionId, {
+            // Set session cookie immediately (expires in 24 hours)
+            res.cookie('visitor_session', newSessionId, {
                 maxAge: 24 * 60 * 60 * 1000,
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax'
+                sameSite: 'lax',
+                path: '/'
+            });
+
+            // Log visitor asynchronously (don't wait for it)
+            logVisitorAsync(req, newSessionId).catch(err => {
+                console.error('Visitor logging error:', err.message);
             });
         }
 
-        // Continue to next middleware/route
+        // Continue to next middleware/route immediately
         next();
     } catch (error) {
-        console.error('Visitor tracking error:', error.message);
-        // Don't block request on tracking error
+        console.error('Visitor tracking middleware error:', error.message);
+        // Always continue to next route, don't block on tracking error
         next();
+    }
+}
+
+/**
+ * Async function to log visitor (runs in background)
+ */
+async function logVisitorAsync(req, sessionId) {
+    try {
+        const ip = getClientIp(req);
+        const url = req.originalUrl || req.url || '/';
+        const userAgent = req.get?.('user-agent') || req.headers?.['user-agent'] || '';
+
+        // Only log if we have valid data
+        if (!ip || !url) {
+            console.warn('Skipping visitor log: missing ip or url');
+            return;
+        }
+
+        const { error } = await supabase
+            .from('visitor_logs')
+            .insert({
+                ip_address: ip,
+                url: url,
+                session_id: sessionId,
+                user_agent: userAgent
+            });
+
+        if (error) {
+            // 23505 is unique constraint error (session already exists) - ignore it
+            if (error.code !== '23505') {
+                console.error('[VISITOR_LOG] Insert error:', error.code, error.message);
+            }
+        } else {
+            console.log('[VISITOR_LOG] Logged:', ip, url);
+        }
+    } catch (error) {
+        console.error('[VISITOR_LOG] Exception:', error.message);
     }
 }
 
