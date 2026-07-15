@@ -14,7 +14,9 @@
       "Bash(git commit -m 'Add device type and browser detection to visitor tracking *)",
       "Bash(git commit -m 'Make dotenv optional for Vercel deployment *)",
       "Bash(git commit -m 'Improve geolocation error handling and diagnostics *)",
-      "Bash(git commit -m 'Include courses folder in Vercel build configuration *)"
+      "Bash(git commit -m 'Include courses folder in Vercel build configuration *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
