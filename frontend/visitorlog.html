@@ -487,8 +487,8 @@
     // Load on page load
     loadVisitorLogs(1);
 
-    // Refresh every 30 seconds
-    setInterval(() => loadVisitorLogs(currentPage), 30000);
+    // Refresh every 30 minutes to avoid database spam
+    setInterval(() => loadVisitorLogs(currentPage), 30 * 60 * 1000);
 </script>
 
 </body>
