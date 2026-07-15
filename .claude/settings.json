@@ -25,7 +25,11 @@
       "Bash(git commit -m 'Add detailed logging for bot conversation debugging *)",
       "Bash(git commit -m 'Add dynamic projects section with config-based visibility *)",
       "Bash(xargs sed -i 's|<link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\">|<link rel=\"icon\" type=\"image/x-icon\" href=\"/favicon.ico\">|g')",
-      "Bash(git commit -m 'Fix favicon links - change from .png to .ico format *)"
+      "Bash(git commit -m 'Fix favicon links - change from .png to .ico format *)",
+      "Bash(git commit -m 'Fix Coaching Studio project link URL *)",
+      "Bash(git commit -m 'Add two new tiles to '\\\\''How I Help Leaders'\\\\'' section *)",
+      "Bash(git commit -m 'Update section heading to '\\\\''How I Help Leaders and Organizations'\\\\'' *)",
+      "Bash(git commit -m 'Update '\\\\''What I'\\\\''m Building These Days'\\\\'' tagline *)"
     ]
   }
 }
