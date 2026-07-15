@@ -803,13 +803,12 @@ app.get('/intro', (req, res) => {
 // ADMIN LOGIN PAGE
 app.get('/admin', (req, res) => {
     if (isAdminAuthenticated(req)) {
-        // Already authenticated, redirect to original page or reports
-        const redirect = req.query.redirect || '/admin-reports';
-        return res.redirect(redirect);
+        // Already authenticated, show dashboard
+        return res.sendFile(path.join(__dirname, '../frontend/admin-dashboard.html'));
     }
 
     const hasLoginError = String(req.query.error || '') === '1';
-    const redirect = req.query.redirect || '/admin-reports';
+    const redirect = req.query.redirect || '/admin';
 
     // Serve login page
     const loginHTML = `<!DOCTYPE html>
