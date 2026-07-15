@@ -21,7 +21,8 @@
       "Bash(git commit -m 'Add comprehensive SEO meta tags to all pages *)",
       "Bash(git commit -m 'Change visitor log auto-refresh from 30 seconds to 30 minutes *)",
       "Bash(git commit -m 'Add bot conversation logging with accordion UI *)",
-      "Bash(grep -E \"\\\\.\\(js|html\\)$\")"
+      "Bash(grep -E \"\\\\.\\(js|html\\)$\")",
+      "Bash(git commit -m 'Add detailed logging for bot conversation debugging *)"
     ]
   }
 }
