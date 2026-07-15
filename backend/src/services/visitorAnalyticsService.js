@@ -106,7 +106,7 @@ async function logVisitorAsync(req, sessionKey) {
 }
 
 /**
- * Fetch geolocation data for an IP address using ip-api.com
+ * Fetch geolocation data for an IP address using ipinfo.io (works better with Vercel)
  */
 async function fetchLocationData(ip) {
     try {
@@ -121,46 +121,48 @@ async function fetchLocationData(ip) {
             return null;
         }
 
-        // Use HTTPS instead of HTTP for better compatibility
-        const url = `https://ip-api.com/json/${ip}?fields=country,city,lat,lon,isp`;
+        // Use ipinfo.io instead of ip-api.com (more reliable with Vercel)
+        const url = `https://ipinfo.io/${ip}/json`;
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
 
         try {
-            const response = await fetch(url, { signal: controller.signal });
+            const response = await fetch(url, {
+                signal: controller.signal,
+                headers: { 'User-Agent': 'Coach-Analytics/1.0' }
+            });
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                console.error('[GEOLOCATION_ERROR] HTTP', response.status, 'for IP', ip);
+                console.error('[GEOLOCATION_ERROR] HTTP', response.status, 'for IP', ip, '- using ipinfo.io');
                 return null;
             }
 
             const data = await response.json();
 
-            if (data.status === 'success') {
+            // ipinfo.io returns data directly (no status field)
+            if (data.city && data.country) {
+                const [lat, lon] = (data.loc || ',').split(',').map(s => s.trim());
                 const location = {
                     country: data.country || null,
                     city: data.city || null,
-                    latitude: data.lat || null,
-                    longitude: data.lon || null,
-                    isp: data.isp || null,
+                    latitude: lat ? parseFloat(lat) : null,
+                    longitude: lon ? parseFloat(lon) : null,
+                    isp: data.org || null,
                     timestamp: Date.now()
                 };
                 locationCache.set(ip, { data: location, timestamp: Date.now() });
-                console.log('[GEOLOCATION_SUCCESS]', ip, data.country, data.city);
+                console.log('[GEOLOCATION_SUCCESS]', ip, data.city, data.country);
                 return location;
-            } else if (data.status === 'fail') {
-                console.error('[GEOLOCATION_ERROR] API fail for IP', ip, '- Query limit or invalid request:', data.message);
-                return null;
             } else {
-                console.error('[GEOLOCATION_ERROR] Unexpected status for IP', ip, ':', data.status);
+                console.error('[GEOLOCATION_ERROR] Incomplete data for IP', ip, 'city:', data.city, 'country:', data.country);
                 return null;
             }
         } catch (fetchError) {
             clearTimeout(timeoutId);
             if (fetchError.name === 'AbortError') {
-                console.error('[GEOLOCATION_ERROR] Timeout (10s) for IP', ip);
+                console.error('[GEOLOCATION_ERROR] Timeout (8s) for IP', ip);
             } else {
                 console.error('[GEOLOCATION_ERROR] Fetch exception for IP', ip, ':', fetchError.message);
             }
