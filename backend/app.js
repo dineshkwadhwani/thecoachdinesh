@@ -631,7 +631,11 @@ function parseCookies(req) {
 
 function isAdminAuthenticated(req) {
     const cookies = parseCookies(req);
-    return cookies[ADMIN_AUTH_COOKIE] === 'true';
+    const isAuth = cookies[ADMIN_AUTH_COOKIE] === 'true';
+    if (!isAuth) {
+        console.log('[ADMIN_AUTH] Not authenticated - Cookie value:', cookies[ADMIN_AUTH_COOKIE], 'Expected: true');
+    }
+    return isAuth;
 }
 
 function isApiCallsEnabled() {
@@ -815,6 +819,11 @@ app.get('/intro', (req, res) => {
 
 // ADMIN LOGIN PAGE
 app.get('/admin', (req, res) => {
+    // Prevent caching to ensure authentication is always checked
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+
     if (isAdminAuthenticated(req)) {
         // Already authenticated, show dashboard
         return res.sendFile(path.join(__dirname, '../frontend/admin-dashboard.html'));
