@@ -648,6 +648,13 @@ function isApiCallsEnabled() {
     }
 }
 
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Track visitor analytics (must be before static files to capture all requests)
+app.use(trackVisitor);
+
 // 1. SERVE STATIC FILES
 // This tells Express to serve your CSS, JS, and Images from the frontend folder
 app.use(express.static(path.join(__dirname, '../frontend'), {
@@ -671,13 +678,6 @@ app.use('/courses', express.static(path.join(__dirname, '../courses'), {
         setPageCacheHeaders(res);
     }
 }));
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// Track visitor analytics (must be before other routes)
-app.use(trackVisitor);
 
 app.get('/ping', (req, res) => {
   res.status(200).send('Coach is awake!');
