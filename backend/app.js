@@ -6,7 +6,6 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
-const cookieParser = require('cookie-parser');
 const OpenAI = require('openai');
 const { askDinesh } = require('./coachService');
 const reportService = require('./src/services/reportService');
@@ -670,7 +669,6 @@ app.use('/courses', express.static(path.join(__dirname, '../courses'), {
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 // Track visitor analytics (must be before other routes)
 app.use(trackVisitor);

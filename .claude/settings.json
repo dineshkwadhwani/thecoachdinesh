@@ -7,7 +7,8 @@
       "Bash(git commit -m 'Add detailed logging for leadership analysis API calls *)",
       "Bash(git commit -m 'Add visitor analytics tracking and dashboard *)",
       "Bash(curl -s \"https://www.thecoachdinesh.com/\")",
-      "Bash(git commit -m 'Fix visitor tracking middleware and ensure dependencies are installed *)"
+      "Bash(git commit -m 'Fix visitor tracking middleware and ensure dependencies are installed *)",
+      "Bash(git commit -m 'Remove cookie-parser dependency and simplify visitor tracking *)"
     ]
   }
 }
