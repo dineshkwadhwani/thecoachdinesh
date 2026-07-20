@@ -13,6 +13,28 @@
   "routes": [
     {
       "src": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "dineshwadhwani.online"
+        }
+      ],
+      "status": 308,
+      "dest": "https://www.thecoachdinesh.com/portfolio.html"
+    },
+    {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.dineshwadhwani.online"
+        }
+      ],
+      "status": 308,
+      "dest": "https://www.thecoachdinesh.com/portfolio.html"
+    },
+    {
+      "src": "/(.*)",
       "dest": "/api/index.js"
     }
   ],
