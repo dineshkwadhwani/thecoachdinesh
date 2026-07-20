@@ -30,7 +30,14 @@
       "Bash(git commit -m 'Add two new tiles to '\\\\''How I Help Leaders'\\\\'' section *)",
       "Bash(git commit -m 'Update section heading to '\\\\''How I Help Leaders and Organizations'\\\\'' *)",
       "Bash(git commit -m 'Update '\\\\''What I'\\\\''m Building These Days'\\\\'' tagline *)",
-      "Bash(git commit -m 'Fix admin authentication - prevent page caching *)"
+      "Bash(git commit -m 'Fix admin authentication - prevent page caching *)",
+      "Bash(cat)",
+      "Bash(chmod +x /tmp/setup_check.sh)",
+      "Bash(/tmp/setup_check.sh)",
+      "Bash(npm install *)",
+      "Bash(chmod +x /tmp/final_check.sh)",
+      "Bash(/tmp/final_check.sh)",
+      "Bash(git commit -m 'Add domain redirect: dineshwadhwani.online → portfolio.html *)"
     ]
   }
 }
