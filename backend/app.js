@@ -1,7 +1,13 @@
 const path = require('path');
 
 // Load environment variables FIRST, before anything else
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+// Make it optional in case dotenv is not installed
+try {
+    require('dotenv').config({ path: path.join(__dirname, '.env') });
+} catch (e) {
+    // dotenv not available - environment variables should be set via Vercel/system
+    console.log('Note: dotenv not available, using system environment variables');
+}
 
 const express = require('express');
 const cors = require('cors');
@@ -9,6 +15,8 @@ const fs = require('fs');
 const OpenAI = require('openai');
 const { askDinesh } = require('./coachService');
 const reportService = require('./src/services/reportService');
+const { trackVisitor, getVisitorLogs, deleteAllVisitorLogs } = require('./src/services/visitorAnalyticsService');
+const { logBotConversation, getBotLogs, deleteAllBotLogs } = require('./src/services/botLogsService');
 
 const app = express();
 const pageCacheDurationMs = 15 * 60 * 1000;
@@ -623,7 +631,11 @@ function parseCookies(req) {
 
 function isAdminAuthenticated(req) {
     const cookies = parseCookies(req);
-    return cookies[ADMIN_AUTH_COOKIE] === 'true';
+    const isAuth = cookies[ADMIN_AUTH_COOKIE] === 'true';
+    if (!isAuth) {
+        console.log('[ADMIN_AUTH] Not authenticated - Cookie value:', cookies[ADMIN_AUTH_COOKIE], 'Expected: true');
+    }
+    return isAuth;
 }
 
 function isApiCallsEnabled() {
@@ -640,6 +652,13 @@ function isApiCallsEnabled() {
         return true;
     }
 }
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Track visitor analytics (must be before static files to capture all requests)
+app.use(trackVisitor);
 
 // 1. SERVE STATIC FILES
 // This tells Express to serve your CSS, JS, and Images from the frontend folder
@@ -665,10 +684,6 @@ app.use('/courses', express.static(path.join(__dirname, '../courses'), {
     }
 }));
 
-app.use(cors()); 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
 app.get('/ping', (req, res) => {
   res.status(200).send('Coach is awake!');
 });
@@ -686,6 +701,19 @@ app.get('/debug/status', (req, res) => {
     message: process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY
       ? '✓ Ready to save reports to Supabase'
       : '⚠️ Missing Supabase credentials - reports will go to file storage'
+  });
+});
+
+// Get site configuration (projects section visibility)
+app.get('/api/config', (req, res) => {
+  res.json({
+    projects: {
+      enabled: String(process.env.PROJECTS || 'ON').toUpperCase() === 'ON',
+      coachingStudio: String(process.env.PROJECTS_COACHINGSTUDIO || 'ON').toUpperCase() === 'ON',
+      searchMyJob: String(process.env.PROJECTS_SEARCHMYJOB || 'ON').toUpperCase() === 'ON',
+      dineshtrade: String(process.env.PROJECTS_DINESHTRADE || 'ON').toUpperCase() === 'ON',
+      aiCourse: String(process.env.PROJECTS_AICOURSE || 'ON').toUpperCase() === 'ON'
+    }
   });
 });
 
@@ -791,13 +819,19 @@ app.get('/intro', (req, res) => {
 
 // ADMIN LOGIN PAGE
 app.get('/admin', (req, res) => {
+    // Prevent caching to ensure authentication is always checked
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+
     if (isAdminAuthenticated(req)) {
-        // Already authenticated, redirect to reports
-        return res.redirect('/admin-reports');
+        // Already authenticated, show dashboard
+        return res.sendFile(path.join(__dirname, '../frontend/admin-dashboard.html'));
     }
 
     const hasLoginError = String(req.query.error || '') === '1';
-    
+    const redirect = req.query.redirect || '/admin';
+
     // Serve login page
     const loginHTML = `<!DOCTYPE html>
 <html lang="en">
@@ -938,15 +972,16 @@ app.get('/admin', (req, res) => {
             </div>
 
             <form id="login-form" method="POST" action="/admin-login">
+                <input type="hidden" name="redirect" value="${redirect}">
                 <div id="error-message" class="error-message ${hasLoginError ? 'show' : ''}">${hasLoginError ? 'Invalid password. Please try again.' : ''}</div>
-                
+
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input 
-                        type="password" 
+                    <input
+                        type="password"
                         name="password"
-                        id="password" 
-                        placeholder="Enter password" 
+                        id="password"
+                        placeholder="Enter password"
                         autocomplete="off"
                         required
                     >
@@ -966,12 +1001,13 @@ app.get('/admin', (req, res) => {
 // ADMIN LOGIN API
 app.post('/admin-login', (req, res) => {
     const password = String(req.body && req.body.password || '').trim();
+    const redirect = String(req.body && req.body.redirect || '').trim() || '/admin-reports';
     const todaysPassword = getTodaysAdminPassword();
     const prefersHtml = (req.headers.accept || '').includes('text/html');
-    
+
     if (!password) {
         if (prefersHtml) {
-            return res.redirect('/admin?error=1');
+            return res.redirect(`/admin?error=1&redirect=${encodeURIComponent(redirect)}`);
         }
         return res.status(400).json({ success: false, message: 'Password is required' });
     }
@@ -980,13 +1016,13 @@ app.post('/admin-login', (req, res) => {
         // Set authentication cookie
         res.setHeader('Set-Cookie', `${ADMIN_AUTH_COOKIE}=true; Path=/; HttpOnly; SameSite=Strict`);
         if (prefersHtml) {
-            return res.redirect('/admin-reports');
+            return res.redirect(redirect);
         }
         return res.json({ success: true, message: 'Authentication successful' });
     }
 
     if (prefersHtml) {
-        return res.redirect('/admin?error=1');
+        return res.redirect(`/admin?error=1&redirect=${encodeURIComponent(redirect)}`);
     }
     res.status(401).json({ success: false, message: 'Invalid password' });
 });
@@ -995,6 +1031,99 @@ app.post('/admin-login', (req, res) => {
 app.post('/admin-logout', (req, res) => {
     res.setHeader('Set-Cookie', `${ADMIN_AUTH_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`);
     res.json({ success: true });
+});
+
+// VISITOR LOGS API - Protected
+app.get('/api/visitor-logs', async (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const page = parseInt(req.query.page || '1', 10);
+        const filter = req.query.filter || '24h'; // '24h', '7d', '30d', 'all'
+        const result = await getVisitorLogs(page, 50, filter);
+        res.json(result);
+    } catch (error) {
+        console.error('Error fetching visitor logs:', error.message);
+        res.status(500).json({ error: 'Failed to fetch visitor logs' });
+    }
+});
+
+app.delete('/api/visitor-logs', async (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const result = await deleteAllVisitorLogs();
+        if (result.success) {
+            res.json({ success: true, message: 'All visitor logs deleted' });
+        } else {
+            res.status(500).json({ success: false, error: result.error });
+        }
+    } catch (error) {
+        console.error('Error deleting visitor logs:', error.message);
+        res.status(500).json({ success: false, error: 'Failed to delete visitor logs' });
+    }
+});
+
+// BOT LOGS ENDPOINTS
+app.post('/api/log-bot-conversation', async (req, res) => {
+    try {
+        const { name, phone, interaction } = req.body;
+
+        if (!name || !phone || !interaction) {
+            return res.status(400).json({ success: false, error: 'Missing required fields' });
+        }
+
+        const result = await logBotConversation(name, phone, interaction);
+        res.json(result);
+    } catch (error) {
+        console.error('Error logging bot conversation:', error.message);
+        res.status(500).json({ success: false, error: 'Failed to log conversation' });
+    }
+});
+
+app.get('/api/bot-logs', async (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const page = parseInt(req.query.page || '1', 10);
+        const filter = req.query.filter || '24h';
+        const result = await getBotLogs(page, 20, filter);
+        res.json(result);
+    } catch (error) {
+        console.error('Error fetching bot logs:', error.message);
+        res.status(500).json({ error: 'Failed to fetch bot logs' });
+    }
+});
+
+app.delete('/api/bot-logs', async (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const result = await deleteAllBotLogs();
+        if (result.success) {
+            res.json({ success: true, message: 'All bot logs deleted' });
+        } else {
+            res.status(500).json({ success: false, error: result.error });
+        }
+    } catch (error) {
+        console.error('Error deleting bot logs:', error.message);
+        res.status(500).json({ success: false, error: 'Failed to delete bot logs' });
+    }
+});
+
+app.get('/botlog', (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.redirect('/admin?redirect=/botlog');
+    }
+    res.sendFile(path.join(__dirname, '../frontend/botlog.html'));
 });
 
 // 3. THE CHAT API
@@ -1085,10 +1214,19 @@ app.get('/get-questions', (req, res) => {
 // ADMIN REPORTS PAGE - Protected
 app.get('/admin-reports', (req, res) => {
     if (!isAdminAuthenticated(req)) {
-        return res.redirect('/admin');
+        return res.redirect(`/admin?redirect=${encodeURIComponent('/admin-reports')}`);
     }
-    
+
     res.sendFile(path.join(__dirname, '../frontend/admin-reports.html'));
+});
+
+// VISITOR LOG PAGE - Protected
+app.get('/visitorlog', (req, res) => {
+    if (!isAdminAuthenticated(req)) {
+        return res.redirect(`/admin?redirect=${encodeURIComponent('/visitorlog')}`);
+    }
+
+    res.sendFile(path.join(__dirname, '../frontend/visitorlog.html'));
 });
 
 // Protected Leadership Reports Endpoints

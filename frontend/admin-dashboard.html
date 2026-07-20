@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Admin dashboard - Management hub">
+    <title>Admin Dashboard | Coach Dinesh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(38, 61, 89, 0.15);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(38, 61, 89, 0.25);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            text-align: center;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #17212b;
+            text-align: center;
+        }
+
+        .card-description {
+            color: #4d5e6f;
+            font-size: 0.95rem;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .card-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover .card-link {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .logout-section {
+            text-align: center;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Admin Dashboard</h1>
+        <p>Manage your coaching platform</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <a href="/admin-reports" class="card">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Leadership Reports</div>
+            <div class="card-description">View and manage client assessment reports</div>
+            <span class="card-link">View Reports →</span>
+        </a>
+
+        <a href="/visitorlog" class="card">
+            <div class="card-icon">👥</div>
+            <div class="card-title">Visitor Analytics</div>
+            <div class="card-description">Track site visits, device info, and geolocation data</div>
+            <span class="card-link">View Analytics →</span>
+        </a>
+
+        <a href="/botlog" class="card">
+            <div class="card-icon">🤖</div>
+            <div class="card-title">Bot Interactions</div>
+            <div class="card-description">Monitor chatbot conversations and engagement</div>
+            <span class="card-link">View Conversations →</span>
+        </a>
+    </div>
+
+    <div class="logout-section">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<script>
+    function logout() {
+        // Clear the admin auth cookie
+        document.cookie = 'adminAuth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        window.location.href = '/';
+    }
+</script>
+
+</body>
+</html>

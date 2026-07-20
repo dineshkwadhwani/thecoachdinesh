@@ -6,11 +6,19 @@
       "src": "api/index.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": "{backend/**,frontend/**}"
+        "includeFiles": "{backend/**,frontend/**,courses/**}"
       }
     }
   ],
   "routes": [
+    {
+      "src": "^(?!portfolio\\.html).*",
+      "host": "^(www\\.)?dineshwadhwani\\.online$",
+      "status": 301,
+      "headers": {
+        "location": "https://www.thecoachdinesh.com/portfolio.html"
+      }
+    },
     {
       "src": "/(.*)",
       "has": [

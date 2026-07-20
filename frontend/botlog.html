@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Bot interactions log - Admin only">
+    <link rel="canonical" href="https://www.thecoachdinesh.com/botlog">
+    <title>Bot Interactions Log | Coach Dinesh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #f5f8fb 0%, #eef3f8 100%);
+            color: #24313d;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        nav {
+            background: white;
+            border-bottom: 1px solid #e1e8f0;
+            padding: 16px 0;
+            margin-bottom: 40px;
+        }
+
+        nav .container {
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+        }
+
+        nav h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #17212b;
+            margin: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #17212b;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #4d5e6f;
+            font-size: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #e1e8f0;
+            box-shadow: 0 2px 8px rgba(38, 61, 89, 0.04);
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #4d5e6f;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #17212b;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e1e8f0;
+            padding: 20px;
+            margin-bottom: 32px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .controls label {
+            font-weight: 500;
+            color: #4a6177;
+        }
+
+        .controls select,
+        .controls button {
+            padding: 8px 12px;
+            border: 1px solid #cfd9e4;
+            border-radius: 8px;
+            background: white;
+            color: #4a6177;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .controls select:hover,
+        .controls button:hover {
+            border-color: #1d5da8;
+            background: #f0f6ff;
+        }
+
+        .controls button.reset {
+            background: #c85a54;
+            color: white;
+            border-color: #c85a54;
+        }
+
+        .controls button.reset:hover {
+            background: #b54946;
+            border-color: #b54946;
+        }
+
+        .accordion-section {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e1e8f0;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(38, 61, 89, 0.04);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #e1e8f0;
+        }
+
+        .accordion-header:hover {
+            background: #f9fbfd;
+        }
+
+        .accordion-header.active {
+            background: #f0f6ff;
+        }
+
+        .accordion-header-content {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 20px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .accordion-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            color: #4d5e6f;
+            transition: transform 0.2s ease;
+        }
+
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            flex: 1;
+        }
+
+        .accordion-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 180px;
+        }
+
+        .accordion-meta-label {
+            font-size: 0.75rem;
+            color: #4d5e6f;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .accordion-meta-value {
+            font-weight: 600;
+            color: #17212b;
+            font-size: 0.95rem;
+        }
+
+        .accordion-meta-value.phone {
+            font-family: 'Courier New', monospace;
+            color: #1d5da8;
+        }
+
+        .accordion-meta-value.time {
+            color: #4d5e6f;
+            font-size: 0.9rem;
+        }
+
+        .accordion-body {
+            display: none;
+            padding: 20px;
+            background: #fafbfc;
+            border-top: 1px solid #e1e8f0;
+        }
+
+        .accordion-section.active .accordion-body {
+            display: block;
+        }
+
+        .conversation {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid #e1e8f0;
+        }
+
+        .message.user {
+            grid-template-columns: 1fr auto;
+            background: #f0f6ff;
+            border-color: #d4e4f7;
+        }
+
+        .message-role {
+            font-weight: 600;
+            color: #1d5da8;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .message.user .message-role {
+            color: #0052cc;
+        }
+
+        .message-content {
+            color: #24313d;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .pagination {
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pagination button,
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #cfd9e4;
+            border-radius: 8px;
+            background: white;
+            color: #4a6177;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .pagination button:hover,
+        .pagination a:hover {
+            background: #1d5da8;
+            color: white;
+            border-color: #1d5da8;
+        }
+
+        .pagination button.active,
+        .pagination a.active {
+            background: #1d5da8;
+            color: white;
+            border-color: #1d5da8;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #4d5e6f;
+        }
+
+        .error {
+            background: #fef0f0;
+            color: #b33b3b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #b33b3b;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #4d5e6f;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .accordion-header-content {
+                grid-template-columns: 1fr;
+            }
+
+            .accordion-info {
+                grid-template-columns: auto 1fr;
+                gap: 16px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .controls select,
+            .controls button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="container">
+        <a href="https://www.thecoachdinesh.com">
+            <h3>The Coach Dinesh</h3>
+        </a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="header">
+        <h1>Bot Interactions Log</h1>
+        <p>View and manage chatbot conversations</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="label">Total Conversations</div>
+            <div class="value" id="totalConversations">-</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Last 24 Hours</div>
+            <div class="value" id="last24Hours">-</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <label for="filterSelect">Filter:</label>
+        <select id="filterSelect" onchange="loadBotLogs(1)">
+            <option value="24h">Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="all">All Time</option>
+        </select>
+        <button class="reset" onclick="resetBotLogs()">Reset All</button>
+    </div>
+
+    <div id="errorMessage" class="error" style="display: none;"></div>
+    <div id="loadingMessage" class="loading" style="display: none;">Loading conversations...</div>
+
+    <div id="conversationsList" style="display: none;"></div>
+
+    <div id="emptyMessage" class="empty" style="display: none;">
+        No bot conversations found.
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+</div>
+
+<script>
+    let currentPage = 1;
+    const pageSize = 20;
+
+    async function loadBotLogs(page = 1) {
+        const errorEl = document.getElementById('errorMessage');
+        const loadingEl = document.getElementById('loadingMessage');
+        const conversationsEl = document.getElementById('conversationsList');
+        const emptyEl = document.getElementById('emptyMessage');
+        const paginationEl = document.getElementById('pagination');
+        const filterSelect = document.getElementById('filterSelect');
+
+        errorEl.style.display = 'none';
+        loadingEl.style.display = 'block';
+        conversationsEl.style.display = 'none';
+        emptyEl.style.display = 'none';
+
+        try {
+            const filter = filterSelect.value || '24h';
+            const response = await fetch(`/api/bot-logs?page=${page}&filter=${filter}`);
+
+            if (response.status === 401) {
+                errorEl.textContent = 'Unauthorized: Please log in as admin.';
+                errorEl.style.display = 'block';
+                loadingEl.style.display = 'none';
+                return;
+            }
+
+            if (!response.ok) throw new Error('Failed to load bot logs');
+
+            const result = await response.json();
+            const { data, total, last24Hours, totalPages } = result;
+
+            loadingEl.style.display = 'none';
+
+            // Update stats
+            document.getElementById('totalConversations').textContent = total.toLocaleString();
+            document.getElementById('last24Hours').textContent = last24Hours.toLocaleString();
+
+            if (data.length === 0) {
+                emptyEl.style.display = 'block';
+                paginationEl.innerHTML = '';
+                return;
+            }
+
+            // Render conversations as accordions
+            conversationsEl.innerHTML = data.map((log, index) => {
+                const messages = log.interaction || [];
+                const timeStr = formatDateTime(log.timestamp);
+                return `
+                    <div class="accordion-section" data-index="${index}">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-header-content">
+                                <div class="accordion-icon">▼</div>
+                                <div class="accordion-info">
+                                    <div class="accordion-meta">
+                                        <div class="accordion-meta-label">Name</div>
+                                        <div class="accordion-meta-value">${escapeHtml(log.name)}</div>
+                                    </div>
+                                    <div class="accordion-meta">
+                                        <div class="accordion-meta-label">Phone</div>
+                                        <div class="accordion-meta-value phone">${escapeHtml(log.phone)}</div>
+                                    </div>
+                                    <div class="accordion-meta">
+                                        <div class="accordion-meta-label">Time</div>
+                                        <div class="accordion-meta-value time">${timeStr}</div>
+                                    </div>
+                                    <div class="accordion-meta">
+                                        <div class="accordion-meta-label">Messages</div>
+                                        <div class="accordion-meta-value">${messages.length} messages</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="conversation">
+                                ${messages.map((msg, i) => `
+                                    <div class="message ${msg.role === 'user' ? 'user' : ''}">
+                                        <div class="message-role">${escapeHtml(msg.role)}</div>
+                                        <div class="message-content">${escapeHtml(msg.content)}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            conversationsEl.style.display = 'block';
+
+            // Render pagination
+            let paginationHTML = '';
+            if (page > 1) {
+                paginationHTML += `<button onclick="loadBotLogs(${page - 1})">← Previous</button>`;
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === page) {
+                    paginationHTML += `<span style="padding: 8px 12px; color: #1d5da8; font-weight: 600;">${i}</span>`;
+                } else if (i >= page - 2 && i <= page + 2) {
+                    paginationHTML += `<button onclick="loadBotLogs(${i})">${i}</button>`;
+                }
+            }
+
+            if (page < totalPages) {
+                paginationHTML += `<button onclick="loadBotLogs(${page + 1})">Next →</button>`;
+            }
+
+            paginationEl.innerHTML = paginationHTML;
+            currentPage = page;
+        } catch (error) {
+            loadingEl.style.display = 'none';
+            errorEl.textContent = error.message;
+            errorEl.style.display = 'block';
+        }
+    }
+
+    function toggleAccordion(header) {
+        const section = header.closest('.accordion-section');
+        section.classList.toggle('active');
+    }
+
+    function formatDateTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 1) return 'just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text || '';
+        return div.innerHTML;
+    }
+
+    async function resetBotLogs() {
+        const confirmed = confirm('⚠️ Are you sure? This will delete ALL bot conversation logs.');
+        if (!confirmed) return;
+
+        const doubleConfirm = confirm('🚨 FINAL WARNING: This will permanently delete all logs. Continue?');
+        if (!doubleConfirm) return;
+
+        try {
+            const response = await fetch('/api/bot-logs', { method: 'DELETE' });
+
+            if (response.status === 401) {
+                alert('Unauthorized: Please log in as admin.');
+                return;
+            }
+
+            if (!response.ok) {
+                const error = await response.json();
+                alert('Error: ' + (error.error || 'Failed to reset logs'));
+                return;
+            }
+
+            alert('✓ All bot logs deleted successfully');
+            loadBotLogs(1);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    // Load on page load
+    loadBotLogs(1);
+</script>
+
+</body>
+</html>
