@@ -12,14 +12,6 @@
   ],
   "routes": [
     {
-      "src": "^(?!portfolio\\.html).*",
-      "host": "^(www\\.)?dineshwadhwani\\.online$",
-      "status": 301,
-      "headers": {
-        "location": "https://www.thecoachdinesh.com/portfolio.html"
-      }
-    },
-    {
       "src": "/(.*)",
       "has": [
         {
