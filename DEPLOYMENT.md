@@ -37,6 +37,15 @@ PORT=3000
    - Test homepage: `https://your-project.vercel.app`
    - Test routes: `/portfolio`, `/profile`, `/projects`, `/intro`
 
+### Domain Redirect Rules
+
+`vercel.json` includes host-based redirects so these domains always redirect to the portfolio page:
+
+- `dineshwadhwani.online` → `https://www.thecoachdinesh.com/portfolio.html`
+- `www.dineshwadhwani.online` → `https://www.thecoachdinesh.com/portfolio.html`
+
+This redirect is applied before the catch-all route to `/api/index.js`.
+
 ### What Changed Since File-Based Storage
 
 **Before:** Test results were stored in JSON files (`report-history.json`, `transformation-summary.json`)
