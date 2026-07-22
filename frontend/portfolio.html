@@ -90,27 +90,34 @@ section{
 
 .portfolio-contact a:hover{ opacity:1; text-decoration:underline; }
 
+.hero-buttons-wrap{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:16px;
+}
+
 .hero-buttons{
   display:flex;
   gap:16px;
   flex-wrap:wrap;
 }
 
-.hero-buttons .btn,
-.hero-buttons .btn-outline{
+.hero-buttons-wrap .btn,
+.hero-buttons-wrap .btn-outline{
   padding:15px 36px;
   border-radius:40px;
   font-weight:500;
   text-decoration:none;
 }
 
-.hero-buttons .btn-outline{
+.hero-buttons-wrap .btn-outline{
   background:transparent;
   color:white;
   border:1px solid rgba(255,255,255,.35);
 }
 
-.hero-buttons .btn-outline:hover{
+.hero-buttons-wrap .btn-outline:hover{
   border-color:#3b82f6;
   background:rgba(255,255,255,.06);
 }
@@ -347,9 +354,12 @@ Customer Experience &middot; Payments &amp; Fraud &middot; Education &middot; He
 <span>Open to All Roles/Locations</span>
 </div>
 
+<div class="hero-buttons-wrap">
 <div class="hero-buttons">
 <a class="btn" href="files/Dinesh_Wadhwani_Resume.pdf" download="Dinesh_Wadhwani_Resume.pdf">Download Resume</a>
 <a class="btn-outline" href="#experience">View Experience</a>
+</div>
+<a class="btn-outline" href="#projects" style="text-align:center;">What Am I Building →</a>
 </div>
 
 </div>
