@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Five real n8n AI agents built for the course — Good Morning bot, Birthday Reminder, AI Joke Emailer, Daily Weather report, and Stock News Morning Report. Full source on GitHub.">
+  <meta name="keywords" content="n8n agents, AI agents, agentic AI examples, n8n workflows, AI automation course">
+  <meta name="author" content="Coach Dinesh">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.thecoachdinesh.com/courses/ai/agents">
+
+  <title>AI Agents Library | 5 Working n8n Agents | The Coach Dinesh</title>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.thecoachdinesh.com/courses/ai/agents">
+  <meta property="og:title" content="AI Agents Library | The Coach Dinesh AI Course">
+  <meta property="og:description" content="Five real n8n AI agents students build and deploy — with full source code on GitHub.">
+  <meta property="og:image" content="https://www.thecoachdinesh.com/og-agents.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://www.thecoachdinesh.com/courses/ai/agents">
+  <meta name="twitter:title" content="AI Agents Library">
+  <meta name="twitter:description" content="Five real n8n AI agents with full source code on GitHub.">
+  <meta name="twitter:image" content="https://www.thecoachdinesh.com/og-agents.png">
+
+  <link rel="icon" type="image/png" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .page-hero {
+      padding: 100px 60px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .repo-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+      padding: 20px 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .repo-banner-text { display: flex; align-items: center; gap: 14px; }
+    .repo-banner-icon { font-size: 1.6rem; }
+    .repo-banner-title { color: var(--white); font-weight: 600; font-size: 0.95rem; }
+    .repo-banner-sub { font-size: 0.82rem; color: var(--muted); font-family: var(--font-mono); }
+
+    .agents-block {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px 80px;
+    }
+
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .agent-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-decoration: none;
+      transition: all var(--transition);
+    }
+
+    .agent-card:hover {
+      background: var(--card-hover);
+      border-color: rgba(255,255,255,0.16);
+      transform: translateY(-3px);
+      color: inherit;
+    }
+
+    .agent-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .agent-card-icon { font-size: 2rem; }
+
+    .agent-card h3 {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .agent-card p { font-size: 0.88rem; margin-bottom: 18px; }
+
+    .agent-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+      margin-bottom: 14px;
+    }
+
+    .agent-card-cta {
+      font-size: 0.82rem;
+      color: var(--blue-lt);
+      font-weight: 600;
+    }
+
+    .agent-card:hover .agent-card-cta { color: var(--accent); }
+
+    .full-width-agent { grid-column: 1 / -1; }
+
+    @media (max-width: 900px) {
+      .page-hero { padding: 80px 24px 40px; }
+      .agents-block { padding: 0 24px 60px; }
+      .agents-grid { grid-template-columns: 1fr; }
+      .repo-banner { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="about.html">About</a></li>
+    <li><a href="curriculum.html">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="sessions/session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="sessions/session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="sessions/session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="sessions/session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="sessions/session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="sessions/session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="sessions/session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="sessions/session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="sessions/session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="sessions/session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="sessions/session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="sessions/session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+      </div>
+    </li>
+    <li><a href="agents.html" class="active">Agents</a></li>
+    <li><a href="lab-tests.html">Lab Tests</a></li>
+    <li><a href="/" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<div class="page-hero">
+  <span class="section-eyebrow">Real Agents, Real Code</span>
+  <h1>The AI Agents Library</h1>
+  <p class="section-subtitle" style="margin-bottom:0;">Five working n8n agents built for this course — each one a small, self-contained automation you can import, configure, and run on your own machine in under 20 minutes.</p>
+
+  <div class="repo-banner">
+    <div class="repo-banner-text">
+      <span class="repo-banner-icon">🐙</span>
+      <div>
+        <div class="repo-banner-title">All source code lives on GitHub</div>
+        <div class="repo-banner-sub">dineshkwadhwani/agents</div>
+      </div>
+    </div>
+    <a href="https://github.com/dineshkwadhwani/agents" class="btn btn-primary" target="_blank" rel="noopener">View Repository ↗</a>
+  </div>
+
+  <div class="repo-banner" style="margin-top:16px;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.06);">
+    <div class="repo-banner-text">
+      <span class="repo-banner-icon">🐳</span>
+      <div>
+        <div class="repo-banner-title">Start here — Docker &amp; n8n Setup Guide</div>
+        <div class="repo-banner-sub">Required before building any agent · ~15 minutes · Mac &amp; Windows</div>
+      </div>
+    </div>
+    <a href="agents/setup-guide.html" class="btn btn-accent">Open Setup Guide →</a>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px 40px;"></div>
+
+<div class="agents-block">
+  <span class="section-eyebrow">5 Agents</span>
+  <h2 class="section-title">Pick an Agent to Build</h2>
+  <p class="section-subtitle">Every agent page below includes the objective, an architecture diagram, a full step-by-step build guide, configuration reference, and troubleshooting — everything needed to get it running and deployed.</p>
+
+  <div class="agents-grid">
+
+    <a href="agents/setup-guide.html" class="agent-card reveal full-width-agent" style="border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.05);">
+      <div class="agent-card-top">
+        <span class="agent-card-icon">🐳</span>
+        <span class="tag tag-green">Start Here · Required</span>
+      </div>
+      <h3>Setup Guide: Docker &amp; n8n</h3>
+      <p>Install Docker Desktop and run n8n locally — the one-time setup every agent below depends on. Mac and Windows instructions, done in about 15 minutes.</p>
+      <div class="agent-card-meta">
+        <span class="tag tag-blue">~15 Minutes</span>
+        <span class="tag tag-blue">Free</span>
+        <span class="tag tag-blue">PDF Download Available</span>
+      </div>
+      <span class="agent-card-cta">Open Setup Guide →</span>
+    </a>
+
+    <a href="agents/good-morning.html" class="agent-card reveal">
+      <div class="agent-card-top">
+        <span class="agent-card-icon">🌅</span>
+        <span class="tag tag-green">Beginner</span>
+      </div>
+      <h3>Good Morning Telegram Agent</h3>
+      <p>The simplest possible n8n agent — just 2 nodes. Every morning at 8 AM it sends a "Good Morning" message with today's date straight to your Telegram chat.</p>
+      <div class="agent-card-meta">
+        <span class="tag tag-blue">2 Nodes</span>
+        <span class="tag tag-blue">Telegram API</span>
+        <span class="tag tag-blue">No OAuth</span>
+      </div>
+      <span class="agent-card-cta">View Build Guide →</span>
+    </a>
+
+    <a href="agents/weather.html" class="agent-card reveal">
+      <div class="agent-card-top">
+        <span class="agent-card-icon">🌤️</span>
+        <span class="tag tag-green">Beginner</span>
+      </div>
+      <h3>Daily Weather Telegram Agent</h3>
+      <p>Fetches live weather for your city every morning and sends a formatted, emoji-rich report to Telegram — no Google Cloud or OAuth setup needed.</p>
+      <div class="agent-card-meta">
+        <span class="tag tag-blue">4 Nodes</span>
+        <span class="tag tag-blue">OpenWeatherMap API</span>
+        <span class="tag tag-blue">Telegram API</span>
+      </div>
+      <span class="agent-card-cta">View Build Guide →</span>
+    </a>
+
+    <a href="agents/joke-emailer.html" class="agent-card reveal">
+      <div class="agent-card-top">
+        <span class="agent-card-icon">😄</span>
+        <span class="tag tag-green">Beginner</span>
+      </div>
+      <h3>AI Joke Emailer</h3>
+      <p>Click a button — Gemini AI generates a joke, and it lands in your Gmail inbox seconds later. Teaches the core Trigger → AI thinks → Action pattern.</p>
+      <div class="agent-card-meta">
+        <span class="tag tag-blue">3 Nodes</span>
+        <span class="tag tag-amber">Gemini AI</span>
+        <span class="tag tag-blue">Gmail OAuth</span>
+      </div>
+      <span class="agent-card-cta">View Build Guide →</span>
+    </a>
+
+    <a href="agents/birthday-reminder.html" class="agent-card reveal">
+      <div class="agent-card-top">
+        <span class="agent-card-icon">🎂</span>
+        <span class="tag tag-amber">Intermediate</span>
+      </div>
+      <h3>Birthday Reminder Telegram Bot</h3>
+      <p>Reads a birthday list from Google Drive every morning and only messages you on Telegram when there's an actual match — smart, conditional automation.</p>
+      <div class="agent-card-meta">
+        <span class="tag tag-blue">6 Nodes</span>
+        <span class="tag tag-blue">Google Drive</span>
+        <span class="tag tag-blue">IF Logic</span>
+      </div>
+      <span class="agent-card-cta">View Build Guide →</span>
+    </a>
+
+    <a href="agents/stock-news.html" class="agent-card reveal full-width-agent">
+      <div class="agent-card-top">
+        <span class="agent-card-icon">📈</span>
+        <span class="tag" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);">Advanced</span>
+      </div>
+      <h3>Stock News Morning Report Agent</h3>
+      <p>Every weekday at 8 AM: reads your stock watchlist from Google Drive, loops through each stock calling Gemini AI for the latest 48-hour news, builds a clean HTML report, and emails it — the most complete agent in the set, combining loops, rate-limiting, and AI-generated content into one production-style pipeline.</p>
+      <div class="agent-card-meta">
+        <span class="tag tag-blue">9 Nodes</span>
+        <span class="tag tag-blue">Google Drive</span>
+        <span class="tag tag-amber">Gemini AI</span>
+        <span class="tag tag-blue">Gmail OAuth</span>
+        <span class="tag tag-blue">Loop + Rate Limit</span>
+      </div>
+      <span class="agent-card-cta">View Build Guide →</span>
+    </a>
+
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<section style="text-align:center;padding:60px;">
+  <span class="section-eyebrow">Built With n8n + Docker</span>
+  <h2 style="margin-bottom:16px;">Every Agent Runs Entirely On Your Laptop</h2>
+  <p style="max-width:520px;margin:0 auto 32px;">No cloud account required to get started. Each agent is a single JSON workflow file you import into a local n8n instance running in Docker.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+    <a href="https://github.com/dineshkwadhwani/agents" class="btn btn-primary" target="_blank" rel="noopener">Clone the Repository ↗</a>
+    <a href="curriculum.html" class="btn btn-outline">Back to Curriculum</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="/" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="index.html">AI Course Home</a>
+    <a href="about.html">About</a>
+    <a href="curriculum.html">Curriculum</a>
+    <a href="agents.html">Agents</a>
+    <a href="lab-tests.html">Lab Tests</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

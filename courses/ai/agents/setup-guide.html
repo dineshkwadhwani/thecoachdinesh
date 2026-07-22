@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Step-by-step guide to installing Docker Desktop and running n8n on Mac or Windows — required setup before building any AI agent in this course.">
+  <title>Docker & n8n Setup Guide | AI Agents | The Coach Dinesh</title>
+  <link rel="canonical" href="https://www.thecoachdinesh.com/courses/ai/agents/setup-guide">
+  <link rel="icon" type="image/png" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .os-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .os-col {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+    }
+    .os-col h5 {
+      font-size: 0.85rem;
+      color: var(--white);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .os-col ul, .os-col ol { padding-left: 18px; }
+    .os-col li { font-size: 0.85rem; color: var(--off-white); margin-bottom: 6px; }
+    @media (max-width: 700px) {
+      .os-columns { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../curriculum.html">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="../sessions/session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="../sessions/session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="../sessions/session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="../sessions/session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="../sessions/session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="../sessions/session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="../sessions/session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="../sessions/session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="../sessions/session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="../sessions/session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="../sessions/session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="../sessions/session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+      </div>
+    </li>
+    <li><a href="../agents.html" class="active">Agents</a></li>
+    <li><a href="../lab-tests.html">Lab Tests</a></li>
+    <li><a href="/" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<div class="agent-hero">
+  <span class="agent-icon-badge">🐳</span>
+  <span class="section-eyebrow">Required Before Any Agent · All Levels</span>
+  <h1>Setting Up Docker &amp; n8n</h1>
+  <p class="agent-tagline">Every agent in this library runs on n8n inside Docker. Complete this setup once — in about 10–15 minutes, on Mac or Windows — and you're ready to build all five agents. No prior technical experience needed.</p>
+
+  <div class="agent-meta">
+    <span class="tag tag-green">Required Setup</span>
+    <span class="tag tag-blue">~15 Minutes</span>
+    <span class="tag tag-blue">Mac & Windows</span>
+    <span class="tag tag-blue">100% Free</span>
+  </div>
+
+  <div class="agent-actions">
+    <a href="../files/Docker_n8n_Setup_Guide.pdf" class="btn btn-primary" target="_blank">📄 Download PDF Guide</a>
+    <a href="../agents.html" class="btn btn-outline">← Back to Agents Library</a>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── WHAT YOU'LL INSTALL ────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">What You Will Install</span>
+  <h2 class="section-title">Two Free Tools</h2>
+  <div class="table-wrap">
+    <table class="info-table">
+      <tr><th>Tool</th><th>What It Does</th><th>Cost</th></tr>
+      <tr><td>Docker Desktop</td><td>Runs applications in containers on your laptop</td><td>✅ Free</td></tr>
+      <tr><td>n8n</td><td>The automation tool where you build your AI agents</td><td>✅ Free (self-hosted)</td></tr>
+    </table>
+  </div>
+  <div class="callout callout-success" style="margin-top:16px;">⏱️ <strong>Time needed:</strong> About 10–15 minutes total. Follow each step carefully and you'll be done before class starts.</div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── PART 1: DOCKER ─────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Part 1</span>
+  <h2 class="section-title">🐳 Installing Docker Desktop</h2>
+  <p style="max-width:720px;margin-bottom:24px;">Docker runs software in isolated "containers" — think of a container like a sealed box containing everything n8n needs to run, with no messy installation and no conflicts with other software on your laptop.</p>
+
+  <div class="step-list">
+    <div class="step-item reveal">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Go to the Docker Website</h4>
+        <p>Open your browser and go to <a href="https://www.docker.com/products/docker-desktop" target="_blank" rel="noopener">docker.com/products/docker-desktop</a></p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Download for Your Operating System</h4>
+        <div class="os-columns">
+          <div class="os-col">
+            <h5>🍎 Mac</h5>
+            <ul>
+              <li>Click "Download for Mac"</li>
+              <li>Apple Silicon (M1/M2/M3) → "Mac with Apple Chip"</li>
+              <li>Older Intel Mac → "Mac with Intel Chip"</li>
+              <li>Not sure? Apple menu → About This Mac → check "Chip"</li>
+            </ul>
+          </div>
+          <div class="os-col">
+            <h5>🪟 Windows</h5>
+            <ul>
+              <li>Click "Download for Windows"</li>
+              <li>Download the <code>.exe</code> installer</li>
+              <li>Requires Windows 10/11 (64-bit)</li>
+              <li>WSL 2 must be enabled (Docker will prompt if needed)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Install Docker Desktop</h4>
+        <div class="os-columns">
+          <div class="os-col">
+            <h5>🍎 Mac</h5>
+            <ol>
+              <li>Open the downloaded <code>.dmg</code> file</li>
+              <li>Drag the Docker icon into Applications</li>
+              <li>Open Docker from Applications or Spotlight</li>
+              <li>Enter your password if macOS asks</li>
+            </ol>
+          </div>
+          <div class="os-col">
+            <h5>🪟 Windows</h5>
+            <ol>
+              <li>Double-click the downloaded <code>.exe</code></li>
+              <li>Click Next through the wizard, accept defaults</li>
+              <li>Restart your computer if prompted</li>
+              <li>Docker Desktop launches automatically after restart</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Wait for Docker to Start</h4>
+        <p>When Docker Desktop opens, wait for the status at the bottom left to say <strong>"Engine running"</strong> in green.</p>
+        <div class="callout callout-warn">First launch can take 1–2 minutes. Don't close the window — wait for the green status.</div>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Verify Docker Is Working</h4>
+        <p>Open Terminal (Mac: <code>Cmd+Space</code> → "Terminal") or Command Prompt (Windows: Windows key → "cmd") and type:</p>
+        <div class="code-block">docker --version</div>
+        <p>You should see something like <code>Docker version 27.x.x</code></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── PART 2: N8N ────────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Part 2</span>
+  <h2 class="section-title">🤖 Installing &amp; Running n8n</h2>
+  <p style="max-width:720px;margin-bottom:24px;">n8n is the automation platform where you'll build every agent. We run it inside Docker with a single command — your workflows are saved permanently, even across restarts.</p>
+
+  <div class="step-list">
+    <div class="step-item reveal">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Open Terminal or Command Prompt</h4>
+        <p>Mac: <code>Cmd+Space</code> → type "Terminal" → Enter. Windows: <code>Win+R</code> → type "cmd" → Enter.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Run n8n Using Docker</h4>
+        <p>Mac / Terminal:</p>
+        <div class="code-block">docker run -d \
+  --name n8n \
+  --restart unless-stopped \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  docker.n8n.io/n8nio/n8n</div>
+        <p>Windows / Command Prompt (uses <code>^</code> instead of <code>\</code>):</p>
+        <div class="code-block">docker run -d ^
+  --name n8n ^
+  --restart unless-stopped ^
+  -p 5678:5678 ^
+  -v n8n_data:/home/node/.n8n ^
+  docker.n8n.io/n8nio/n8n</div>
+        <div class="callout callout-warn">First time: Docker downloads n8n automatically (~500MB), which takes 1–3 minutes. Scrolling text is normal — wait until it stops.</div>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Wait for n8n to Start</h4>
+        <p>Give it about 20–30 seconds to initialise after the command finishes.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Open n8n in Your Browser</h4>
+        <p>Go to <code>http://localhost:5678</code> in Chrome, Firefox, Edge, or Safari.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Create Your Local Account</h4>
+        <p>Fill in any name, any email, and any password you'll remember.</p>
+        <div class="callout callout-success">🔒 Privacy note: this account is stored only on your laptop. Nothing is sent to the internet, and n8n never asks for payment or personal details.</div>
+        <p style="margin-top:10px;">✅ <strong>Success signal:</strong> the n8n "Overview" dashboard appears with tabs for Workflows, Credentials, Executions, Variables, and Data tables.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── VERIFY + REBOOT ────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Before Class</span>
+  <h2 class="section-title">Verifying Everything Works</h2>
+
+  <div class="table-wrap" style="margin-bottom:32px;">
+    <table class="info-table">
+      <tr><th>#</th><th>Check</th><th>Expected Result</th></tr>
+      <tr><td>1</td><td>Docker Desktop is open and running</td><td>"Engine running" in green ✅</td></tr>
+      <tr><td>2</td><td><code>http://localhost:5678</code> loads in browser</td><td>n8n login or dashboard appears ✅</td></tr>
+      <tr><td>3</td><td>You can log in to n8n</td><td>Overview dashboard is visible ✅</td></tr>
+      <tr><td>4</td><td>n8n container visible in Docker Desktop</td><td>"n8n" shown as running ✅</td></tr>
+    </table>
+  </div>
+
+  <h3 style="margin-bottom:12px;font-size:1.05rem;">🔄 After Restarting Your Computer</h3>
+  <p style="max-width:720px;margin-bottom:12px;">Because we used <code>--restart unless-stopped</code>, n8n restarts automatically on every reboot — as long as Docker Desktop is running. After a reboot: open Docker Desktop, wait for "Engine running", then go to <code>http://localhost:5678</code> — your workflows and credentials will all still be there.</p>
+  <div class="callout callout-warn">Make Docker Desktop launch automatically at login: <strong>Docker Desktop → Settings → General → "Start Docker Desktop when you sign in to your computer"</strong>.</div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── TROUBLESHOOTING ────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Reference</span>
+  <h2 class="section-title">Troubleshooting &amp; Quick Reference</h2>
+
+  <h3 style="margin-bottom:12px;font-size:1.05rem;">Troubleshooting</h3>
+  <div class="table-wrap" style="margin-bottom:32px;">
+    <table class="info-table">
+      <tr><th>Problem</th><th>Likely Cause</th><th>Fix</th></tr>
+      <tr><td><code>localhost:5678</code> not loading</td><td>Container has no port mapping</td><td>Stop container, re-run docker run with <code>-p 5678:5678</code></td></tr>
+      <tr><td>Docker says "Engine not running"</td><td>Docker Desktop not started</td><td>Open Docker Desktop, wait for green status</td></tr>
+      <tr><td><code>command not found: docker</code></td><td>Docker not installed properly</td><td>Re-install from docker.com</td></tr>
+      <tr><td>"name already in use" error</td><td>Old container exists</td><td>Run <code>docker rm n8n</code>, then try again</td></tr>
+      <tr><td>n8n loads but workflows missing</td><td>Wrong volume / new container</td><td>Make sure <code>-v n8n_data</code> is in your command</td></tr>
+      <tr><td>Windows: command not working</td><td>Wrong line continuation</td><td>Use <code>^</code> instead of <code>\</code> in cmd</td></tr>
+    </table>
+  </div>
+
+  <h3 style="margin-bottom:12px;font-size:1.05rem;">📋 Quick Reference Card</h3>
+  <div class="table-wrap">
+    <table class="info-table">
+      <tr><th>Action</th><th>Command / URL</th></tr>
+      <tr><td>n8n URL</td><td><code>http://localhost:5678</code></td></tr>
+      <tr><td>Start n8n (if stopped)</td><td><code>docker start n8n</code></td></tr>
+      <tr><td>Stop n8n</td><td><code>docker stop n8n</code></td></tr>
+      <tr><td>Check if n8n is running</td><td><code>docker ps</code></td></tr>
+      <tr><td>View n8n logs</td><td><code>docker logs n8n</code></td></tr>
+      <tr><td>Remove and reinstall n8n</td><td><code>docker rm n8n</code> (then run the full command again)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ── FOOTER NAV ─────────────────────────────────── -->
+<div class="agent-footer-nav">
+  <a href="../agents.html" class="nav-arrow"><span class="arrow-label">← Back</span><span class="arrow-title">Agents Library</span></a>
+  <a href="good-morning.html" class="nav-arrow next-session"><span class="arrow-label">Ready? →</span><span class="arrow-title">Build Your First Agent: Good Morning</span></a>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="/" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="../index.html">AI Course Home</a>
+    <a href="../about.html">About</a>
+    <a href="../curriculum.html">Curriculum</a>
+    <a href="../agents.html">Agents</a>
+    <a href="../lab-tests.html">Lab Tests</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
