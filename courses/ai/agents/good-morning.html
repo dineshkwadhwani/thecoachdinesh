@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Build the Good Morning Telegram Agent — the simplest n8n agent, 2 nodes, sends a daily message to Telegram at 8 AM. Full build and deploy guide.">
+  <title>Good Morning Telegram Agent | AI Agents | The Coach Dinesh</title>
+  <link rel="canonical" href="https://www.thecoachdinesh.com/courses/ai/agents/good-morning">
+  <link rel="icon" type="image/png" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../curriculum.html">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="../sessions/session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="../sessions/session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="../sessions/session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="../sessions/session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="../sessions/session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="../sessions/session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="../sessions/session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="../sessions/session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="../sessions/session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="../sessions/session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="../sessions/session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="../sessions/session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+      </div>
+    </li>
+    <li><a href="../agents.html" class="active">Agents</a></li>
+    <li><a href="../lab-tests.html">Lab Tests</a></li>
+    <li><a href="/" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<div class="agent-hero">
+  <span class="agent-icon-badge">🌅</span>
+  <span class="section-eyebrow">Agent 1 of 5 · Beginner</span>
+  <h1>Good Morning Telegram Agent</h1>
+  <p class="agent-tagline">The simplest possible n8n agent — just 2 nodes. Every morning at 8 AM it automatically sends a "Good Morning" message with today's date to your Telegram chat. No OAuth, no Google Cloud, no paid APIs.</p>
+
+  <div class="agent-meta">
+    <span class="tag tag-green">Beginner</span>
+    <span class="tag tag-blue">2 Nodes</span>
+    <span class="tag tag-blue">Scheduled Trigger</span>
+    <span class="tag tag-blue">Telegram Bot API</span>
+  </div>
+
+  <div class="agent-actions">
+    <a href="https://github.com/dineshkwadhwani/agents/tree/main/definitions/send_good_morning" class="btn btn-primary" target="_blank" rel="noopener">🐙 View Code on GitHub ↗</a>
+    <a href="../agents.html" class="btn btn-outline">← Back to Agents Library</a>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── ARCHITECTURE ──────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">How It Works</span>
+  <h2 class="section-title">Architecture</h2>
+  <div class="flow-diagram">[ Schedule Trigger ]
+    Fires every day at 8:00 AM
+        <span class="arrow">↓</span>
+[ HTTP Request → Telegram Bot API ]
+    Sends "Good Morning!" message to your Telegram chat</div>
+
+  <div class="callout callout-success" style="margin-top:20px;">✅ <strong>Total nodes:</strong> 2 &nbsp;·&nbsp; <strong>Trigger:</strong> <code>0 8 * * *</code> (8 AM daily) &nbsp;·&nbsp; <strong>API:</strong> Telegram Bot API (free, no billing)</div>
+
+  <h3 style="margin-top:32px;margin-bottom:12px;font-size:1.05rem;">Sample Telegram Message</h3>
+  <div class="code-block">🌅 Good Morning! Have an amazing day ahead! 😊
+
+Wednesday, 22 July 2026</div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── PREREQUISITES ─────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Before You Start</span>
+  <h2 class="section-title">What You Need</h2>
+  <div class="table-wrap">
+    <table class="info-table">
+      <tr><th>What</th><th>Where to get it</th><th>Time</th></tr>
+      <tr><td>Docker Desktop</td><td><a href="https://docker.com/products/docker-desktop" target="_blank" rel="noopener">docker.com/products/docker-desktop</a></td><td>5 min</td></tr>
+      <tr><td>Telegram app</td><td>Your phone's app store</td><td>2 min</td></tr>
+      <tr><td>Telegram Bot Token</td><td>@BotFather on Telegram</td><td>2 min</td></tr>
+      <tr><td>Telegram Chat ID</td><td>@userinfobot or getUpdates URL</td><td>1 min</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── BUILD STEPS ────────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Build Guide</span>
+  <h2 class="section-title">Step-by-Step Setup</h2>
+
+  <div class="step-list">
+    <div class="step-item reveal">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Install Docker &amp; Run n8n</h4>
+        <p>Install Docker Desktop, then run n8n locally:</p>
+        <div class="code-block">docker run -d \
+  --name n8n \
+  --restart unless-stopped \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  docker.n8n.io/n8nio/n8n</div>
+        <p>Wait 30 seconds, open <code>http://localhost:5678</code>, and create your local account. New to Docker? Follow the full <a href="setup-guide.html">Docker &amp; n8n Setup Guide →</a></p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Create Your Telegram Bot</h4>
+        <p>Message <strong>@BotFather</strong> on Telegram, send <code>/newbot</code>, choose a name and username (must end in "bot"). Copy the Bot Token it gives you.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Start a Chat With Your Bot</h4>
+        <p>Search for your bot by username and click <strong>Start</strong>. Telegram blocks messages from bots you haven't started a conversation with.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Get Your Telegram Chat ID</h4>
+        <p>Message <strong>@userinfobot</strong> to get your ID instantly, or visit <code>https://api.telegram.org/botYOUR_TOKEN/getUpdates</code> and read the <code>"chat":{"id":...}</code> field.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Import the Workflow</h4>
+        <p>In n8n, click <strong>+ → New Workflow → ... → Import from file</strong>, and select <code>good_morning_telegram.json</code> from the repo.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Configure the Send Node</h4>
+        <p>Open the <strong>Send Good Morning</strong> node. Replace <code>PUT_YOUR_BOT_TOKEN_HERE</code> in the URL with your Bot Token, and <code>PUT_YOUR_CHAT_ID_HERE</code> in the JSON body with your Chat ID (keep the single quotes).</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Test &amp; Publish</h4>
+        <p>Save with <code>Cmd+S</code>, click <strong>Execute workflow</strong> — both nodes should turn green and the message should land on Telegram instantly. Click <strong>Publish</strong> to activate the daily 8 AM schedule.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── CONFIG + TROUBLESHOOTING ──────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Reference</span>
+  <h2 class="section-title">Configuration &amp; Troubleshooting</h2>
+
+  <h3 style="margin-bottom:12px;font-size:1.05rem;">Configuration Reference</h3>
+  <div class="table-wrap" style="margin-bottom:32px;">
+    <table class="info-table">
+      <tr><th>What to change</th><th>Where</th></tr>
+      <tr><td>Schedule time</td><td>"Every Day 8AM" node → cron expression</td></tr>
+      <tr><td>Message text</td><td>"Send Good Morning" node → JSON Body → <code>text</code></td></tr>
+      <tr><td>Recipient</td><td>"Send Good Morning" node → JSON Body → <code>chat_id</code></td></tr>
+      <tr><td>Bot</td><td>"Send Good Morning" node → URL (token)</td></tr>
+    </table>
+  </div>
+  <div class="callout callout-warn">Current schedule is <code>0 8 * * *</code> (every day). For weekdays only, use <code>0 8 * * 1-5</code>.</div>
+
+  <h3 style="margin:32px 0 12px;font-size:1.05rem;">Troubleshooting</h3>
+  <div class="table-wrap">
+    <table class="info-table">
+      <tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+      <tr><td><code>localhost:5678</code> not loading</td><td>n8n not running</td><td>Check Docker Desktop — n8n container should be running</td></tr>
+      <tr><td><code>401 Unauthorized</code></td><td>Wrong Bot Token</td><td>Re-copy token from BotFather, no spaces</td></tr>
+      <tr><td><code>400 - chat not found</code></td><td>Wrong Chat ID or bot not started</td><td>Send <code>/start</code> to your bot, re-verify Chat ID</td></tr>
+      <tr><td>Message not arriving at 8 AM</td><td>Workflow not published</td><td>Click <strong>Publish</strong> — saving alone isn't enough</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── EXTEND + BUILT WITH ───────────────────────── -->
+<div class="agent-section">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;">
+    <div>
+      <span class="section-eyebrow">Go Further</span>
+      <h3 style="color:var(--white);margin-bottom:16px;">Ideas to Extend</h3>
+      <ul class="extend-list">
+        <li>Personalise the message with the student's name using a Code node</li>
+        <li>Call Gemini to generate a motivational quote each morning</li>
+        <li>Combine with the Weather agent to include today's forecast</li>
+        <li>Send to a Telegram group instead of one person</li>
+      </ul>
+    </div>
+    <div>
+      <span class="section-eyebrow">Built With</span>
+      <h3 style="color:var(--white);margin-bottom:16px;">Tech Stack</h3>
+      <div class="builtwith-tags">
+        <span class="tag tag-blue">n8n</span>
+        <span class="tag tag-blue">Telegram Bot API</span>
+        <span class="tag tag-blue">Docker</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER NAV ─────────────────────────────────── -->
+<div class="agent-footer-nav">
+  <a href="../agents.html" class="nav-arrow"><span class="arrow-label">← Back</span><span class="arrow-title">Agents Library</span></a>
+  <a href="weather.html" class="nav-arrow next-session"><span class="arrow-label">Next →</span><span class="arrow-title">Daily Weather Telegram Agent</span></a>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="/" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="../index.html">AI Course Home</a>
+    <a href="../about.html">About</a>
+    <a href="../curriculum.html">Curriculum</a>
+    <a href="../agents.html">Agents</a>
+    <a href="../lab-tests.html">Lab Tests</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

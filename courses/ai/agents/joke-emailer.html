@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Build the AI Joke Emailer — an n8n agent that calls Gemini AI to generate a joke and emails it via Gmail. Full build and deploy guide.">
+  <title>AI Joke Emailer | AI Agents | The Coach Dinesh</title>
+  <link rel="canonical" href="https://www.thecoachdinesh.com/courses/ai/agents/joke-emailer">
+  <link rel="icon" type="image/png" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../curriculum.html">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="../sessions/session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="../sessions/session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="../sessions/session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="../sessions/session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="../sessions/session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="../sessions/session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="../sessions/session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="../sessions/session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="../sessions/session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="../sessions/session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="../sessions/session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="../sessions/session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+      </div>
+    </li>
+    <li><a href="../agents.html" class="active">Agents</a></li>
+    <li><a href="../lab-tests.html">Lab Tests</a></li>
+    <li><a href="/" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<div class="agent-hero">
+  <span class="agent-icon-badge">😄</span>
+  <span class="section-eyebrow">Agent 3 of 5 · Beginner</span>
+  <h1>AI Joke Emailer</h1>
+  <p class="agent-tagline">Click a button and Google Gemini AI generates a funny joke, which lands straight in your Gmail inbox seconds later. Demonstrates the core agentic pattern: Trigger → AI thinks → Action happens.</p>
+
+  <div class="agent-meta">
+    <span class="tag tag-green">Beginner</span>
+    <span class="tag tag-blue">3 Nodes</span>
+    <span class="tag tag-blue">Manual Trigger</span>
+    <span class="tag tag-amber">Gemini 2.5 Flash</span>
+    <span class="tag tag-blue">Gmail OAuth</span>
+  </div>
+
+  <div class="agent-actions">
+    <a href="https://github.com/dineshkwadhwani/agents/tree/main/definitions/send_joke_agent" class="btn btn-primary" target="_blank" rel="noopener">🐙 View Code on GitHub ↗</a>
+    <a href="../agents.html" class="btn btn-outline">← Back to Agents Library</a>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── ARCHITECTURE ──────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">How It Works</span>
+  <h2 class="section-title">Architecture</h2>
+  <div class="flow-diagram">[ Manual Trigger ]
+    Click "Execute workflow"
+        <span class="arrow">↓</span>
+[ HTTP Request → Gemini AI ]
+    Sends prompt: "Tell me a funny joke" — Gemini returns a joke
+        <span class="arrow">↓</span>
+[ Code Node (JavaScript) ]
+    Extracts just the joke text from Gemini's response
+        <span class="arrow">↓</span>
+[ Gmail Node ]
+    Sends the joke to your inbox</div>
+
+  <div class="callout callout-success" style="margin-top:20px;">✅ <strong>Total nodes:</strong> 3 &nbsp;·&nbsp; <strong>Trigger:</strong> Manual (button click) &nbsp;·&nbsp; <strong>AI Model:</strong> Google Gemini 2.5 Flash</div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── PREREQUISITES ─────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Before You Start</span>
+  <h2 class="section-title">What You Need</h2>
+  <div class="table-wrap">
+    <table class="info-table">
+      <tr><th>What</th><th>Where to get it</th><th>Time</th></tr>
+      <tr><td>Docker Desktop</td><td><a href="https://docker.com/products/docker-desktop" target="_blank" rel="noopener">docker.com/products/docker-desktop</a></td><td>5 min</td></tr>
+      <tr><td>Google Account (Gmail)</td><td>Already have one</td><td>—</td></tr>
+      <tr><td>Gemini API Key</td><td><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></td><td>2 min</td></tr>
+      <tr><td>Google OAuth Credentials</td><td><a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a></td><td>10 min</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── BUILD STEPS ────────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Build Guide</span>
+  <h2 class="section-title">Step-by-Step Setup</h2>
+
+  <div class="step-list">
+    <div class="step-item reveal">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Install Docker &amp; Run n8n</h4>
+        <div class="code-block">docker run -d \
+  --name n8n \
+  --restart unless-stopped \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  docker.n8n.io/n8nio/n8n</div>
+        <p>Open <code>http://localhost:5678</code> and create your local account — everything stays on your machine. New to Docker? Follow the full <a href="setup-guide.html">Docker &amp; n8n Setup Guide →</a></p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Get a Gemini API Key</h4>
+        <p>Go to <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>, click <strong>Create API key</strong>, and copy it. Treat it like a password.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Set Up Google OAuth for Gmail</h4>
+        <p>Create a Google Cloud project, enable the <strong>Gmail API</strong>, configure the OAuth consent screen (External, add yourself as a test user), then create an OAuth Client ID (Web application) with redirect URI:</p>
+        <div class="code-block">http://localhost:5678/rest/oauth2-credential/callback</div>
+        <p>Copy the Client ID and Client Secret.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Import the Workflow</h4>
+        <p>In n8n: <strong>+ → New Workflow → ... → Import from file</strong> → select <code>ai_joke_emailer.json</code>. You should see Manual Trigger → HTTP Request → Code → Gmail.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Configure the Gemini HTTP Request Node</h4>
+        <p>In the <strong>Query Parameters</strong>, paste your Gemini API key as the <code>key</code> value.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Connect Gmail</h4>
+        <p>On the Gmail node, click <strong>Set up credential</strong>, paste your Client ID and Secret, sign in with Google, and fill in To / Subject / Message (use <code>{{ $json.joke }}</code> as the message).</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Test It</h4>
+        <p>Save, click <strong>Execute workflow</strong> — all nodes turn green and the joke arrives in Gmail within seconds.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── CONFIG + TROUBLESHOOTING ──────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Reference</span>
+  <h2 class="section-title">Placeholders &amp; Troubleshooting</h2>
+
+  <h3 style="margin-bottom:12px;font-size:1.05rem;">Placeholder Reference</h3>
+  <div class="table-wrap" style="margin-bottom:32px;">
+    <table class="info-table">
+      <tr><th>Node</th><th>Field</th><th>What to put</th></tr>
+      <tr><td>HTTP Request</td><td>Query Parameters → Value</td><td>Your Gemini API key</td></tr>
+      <tr><td>Gmail</td><td>Credential</td><td>Connect via OAuth (Client ID + Secret)</td></tr>
+      <tr><td>Gmail</td><td>To / Subject / Message</td><td>Your address, any subject, <code>{{ $json.joke }}</code></td></tr>
+    </table>
+  </div>
+
+  <h3 style="margin:32px 0 12px;font-size:1.05rem;">Troubleshooting</h3>
+  <div class="table-wrap">
+    <table class="info-table">
+      <tr><th>Problem</th><th>Fix</th></tr>
+      <tr><td><code>Access blocked</code> on Google sign-in</td><td>Add yourself as a Test User in OAuth Consent Screen → Audience</td></tr>
+      <tr><td><code>Forbidden - project denied access</code></td><td>Get a fresh Gemini API key matching the right project</td></tr>
+      <tr><td><code>Quota exceeded</code></td><td>Wait 1-2 minutes — free tier has rate limits</td></tr>
+      <tr><td>Docker container stops after reboot</td><td>Re-run the <code>docker run</code> command — it auto-restarts next time</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── EXTEND + BUILT WITH ───────────────────────── -->
+<div class="agent-section">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;">
+    <div>
+      <span class="section-eyebrow">Go Further</span>
+      <h3 style="color:var(--white);margin-bottom:16px;">Ideas to Extend</h3>
+      <ul class="extend-list">
+        <li>Ask for a joke about a specific topic instead of random</li>
+        <li>Swap the Manual Trigger for a Schedule Trigger — a joke every morning</li>
+        <li>Send to WhatsApp or Slack instead of Gmail</li>
+        <li>Pick a random topic with a Code node before calling Gemini</li>
+      </ul>
+    </div>
+    <div>
+      <span class="section-eyebrow">Built With</span>
+      <h3 style="color:var(--white);margin-bottom:16px;">Tech Stack</h3>
+      <div class="builtwith-tags">
+        <span class="tag tag-blue">n8n</span>
+        <span class="tag tag-amber">Google Gemini 2.5 Flash</span>
+        <span class="tag tag-blue">Gmail API</span>
+        <span class="tag tag-blue">Docker</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER NAV ─────────────────────────────────── -->
+<div class="agent-footer-nav">
+  <a href="weather.html" class="nav-arrow"><span class="arrow-label">← Previous</span><span class="arrow-title">Daily Weather Telegram Agent</span></a>
+  <a href="birthday-reminder.html" class="nav-arrow next-session"><span class="arrow-label">Next →</span><span class="arrow-title">Birthday Reminder Telegram Bot</span></a>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="/" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="../index.html">AI Course Home</a>
+    <a href="../about.html">About</a>
+    <a href="../curriculum.html">Curriculum</a>
+    <a href="../agents.html">Agents</a>
+    <a href="../lab-tests.html">Lab Tests</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

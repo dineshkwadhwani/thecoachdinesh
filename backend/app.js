@@ -712,7 +712,9 @@ app.get('/api/config', (req, res) => {
       coachingStudio: String(process.env.PROJECTS_COACHINGSTUDIO || 'ON').toUpperCase() === 'ON',
       searchMyJob: String(process.env.PROJECTS_SEARCHMYJOB || 'ON').toUpperCase() === 'ON',
       dineshtrade: String(process.env.PROJECTS_DINESHTRADE || 'ON').toUpperCase() === 'ON',
-      aiCourse: String(process.env.PROJECTS_AICOURSE || 'ON').toUpperCase() === 'ON'
+      aiCourse: String(process.env.PROJECTS_AICOURSE || 'ON').toUpperCase() === 'ON',
+      learnAgents: String(process.env.PROJECTS_LEARNAGENTS || 'ON').toUpperCase() === 'ON',
+      githubRepo: String(process.env.PROJECTS_GITHUB || 'ON').toUpperCase() === 'ON'
     }
   });
 });

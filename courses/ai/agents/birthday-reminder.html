@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Build the Birthday Reminder Telegram Bot — an n8n agent that reads a birthday list from Google Drive and alerts you on Telegram. Full build and deploy guide.">
+  <title>Birthday Reminder Telegram Bot | AI Agents | The Coach Dinesh</title>
+  <link rel="canonical" href="https://www.thecoachdinesh.com/courses/ai/agents/birthday-reminder">
+  <link rel="icon" type="image/png" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand">
+    <span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span>
+    <span class="course-badge">AI Course</span>
+  </a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../curriculum.html">Curriculum</a></li>
+    <li class="nav-item-dropdown">
+      <a href="#">Sessions</a>
+      <div class="dropdown-menu">
+        <a href="../sessions/session-1.html"><span class="session-num">01</span> Intro to AI, GenAI & Agentic AI</a>
+        <a href="../sessions/session-2.html"><span class="session-num">02</span> LLM Fundamentals</a>
+        <a href="../sessions/session-3.html"><span class="session-num">03</span> Prompt Engineering</a>
+        <a href="../sessions/session-4.html"><span class="session-num">04</span> Structured Outputs & Parsing</a>
+        <a href="../sessions/session-5.html"><span class="session-num">05</span> Retrieval-Augmented Generation</a>
+        <a href="../sessions/session-6.html"><span class="session-num">06</span> Fine-Tuning & Specialization</a>
+        <a href="../sessions/session-7.html"><span class="session-num">07</span> Evaluation & Benchmarking</a>
+        <a href="../sessions/session-8.html"><span class="session-num">08</span> Scaling & Production</a>
+        <a href="../sessions/session-9.html"><span class="session-num">09</span> Advanced Techniques</a>
+        <a href="../sessions/session-10.html"><span class="session-num">10</span> Safety & Alignment</a>
+        <a href="../sessions/session-11.html"><span class="session-num">11</span> Advanced Architectures</a>
+        <a href="../sessions/session-12.html"><span class="session-num">12</span> Capstone & Case Studies</a>
+      </div>
+    </li>
+    <li><a href="../agents.html" class="active">Agents</a></li>
+    <li><a href="../lab-tests.html">Lab Tests</a></li>
+    <li><a href="/" class="navbar-cta">Main Site ↗</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<div class="agent-hero">
+  <span class="agent-icon-badge">🎂</span>
+  <span class="section-eyebrow">Agent 4 of 5 · Intermediate</span>
+  <h1>Birthday Reminder Telegram Bot</h1>
+  <p class="agent-tagline">Every morning at 8 AM this agent checks a birthday list stored in Google Drive and only messages you on Telegram if someone's birthday falls today. No match, no noise — smart, conditional automation.</p>
+
+  <div class="agent-meta">
+    <span class="tag tag-amber">Intermediate</span>
+    <span class="tag tag-blue">6 Nodes</span>
+    <span class="tag tag-blue">Scheduled Trigger</span>
+    <span class="tag tag-blue">Google Drive</span>
+    <span class="tag tag-blue">IF Logic</span>
+  </div>
+
+  <div class="agent-actions">
+    <a href="https://github.com/dineshkwadhwani/agents/tree/main/definitions/send_birthday_reminder" class="btn btn-primary" target="_blank" rel="noopener">🐙 View Code on GitHub ↗</a>
+    <a href="../agents.html" class="btn btn-outline">← Back to Agents Library</a>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── ARCHITECTURE ──────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">How It Works</span>
+  <h2 class="section-title">Architecture</h2>
+  <div class="flow-diagram">[ Schedule Trigger ]
+    Fires every day at 8:00 AM
+        <span class="arrow">↓</span>
+[ Google Drive Node ]
+    Downloads your birthday Excel file
+        <span class="arrow">↓</span>
+[ Extract from File Node ]
+    Reads each row (name + date of birth)
+        <span class="arrow">↓</span>
+[ Code Node ]
+    Checks if today's date matches any birthday, builds the alert message
+        <span class="arrow">↓</span>
+[ IF Node ]
+    YES → someone has a birthday today → continue
+    NO  → no birthdays today → stop, do nothing
+        <span class="arrow">↓</span>
+[ HTTP Request → Telegram ]
+    Sends birthday alert to your Telegram chat</div>
+
+  <div class="callout callout-success" style="margin-top:20px;">✅ <strong>Total nodes:</strong> 6 &nbsp;·&nbsp; <strong>Trigger:</strong> <code>0 8 * * *</code> (8 AM daily) &nbsp;·&nbsp; <strong>Smart behaviour:</strong> only sends a message when there's an actual birthday</div>
+
+  <h3 style="margin-top:32px;margin-bottom:12px;font-size:1.05rem;">Sample Telegram Message</h3>
+  <div class="code-block">🎂 Birthday Reminder!
+📅 Wednesday, 22 July 2026
+
+🎉 Today is Rahul Sharma's birthday!
+
+Don't forget to wish them! 🥳</div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── PREREQUISITES ─────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Before You Start</span>
+  <h2 class="section-title">What You Need</h2>
+  <div class="table-wrap">
+    <table class="info-table">
+      <tr><th>What</th><th>Where to get it</th><th>Time</th></tr>
+      <tr><td>Docker Desktop</td><td><a href="https://docker.com/products/docker-desktop" target="_blank" rel="noopener">docker.com/products/docker-desktop</a></td><td>5 min</td></tr>
+      <tr><td>Google Account (Drive)</td><td>Already have one</td><td>—</td></tr>
+      <tr><td>Google OAuth Credentials</td><td><a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a></td><td>10 min</td></tr>
+      <tr><td>Birthday Excel file (.xlsx)</td><td>Create it yourself</td><td>5 min</td></tr>
+      <tr><td>Telegram Bot Token &amp; Chat ID</td><td>@BotFather / @userinfobot</td><td>3 min</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── BUILD STEPS ────────────────────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Build Guide</span>
+  <h2 class="section-title">Step-by-Step Setup</h2>
+
+  <div class="step-list">
+    <div class="step-item reveal">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Install Docker &amp; Run n8n</h4>
+        <div class="code-block">docker run -d \
+  --name n8n \
+  --restart unless-stopped \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  docker.n8n.io/n8nio/n8n</div>
+        <p>New to Docker? Follow the full <a href="setup-guide.html">Docker &amp; n8n Setup Guide →</a></p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Create Your Birthday Excel File</h4>
+        <p>Create columns exactly named <code>Full Name</code> and <code>Date of Birth</code>, add rows for each person, save as <code>.xlsx</code>, and upload it to Google Drive.</p>
+        <div class="callout callout-warn">Tip: add today's date for one test person so you get an alert right away.</div>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Set Up Google OAuth</h4>
+        <p>Create a Google Cloud project, enable the <strong>Google Drive API</strong>, configure the OAuth consent screen (add yourself as test user), then create an OAuth Client ID with redirect URI:</p>
+        <div class="code-block">http://localhost:5678/rest/oauth2-credential/callback</div>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Create Your Telegram Bot</h4>
+        <p>Message <strong>@BotFather</strong>, send <code>/newbot</code>, copy the Bot Token, then find your bot and click <strong>Start</strong>. Get your Chat ID from <strong>@userinfobot</strong>.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Import the Workflow</h4>
+        <p>In n8n: <strong>+ → New Workflow → ... → Import from file</strong> → select <code>birthday_reminder_telegram.json</code>. You should see 6 connected nodes.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Connect Google Drive</h4>
+        <p>On the Drive node, connect your OAuth credential, sign in, then switch the <strong>File</strong> field from "By ID" to <strong>"From List"</strong> and select your birthday file.</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Configure the Telegram Node</h4>
+        <p>Replace the Bot Token in the URL and the Chat ID in the JSON body (keep the single quotes).</p>
+      </div>
+    </div>
+
+    <div class="step-item reveal">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <h4>Test &amp; Publish</h4>
+        <p>Add today's date as a test birthday, save, and click <strong>Execute workflow</strong>. All nodes should turn green and the alert should arrive on Telegram. Click <strong>Publish</strong> to activate the daily check.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── CONFIG + TROUBLESHOOTING ──────────────────── -->
+<div class="agent-section">
+  <span class="section-eyebrow">Reference</span>
+  <h2 class="section-title">Excel Format &amp; Troubleshooting</h2>
+
+  <h3 style="margin-bottom:12px;font-size:1.05rem;">Excel File Format</h3>
+  <div class="table-wrap" style="margin-bottom:16px;">
+    <table class="info-table">
+      <tr><th>Full Name</th><th>Date of Birth</th></tr>
+      <tr><td>Rahul Sharma</td><td>22/07/1990</td></tr>
+      <tr><td>Priya Patel</td><td>15/08/1995</td></tr>
+      <tr><td>Anita Desai</td><td>03/01/2000</td></tr>
+    </table>
+  </div>
+  <div class="callout callout-warn" style="margin-bottom:32px;">Headers must be exactly <code>Full Name</code> and <code>Date of Birth</code>. Supported date formats: <code>DD/MM/YYYY</code>, <code>MM/DD/YYYY</code>, <code>YYYY-MM-DD</code> — only day and month are compared, year doesn't matter.</div>
+
+  <h3 style="margin:32px 0 12px;font-size:1.05rem;">Troubleshooting</h3>
+  <div class="table-wrap">
+    <table class="info-table">
+      <tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+      <tr><td><code>Access blocked</code> on Google sign-in</td><td>Not added as test user</td><td>OAuth Consent Screen → Audience → add your Gmail</td></tr>
+      <tr><td><code>File not found</code></td><td>File not selected</td><td>Switch to "From List" and pick your file</td></tr>
+      <tr><td>No Telegram message received</td><td>No birthday today</td><td>This is correct behaviour — add a test date to confirm</td></tr>
+      <tr><td>Date not matching</td><td>Wrong date format</td><td>Try <code>YYYY-MM-DD</code> in your Excel file</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="divider" style="margin:0 60px;"></div>
+
+<!-- ── EXTEND + BUILT WITH ───────────────────────── -->
+<div class="agent-section">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;">
+    <div>
+      <span class="section-eyebrow">Go Further</span>
+      <h3 style="color:var(--white);margin-bottom:16px;">Ideas to Extend</h3>
+      <ul class="extend-list">
+        <li>Add the bot to a group so everyone gets notified</li>
+        <li>Ask Gemini to suggest a gift idea for the birthday person</li>
+        <li>Alert one day in advance instead of on the day</li>
+        <li>Add a third column for anniversaries</li>
+      </ul>
+    </div>
+    <div>
+      <span class="section-eyebrow">Built With</span>
+      <h3 style="color:var(--white);margin-bottom:16px;">Tech Stack</h3>
+      <div class="builtwith-tags">
+        <span class="tag tag-blue">n8n</span>
+        <span class="tag tag-blue">Google Drive API</span>
+        <span class="tag tag-blue">Telegram Bot API</span>
+        <span class="tag tag-blue">Docker</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER NAV ─────────────────────────────────── -->
+<div class="agent-footer-nav">
+  <a href="joke-emailer.html" class="nav-arrow"><span class="arrow-label">← Previous</span><span class="arrow-title">AI Joke Emailer</span></a>
+  <a href="stock-news.html" class="nav-arrow next-session"><span class="arrow-label">Next →</span><span class="arrow-title">Stock News Morning Report Agent</span></a>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2025 The Coach Dinesh · <a href="/" style="color:var(--muted);">thecoachdinesh.com</a></p>
+  <nav class="footer-links">
+    <a href="../index.html">AI Course Home</a>
+    <a href="../about.html">About</a>
+    <a href="../curriculum.html">Curriculum</a>
+    <a href="../agents.html">Agents</a>
+    <a href="../lab-tests.html">Lab Tests</a>
+  </nav>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navbar-nav').classList.toggle('open');
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

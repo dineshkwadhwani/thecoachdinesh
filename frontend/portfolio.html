@@ -90,27 +90,34 @@ section{
 
 .portfolio-contact a:hover{ opacity:1; text-decoration:underline; }
 
+.hero-buttons-wrap{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:16px;
+}
+
 .hero-buttons{
   display:flex;
   gap:16px;
   flex-wrap:wrap;
 }
 
-.hero-buttons .btn,
-.hero-buttons .btn-outline{
+.hero-buttons-wrap .btn,
+.hero-buttons-wrap .btn-outline{
   padding:15px 36px;
   border-radius:40px;
   font-weight:500;
   text-decoration:none;
 }
 
-.hero-buttons .btn-outline{
+.hero-buttons-wrap .btn-outline{
   background:transparent;
   color:white;
   border:1px solid rgba(255,255,255,.35);
 }
 
-.hero-buttons .btn-outline:hover{
+.hero-buttons-wrap .btn-outline:hover{
   border-color:#3b82f6;
   background:rgba(255,255,255,.06);
 }
@@ -319,17 +326,7 @@ section{
 
 <nav>
 
-<div><a href="/" class="brand-link">Coach Dinesh</a></div>
-
-<div class="menu-toggle">
-<span></span>
-<span></span>
-<span></span>
-</div>
-
-<div class="nav-links">
-<a href="/">Home</a>
-</div>
+<div class="brand-link">Dinesh Wadhwani</div>
 
 </nav>
 
@@ -357,9 +354,12 @@ Customer Experience &middot; Payments &amp; Fraud &middot; Education &middot; He
 <span>Open to All Roles/Locations</span>
 </div>
 
+<div class="hero-buttons-wrap">
 <div class="hero-buttons">
 <a class="btn" href="files/Dinesh_Wadhwani_Resume.pdf" download="Dinesh_Wadhwani_Resume.pdf">Download Resume</a>
 <a class="btn-outline" href="#experience">View Experience</a>
+</div>
+<a class="btn-outline" href="#projects" style="text-align:center;">What Am I Building →</a>
 </div>
 
 </div>
@@ -541,6 +541,20 @@ executive level.
 </div>
 </section>
 
+<!-- WHAT I'M DOING THESE DAYS -->
+<section id="projects" style="display: none;">
+
+<h2 class="section-title">What I'm Building These Days</h2>
+<p style="text-align: center; max-width: 600px; margin: 0 auto 40px; color: #4d5e6f; font-size: 1.1rem; line-height: 1.6;">
+Applying AI and technology to solve real problems for myself, coaches, job seekers, and others
+</p>
+
+<div class="grid" id="projects-grid">
+  <!-- Projects will be dynamically inserted here -->
+</div>
+
+</section>
+
 <!-- CTA -->
 <section class="cta portfolio-cta">
 <h2>Want the full picture?</h2>
@@ -555,9 +569,95 @@ executive level.
 </footer>
 
 <script>
-document.querySelector('.menu-toggle').addEventListener('click', function () {
-    document.querySelector('.nav-links').classList.toggle('active');
-});
+// Load and display projects section based on config
+async function initializeProjects() {
+    try {
+        const response = await fetch('/api/config');
+        const config = await response.json();
+
+        if (!config.projects.enabled) {
+            return; // Projects section hidden
+        }
+
+        const projectsSection = document.getElementById('projects');
+        const projectsGrid = document.getElementById('projects-grid');
+
+        const projects = [
+            {
+                id: 'coachingStudio',
+                enabled: config.projects.coachingStudio,
+                icon: '🎯',
+                title: 'Coaching Studio',
+                description: 'A playground for Coaches and Coachees. Assessment tools, Leadership programs, and links to Leadership events across the globe.',
+                url: 'https://www.coachingstudio.in'
+            },
+            {
+                id: 'searchMyJob',
+                enabled: config.projects.searchMyJob,
+                icon: '🔍',
+                title: 'Search My Job',
+                description: 'AI-powered job search portal. Agentic AI finds related jobs for jobseekers, matches profiles with JDs, rephrases resumes for higher interview chances.',
+                url: 'https://www.searchmyjob.online'
+            },
+            {
+                id: 'dineshtrade',
+                enabled: config.projects.dineshtrade,
+                icon: '📈',
+                title: 'Dinesh Trade',
+                description: 'Algorithmic trading app using agents to automatically execute trades on the stock market based on AI-driven strategies.',
+                url: 'https://www.dineshtrade.online'
+            },
+            {
+                id: 'aiCourse',
+                enabled: config.projects.aiCourse,
+                icon: '🤖',
+                title: 'AI & LLM Engineering',
+                description: 'Visiting Faculty at renowned colleges like Symbiosis. Enabling students to learn and quickly adapt to AI technologies.',
+                url: '/courses/ai/'
+            },
+            {
+                id: 'learnAgents',
+                enabled: config.projects.learnAgents,
+                icon: '🧑‍🏫',
+                title: 'Learn Agents with Me',
+                description: 'Five real n8n AI agents with full build and deploy guides — hands-on classroom material for students learning agentic AI.',
+                url: '/courses/ai/agents.html'
+            },
+            {
+                id: 'githubRepo',
+                enabled: config.projects.githubRepo,
+                icon: '🐙',
+                title: 'View More',
+                description: 'Browse my open-source projects, AI agent code, and experiments on GitHub.',
+                url: 'https://github.com/dineshkwadhwani/'
+            }
+        ];
+
+        // Filter enabled projects and render them
+        const enabledProjects = projects.filter(p => p.enabled);
+
+        if (enabledProjects.length > 0) {
+            projectsSection.style.display = 'block';
+            projectsGrid.innerHTML = enabledProjects.map(project => `
+                <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="project-card">
+                    <div class="project-icon">${project.icon}</div>
+                    <h3>${project.title}</h3>
+                    <p>${project.description}</p>
+                    <span class="project-link">Explore →</span>
+                </a>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Error loading projects config:', error);
+    }
+}
+
+// Initialize projects when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeProjects);
+} else {
+    initializeProjects();
+}
 </script>
 
 </body>

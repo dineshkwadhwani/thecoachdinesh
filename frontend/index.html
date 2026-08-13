@@ -328,7 +328,7 @@ Schedule a Conversation
 
 <div style="display:flex; gap:20px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:30px;">
 
-<a href="https://www.thecoachdinesh.com" title="Website">
+<a href="/" title="Website">
 <img src="images/world.png" alt="Website" style="width:24px;height:24px;">
 </a>
 
@@ -912,7 +912,23 @@ async function initializeProjects() {
                 icon: '🤖',
                 title: 'AI & LLM Engineering',
                 description: 'Visiting Faculty at renowned colleges like Symbiosis. Enabling students to learn and quickly adapt to AI technologies.',
-                url: 'https://www.thecoachdinesh.com/courses/ai/'
+                url: '/courses/ai/'
+            },
+            {
+                id: 'learnAgents',
+                enabled: config.projects.learnAgents,
+                icon: '🧑‍🏫',
+                title: 'Learn Agents with Me',
+                description: 'Five real n8n AI agents with full build and deploy guides — hands-on classroom material for students learning agentic AI.',
+                url: '/courses/ai/agents.html'
+            },
+            {
+                id: 'githubRepo',
+                enabled: config.projects.githubRepo,
+                icon: '🐙',
+                title: 'View More',
+                description: 'Browse my open-source projects, AI agent code, and experiments on GitHub.',
+                url: 'https://github.com/dineshkwadhwani/'
             }
         ];
 
