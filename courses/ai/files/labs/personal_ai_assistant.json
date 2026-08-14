@@ -1,0 +1,323 @@
+{
+  "name": "Personal AI Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "pai-001",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1200, 0],
+      "webhookId": "my-assistant"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract message details from the webhook payload\nconst body = $json.body || $json;\nconst text = body.text || '';\nconst intent = body.intent || 'question';\nconst chatId = body.chatId || 'PUT_YOUR_CHAT_ID_HERE';\nconst name = body.name || 'Student';\n\nreturn [{ json: { text, intent, chatId, name } }];"
+      },
+      "id": "pai-002",
+      "name": "Extract Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-980, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "remember-check",
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "remember",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "pai-003",
+      "name": "Is Remember?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-760, -200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "search-check",
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "search",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "pai-004",
+      "name": "Is Search?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-760, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "email-check",
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "email",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "pai-005",
+      "name": "Is Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-760, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/api/v2/collections/memories/add",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ documents: [$json.text.replace(/^remember[:\\s]*/i, '').trim()], ids: ['mem_' + Date.now()], metadatas: [{ saved_by: $json.name }] }) }}",
+        "options": {}
+      },
+      "id": "pai-006",
+      "name": "Save to ChromaDB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-500, -300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/api/v2/collections/memories/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ query_texts: [$json.text], n_results: 3 }) }}",
+        "options": {}
+      },
+      "id": "pai-007",
+      "name": "Search ChromaDB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-500, -100]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const results = $json.documents?.[0] || [];\nconst question = $('Extract Message').first().json.text;\nconst chatId = $('Extract Message').first().json.chatId;\n\nif (results.length === 0) {\n  return [{ json: { answer: \"I don't have anything in memory yet! Try: Remember: your exam is on August 10\", chatId } }];\n}\n\nconst context = results.join('\\n');\nreturn [{ json: { context, question, chatId } }];"
+      },
+      "id": "pai-008",
+      "name": "Build Search Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-280, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:11434/api/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'llama3.2:3b', prompt: 'You are a helpful personal assistant. Based on these stored memories:\\n' + $json.context + '\\n\\nAnswer this question concisely: ' + $json.question, stream: false }) }}",
+        "options": {}
+      },
+      "id": "pai-009",
+      "name": "Llama — Search Answer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-60, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:11434/api/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'llama3.2:3b', prompt: 'You are a helpful AI assistant. Answer this question clearly and concisely in 3-4 sentences: ' + $json.text, stream: false }) }}",
+        "options": {}
+      },
+      "id": "pai-010",
+      "name": "Llama — General Answer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-500, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "PUT_YOUR_EMAIL_HERE",
+        "subject": "Message from your AI Assistant",
+        "emailType": "text",
+        "message": "={{ $json.text }}",
+        "options": {}
+      },
+      "id": "pai-011",
+      "name": "Send Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-500, 100],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract answer from Llama response\nconst answer = $json.response || 'Sorry, I could not generate an answer.';\nconst chatId = $('Extract Message').first().json.chatId;\nreturn [{ json: { answer, chatId } }];"
+      },
+      "id": "pai-012",
+      "name": "Extract Llama Answer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-280, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/botPUT_YOUR_BOT_TOKEN_HERE/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $json.chatId, text: $json.answer }) }}",
+        "options": {}
+      },
+      "id": "pai-013",
+      "name": "Send to Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [160, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ answer: $json.answer || 'Done!', status: 'ok' }) }}",
+        "options": {}
+      },
+      "id": "pai-014",
+      "name": "Respond to HTML",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [380, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const chatId = $('Extract Message').first().json.chatId;\nreturn [{ json: { answer: 'Got it! Saved to your memory. ✅', chatId } }];"
+      },
+      "id": "pai-015",
+      "name": "Remember Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-280, -300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const chatId = $('Extract Message').first().json.chatId;\nconst text = $('Extract Message').first().json.text;\nconst to = text.match(/to\\s+([\\w.@]+)/i)?.[1] || 'unknown';\nreturn [{ json: { answer: 'Email sent to ' + to + '! ✅', chatId } }];"
+      },
+      "id": "pai-016",
+      "name": "Email Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-280, 100]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{ "node": "Extract Message", "type": "main", "index": 0 }]]
+    },
+    "Extract Message": {
+      "main": [[
+        { "node": "Is Remember?", "type": "main", "index": 0 },
+        { "node": "Is Search?",   "type": "main", "index": 0 },
+        { "node": "Is Email?",    "type": "main", "index": 0 },
+        { "node": "Llama — General Answer", "type": "main", "index": 0 }
+      ]]
+    },
+    "Is Remember?": {
+      "main": [
+        [{ "node": "Save to ChromaDB", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Is Search?": {
+      "main": [
+        [{ "node": "Search ChromaDB", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Is Email?": {
+      "main": [
+        [{ "node": "Send Gmail", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Save to ChromaDB": {
+      "main": [[{ "node": "Remember Reply", "type": "main", "index": 0 }]]
+    },
+    "Search ChromaDB": {
+      "main": [[{ "node": "Build Search Context", "type": "main", "index": 0 }]]
+    },
+    "Build Search Context": {
+      "main": [[{ "node": "Llama — Search Answer", "type": "main", "index": 0 }]]
+    },
+    "Llama — Search Answer": {
+      "main": [[{ "node": "Extract Llama Answer", "type": "main", "index": 0 }]]
+    },
+    "Llama — General Answer": {
+      "main": [[{ "node": "Extract Llama Answer", "type": "main", "index": 0 }]]
+    },
+    "Send Gmail": {
+      "main": [[{ "node": "Email Reply", "type": "main", "index": 0 }]]
+    },
+    "Remember Reply": {
+      "main": [[{ "node": "Send to Telegram", "type": "main", "index": 0 }]]
+    },
+    "Email Reply": {
+      "main": [[{ "node": "Send to Telegram", "type": "main", "index": 0 }]]
+    },
+    "Extract Llama Answer": {
+      "main": [[{ "node": "Send to Telegram", "type": "main", "index": 0 }]]
+    },
+    "Send to Telegram": {
+      "main": [[{ "node": "Respond to HTML", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
