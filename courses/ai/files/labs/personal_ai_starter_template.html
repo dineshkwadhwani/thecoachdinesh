@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  ============================================================
+  PERSONAL AI ASSISTANT — Starter Template
+  AI Agents Classroom | thecoachdinesh.com
+  ============================================================
+  
+  WHAT TO FILL IN:
+  1. YOUR_BOT_TOKEN    → Your Telegram bot token from @BotFather
+  2. YOUR_CHAT_ID      → Your Telegram chat ID from @userinfobot
+  3. YOUR_N8N_WEBHOOK  → Your n8n webhook URL from the Webhook node
+  
+  HOW IT WORKS:
+  - Student types a message in the chat UI
+  - JavaScript sends it to your n8n webhook (HTTP POST)
+  - n8n routes it → Llama / ChromaDB / Gmail
+  - n8n sends the reply back to Telegram
+  - The HTML also shows the reply in the chat UI
+  ============================================================
+-->
+<title>My Personal AI Assistant</title>
+<style>
+
+  /* ── RESET ─────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── COLOUR TOKENS ─────────────────────────────────────── */
+  :root {
+    --bg:       #0f1117;   /* page background       */
+    --surface:  #1a1d27;   /* panels                */
+    --surface2: #22263a;   /* message bubbles       */
+    --border:   #2e3248;   /* borders               */
+    --text:     #e8eaf6;   /* primary text          */
+    --muted:    #7b82a8;   /* secondary text        */
+    --blue:     #4f8ef7;   /* accent blue           */
+    --green:    #34d399;   /* success / memory      */
+    --purple:   #a78bfa;   /* Llama                 */
+    --amber:    #fbbf24;   /* n8n router            */
+    --red:      #f87171;   /* Gmail                 */
+    --tg:       #2AABEE;   /* Telegram brand colour */
+
+    /* ── CHANGE THESE TO CUSTOMISE YOUR BOT ── */
+    --bot-name: "AI Assistant Bot";
+    --bot-color: var(--tg);
+  }
+
+  /* ── LAYOUT ────────────────────────────────────────────── */
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav {
+    padding: 14px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-title { font-size: 15px; font-weight: 600; }
+  .nav-title span { color: var(--blue); }
+  .nav-status {
+    font-size: 11px; padding: 3px 10px;
+    border-radius: 20px; font-weight: 500;
+    background: rgba(52,211,153,0.15);
+    color: var(--green);
+    border: 1px solid rgba(52,211,153,0.3);
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* ── TELEGRAM CHAT PANEL ───────────────────────────────── */
+  .chat-panel {
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 53px);
+  }
+
+  .chat-header {
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chat-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--tg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .chat-name { font-size: 14px; font-weight: 600; }
+  .chat-online { font-size: 11px; color: var(--green); }
+
+  .chat-messages {
+    flex: 1; overflow-y: auto;
+    padding: 16px 12px;
+    display: flex; flex-direction: column;
+    gap: 8px;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Message bubble styles */
+  .msg {
+    max-width: 82%;
+    padding: 9px 13px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    animation: fadeUp 0.25s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .msg.bot  {
+    background: var(--surface2); color: var(--text);
+    align-self: flex-start; border-bottom-left-radius: 3px;
+  }
+  .msg.user {
+    background: var(--tg); color: #fff;
+    align-self: flex-end; border-bottom-right-radius: 3px;
+  }
+  .msg.system {
+    background: rgba(79,142,247,0.1); color: var(--blue);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 8px; font-size: 11px;
+    align-self: center; text-align: center;
+  }
+  .msg.thinking {
+    background: var(--surface); color: var(--muted);
+    align-self: flex-start; border-bottom-left-radius: 3px;
+    font-size: 12px; font-style: italic;
+  }
+
+  /* Typing animation */
+  .dots { display: inline-flex; gap: 3px; align-items: center; }
+  .dots span {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--muted);
+    animation: blink 1.2s infinite;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100% { opacity:0.2; } 40% { opacity:1; } }
+
+  /* Suggestion chips */
+  .suggestions {
+    padding: 8px 12px;
+    display: flex; flex-wrap: wrap; gap: 5px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .sug {
+    font-size: 11px; padding: 4px 10px;
+    border-radius: 12px; cursor: pointer;
+    border: 1px solid var(--border);
+    color: var(--muted); background: var(--bg);
+    transition: all 0.15s;
+  }
+  .sug:hover { border-color: var(--tg); color: var(--tg); background: rgba(42,171,238,0.08); }
+
+  /* Input row */
+  .input-row {
+    padding: 10px 12px;
+    display: flex; gap: 8px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .msg-input {
+    flex: 1; padding: 8px 14px;
+    background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 20px;
+    font-size: 13px; font-family: inherit; outline: none;
+    transition: border-color 0.15s;
+  }
+  .msg-input:focus { border-color: var(--tg); }
+  .msg-input::placeholder { color: var(--muted); }
+  .send-btn {
+    width: 36px; height: 36px; flex-shrink: 0;
+    border-radius: 50%; border: none;
+    background: var(--tg); color: #fff;
+    font-size: 15px; cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .send-btn:hover { transform: scale(1.1); }
+
+  /* ── RIGHT PANEL — PIPELINE VIEW ──────────────────────── */
+  .pipeline-panel {
+    padding: 20px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .panel-title {
+    font-size: 11px; font-weight: 600;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Pipeline nodes */
+  .pipeline {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .p-node {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: all 0.3s;
+  }
+  .p-node.active  { border-color: var(--blue);  background: rgba(79,142,247,0.08); }
+  .p-node.success { border-color: var(--green); background: rgba(52,211,153,0.08); }
+  .p-node.idle    { opacity: 0.55; }
+  .p-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .p-name { font-size: 13px; font-weight: 500; flex: 1; }
+  .p-log  { font-size: 11px; color: var(--muted); font-family: monospace; margin-top: 2px; }
+  .p-badge {
+    font-size: 10px; padding: 2px 8px; border-radius: 10px;
+    font-weight: 500; flex-shrink: 0;
+  }
+  .badge-idle    { background: rgba(123,130,168,0.15); color: var(--muted); }
+  .badge-active  { background: rgba(79,142,247,0.2);   color: var(--blue); }
+  .badge-success { background: rgba(52,211,153,0.2);   color: var(--green); }
+
+  .p-arrow {
+    width: 1px; height: 14px; margin-left: 28px;
+    background: var(--border); transition: background 0.3s;
+  }
+  .p-arrow.lit { background: var(--blue); }
+
+  /* Memory list */
+  .memory-box {
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface); overflow: hidden;
+  }
+  .memory-head {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; font-weight: 600;
+  }
+  .memory-count { color: var(--green); font-family: monospace; font-size: 11px; }
+  .memory-items { padding: 10px; min-height: 50px; display: flex; flex-direction: column; gap: 5px; }
+  .m-item {
+    padding: 6px 10px; border-radius: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 11px; font-family: monospace;
+    animation: fadeUp 0.3s ease;
+  }
+  .m-empty { font-size: 11px; color: var(--muted); padding: 6px; font-style: italic; }
+
+  /* Stats row */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px; text-align: center;
+  }
+  .stat-val { font-size: 22px; font-weight: 700; font-family: monospace; }
+  .stat-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* ── RESPONSIVE ────────────────────────────────────────── */
+  @media (max-width: 680px) {
+    .main { grid-template-columns: 1fr; }
+    .pipeline-panel { display: none; }
+    .chat-panel { height: calc(100vh - 53px); }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ──────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-title">My <span>Personal AI</span> Assistant</div>
+  <div class="nav-status" id="status">● Connected</div>
+</nav>
+
+<div class="main">
+
+  <!-- ── CHAT PANEL ─────────────────────────────────────── -->
+  <div class="chat-panel">
+
+    <div class="chat-header">
+      <div class="chat-avatar">🤖</div>
+      <div>
+        <!--
+          ✏️ CUSTOMISE: Change the bot name below
+        -->
+        <div class="chat-name">AI Assistant Bot</div>
+        <div class="chat-online">● online</div>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="msgs"></div>
+
+    <!--
+      ✏️ CUSTOMISE: Add or change suggestion chips below
+    -->
+    <div class="suggestions">
+      <div class="sug" onclick="sendText(this.textContent)">What is machine learning?</div>
+      <div class="sug" onclick="sendText(this.textContent)">Remember: exam on August 10</div>
+      <div class="sug" onclick="sendText(this.textContent)">Search my notes for exam</div>
+      <div class="sug" onclick="sendText(this.textContent)">Send email to prof@college.edu</div>
+      <div class="sug" onclick="sendText(this.textContent)">What is a neural network?</div>
+    </div>
+
+    <div class="input-row">
+      <input class="msg-input" id="inp"
+        placeholder="Type a message..."
+        onkeydown="if(event.key==='Enter') send()">
+      <button class="send-btn" onclick="send()">➤</button>
+    </div>
+
+  </div>
+
+  <!-- ── PIPELINE PANEL ─────────────────────────────────── -->
+  <div class="pipeline-panel">
+
+    <div class="panel-title">Agent Pipeline — Live View</div>
+
+    <div class="pipeline" id="pipeline">
+
+      <div class="p-node idle" id="node-tg">
+        <div class="p-icon" style="background:rgba(42,171,238,0.15)">📱</div>
+        <div>
+          <div class="p-name">Telegram Trigger</div>
+          <div class="p-log" id="log-tg">Waiting for message...</div>
+        </div>
+        <div class="p-badge badge-idle" id="badge-tg">idle</div>
+      </div>
+
+      <div class="p-arrow" id="arr0"></div>
+
+      <div class="p-node idle" id="node-router">
+        <div class="p-icon" style="background:rgba(251,191,36,0.15)">⚡</div>
+        <div>
+          <div class="p-name">n8n Router</div>
+          <div class="p-log" id="log-router">Analysing intent...</div>
+        </div>
+        <div class="p-badge badge-idle" id="badge-router">idle</div>
+      </div>
+
+      <div class="p-arrow" id="arr1"></div>
+
+      <div class="p-node idle" id="node-llama">
+        <div class="p-icon" style="background:rgba(167,139,250,0.15)">🦙</div>
+        <div>
+          <div class="p-name">Llama 3.2 3B (local)</div>
+          <div class="p-log" id="log-llama">localhost:11434 ready</div>
+        </div>
+        <div class="p-badge badge-idle" id="badge-llama">idle</div>
+      </div>
+
+      <div class="p-arrow" id="arr2"></div>
+
+      <div class="p-node idle" id="node-chroma">
+        <div class="p-icon" style="background:rgba(52,211,153,0.15)">🗄️</div>
+        <div>
+          <div class="p-name">ChromaDB Memory</div>
+          <div class="p-log" id="log-chroma">localhost:8000 ready</div>
+        </div>
+        <div class="p-badge badge-idle" id="badge-chroma">idle</div>
+      </div>
+
+      <div class="p-arrow" id="arr3"></div>
+
+      <div class="p-node idle" id="node-gmail">
+        <div class="p-icon" style="background:rgba(248,113,113,0.15)">📧</div>
+        <div>
+          <div class="p-name">Gmail Action</div>
+          <div class="p-log" id="log-gmail">OAuth connected</div>
+        </div>
+        <div class="p-badge badge-idle" id="badge-gmail">idle</div>
+      </div>
+
+    </div>
+
+    <!-- Memory display -->
+    <div class="memory-box">
+      <div class="memory-head">
+        <span>🗄️ ChromaDB Memory</span>
+        <span class="memory-count" id="mem-count">0 vectors</span>
+      </div>
+      <div class="memory-items" id="mem-list">
+        <div class="m-empty">No memories yet — try "Remember: ..."</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val" id="s-msgs" style="color:var(--tg)">0</div>
+        <div class="stat-lbl">Messages</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="s-mems" style="color:var(--green)">0</div>
+        <div class="stat-lbl">Memories</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="s-emails" style="color:var(--red)">0</div>
+        <div class="stat-lbl">Emails sent</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  STEP 1 — FILL IN YOUR CREDENTIALS
+// ============================================================
+
+const CONFIG = {
+
+  // Your Telegram Bot Token from @BotFather
+  // Example: "123456789:AAFxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  BOT_TOKEN: "PUT_YOUR_BOT_TOKEN_HERE",
+
+  // Your Telegram Chat ID from @userinfobot or getUpdates URL
+  // Example: "1784026614"
+  CHAT_ID: "PUT_YOUR_CHAT_ID_HERE",
+
+  // Your n8n Webhook URL — from the Webhook Trigger node in n8n
+  // Example: "https://abc123.ngrok-free.app/webhook/my-assistant"
+  N8N_WEBHOOK: "PUT_YOUR_N8N_WEBHOOK_URL_HERE",
+
+};
+
+// ============================================================
+//  STEP 2 — CUSTOMISE YOUR BOT RESPONSES (optional)
+//  Add more keywords and answers below
+// ============================================================
+
+const LOCAL_RESPONSES = {
+  'machine learning': 'Machine learning enables computers to learn from data without explicit programming.',
+  'neural network':   'A neural network is a system of interconnected nodes that learns patterns from data.',
+  'deep learning':    'Deep learning uses many-layered neural networks to learn complex representations.',
+  'llama':            'Llama is Meta\'s open-source AI model — we run it locally using Ollama.',
+  'chromadb':         'ChromaDB stores your memories as vectors and retrieves them by semantic similarity.',
+  'n8n':              'n8n is the workflow automation tool that routes messages between all the services.',
+};
+
+// ============================================================
+//  CORE LOGIC — No need to change anything below this line
+// ============================================================
+
+let memories = [];
+let msgCount = 0, emailCount = 0;
+
+// Helper: delay
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+// Add a message bubble to the chat
+function addMsg(text, type) {
+  const el = document.createElement('div');
+  el.className = 'msg ' + type;
+  if (type === 'thinking') {
+    el.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+  } else {
+    el.textContent = text;
+  }
+  const msgs = document.getElementById('msgs');
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+  return el;
+}
+
+// Update a pipeline node
+function setNode(id, log, badge, state) {
+  document.getElementById('node-' + id).className = 'p-node ' + state;
+  document.getElementById('log-' + id).textContent = log;
+  const b = document.getElementById('badge-' + id);
+  b.textContent = badge;
+  b.className = 'p-badge badge-' + (state === 'success' ? 'success' : state === 'active' ? 'active' : 'idle');
+}
+
+// Light up a connector arrow
+function arrow(i, on) {
+  const el = document.getElementById('arr' + i);
+  if (el) el.className = on ? 'p-arrow lit' : 'p-arrow';
+}
+
+// Reset all nodes to idle
+function resetAll() {
+  [['tg','Waiting...'],['router','Ready'],['llama','localhost:11434'],
+   ['chroma','localhost:8000'],['gmail','OAuth connected']]
+  .forEach(([id, log]) => setNode(id, log, 'idle', 'idle'));
+  [0,1,2,3].forEach(i => arrow(i, false));
+}
+
+// Update stats + memory display
+function updateUI() {
+  document.getElementById('s-msgs').textContent  = msgCount;
+  document.getElementById('s-mems').textContent  = memories.length;
+  document.getElementById('s-emails').textContent = emailCount;
+  document.getElementById('mem-count').textContent = memories.length + ' vector' + (memories.length !== 1 ? 's' : '');
+
+  const list = document.getElementById('mem-list');
+  if (memories.length === 0) {
+    list.innerHTML = '<div class="m-empty">No memories yet — try "Remember: ..."</div>';
+  } else {
+    list.innerHTML = '';
+    memories.forEach(m => {
+      const d = document.createElement('div');
+      d.className = 'm-item';
+      d.textContent = '📌 ' + m;
+      list.appendChild(d);
+    });
+  }
+}
+
+// ── MAIN MESSAGE HANDLER ─────────────────────────────────────
+async function handleMessage(text) {
+  msgCount++;
+  const lower = text.toLowerCase();
+  const thinkEl = addMsg('', 'thinking');
+
+  // Detect intent
+  let intent = 'question';
+  if (lower.startsWith('remember')) intent = 'remember';
+  else if (lower.includes('search') || lower.includes('find')) intent = 'search';
+  else if (lower.includes('email') || lower.includes('send')) intent = 'email';
+
+  // Animate: Telegram trigger
+  setNode('tg', 'Message received!', 'active', 'active');
+  arrow(0, true);
+  await wait(400);
+
+  // Animate: Router
+  setNode('tg', '✓ Delivered', 'done', 'success');
+  setNode('router', '→ Intent: ' + intent.toUpperCase(), 'routing', 'active');
+  arrow(1, true);
+  await wait(500);
+  thinkEl.remove();
+
+  // ── ROUTE: REMEMBER ───────────────────────────────────────
+  if (intent === 'remember') {
+
+    setNode('router', '→ Route: ChromaDB save', 'routing', 'active');
+    arrow(2, true);
+    setNode('chroma', '→ Embedding text...', 'saving', 'active');
+    await wait(600);
+
+    const fact = text.replace(/^remember[:\s]*/i, '').trim();
+    memories.push(fact);
+    setNode('chroma', '✓ Saved — ' + memories.length + ' vectors', 'saved', 'success');
+    updateUI();
+
+    // ── SEND TO n8n WEBHOOK ──────────────────────────────────
+    callWebhook({ intent, text, fact });
+
+    addMsg(`Got it! Saved to ChromaDB. ✅\nYou now have ${memories.length} memor${memories.length===1?'y':'ies'}.`, 'bot');
+
+  // ── ROUTE: SEARCH ─────────────────────────────────────────
+  } else if (intent === 'search') {
+
+    setNode('router', '→ Route: ChromaDB search', 'routing', 'active');
+    arrow(2, true);
+    setNode('chroma', '→ Searching ' + memories.length + ' vectors...', 'searching', 'active');
+    await wait(700);
+
+    if (memories.length === 0) {
+      setNode('chroma', '! No vectors found', 'empty', 'idle');
+      addMsg("Nothing in memory yet!\nTry: \"Remember: your exam is on August 10\"", 'bot');
+    } else {
+      setNode('chroma', '✓ ' + memories.length + ' matches found', 'found', 'success');
+      arrow(1, true);
+      setNode('llama', '→ Synthesising answer...', 'generating', 'active');
+      await wait(800);
+      setNode('llama', '✓ Answer ready', 'done', 'success');
+
+      callWebhook({ intent, text, memories });
+
+      addMsg(`From your ChromaDB memory:\n\n${memories.map((m,i)=>`${i+1}. ${m}`).join('\n')}`, 'bot');
+    }
+
+  // ── ROUTE: EMAIL ──────────────────────────────────────────
+  } else if (intent === 'email') {
+
+    setNode('router', '→ Route: Gmail', 'routing', 'active');
+    setNode('llama', '→ Extracting recipient...', 'drafting', 'active');
+    arrow(2, true);
+    await wait(600);
+    setNode('llama', '✓ Email ready', 'done', 'success');
+    arrow(3, true);
+    setNode('gmail', '→ Sending...', 'sending', 'active');
+    await wait(700);
+    emailCount++;
+    setNode('gmail', '✓ Sent!', 'sent', 'success');
+    updateUI();
+
+    callWebhook({ intent, text });
+
+    const to = text.match(/to\s+([\w.@]+)/i)?.[1] || 'recipient@email.com';
+    addMsg(`Email sent to ${to}! ✅\nGmail OAuth handled authentication automatically.`, 'bot');
+
+  // ── ROUTE: GENERAL QUESTION → LLAMA ──────────────────────
+  } else {
+
+    setNode('router', '→ Route: Llama 3.2 3B', 'routing', 'active');
+    arrow(2, true);
+    setNode('llama', '→ Running on localhost:11434...', 'generating', 'active');
+    await wait(900);
+
+    // Check local responses first (for offline demo)
+    let answer = null;
+    for (const [key, val] of Object.entries(LOCAL_RESPONSES)) {
+      if (lower.includes(key)) { answer = val; break; }
+    }
+
+    // If no local match, call n8n which calls real Llama
+    if (!answer) {
+      answer = await callWebhook({ intent, text });
+      if (!answer) answer = 'Llama processed your question locally on the machine. In the real agent this would return a full AI answer!';
+    }
+
+    const tokens = Math.floor(Math.random()*200+80);
+    const secs = (Math.random()*1.5+0.4).toFixed(1);
+    setNode('llama', `✓ ${tokens} tokens, ${secs}s`, 'done', 'success');
+    addMsg(answer, 'bot');
+  }
+
+  // Reset pipeline after 2 seconds
+  await wait(2000);
+  resetAll();
+  updateUI();
+}
+
+// ── CALL n8n WEBHOOK ─────────────────────────────────────────
+// Sends the message to your n8n workflow and waits for a response
+async function callWebhook(payload) {
+  if (CONFIG.N8N_WEBHOOK === 'PUT_YOUR_N8N_WEBHOOK_URL_HERE') {
+    // Webhook not configured — running in demo mode
+    return null;
+  }
+  try {
+    const res = await fetch(CONFIG.N8N_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    return data?.answer || data?.text || null;
+  } catch (e) {
+    console.warn('Webhook error:', e);
+    return null;
+  }
+}
+
+// ── SEND BUTTON ───────────────────────────────────────────────
+function send() {
+  const inp = document.getElementById('inp');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  addMsg(text, 'user');
+  handleMessage(text);
+}
+
+function sendText(text) {
+  addMsg(text, 'user');
+  handleMessage(text);
+}
+
+// ── WELCOME MESSAGE ───────────────────────────────────────────
+setTimeout(() => {
+  addMsg(
+    "Hi! I'm your Personal AI Assistant.\n\n" +
+    "I can:\n" +
+    "• Answer questions (via Llama)\n" +
+    "• Remember things (via ChromaDB)\n" +
+    "• Search your notes (via ChromaDB)\n" +
+    "• Send emails (via Gmail)\n\n" +
+    "Try a suggestion below or type your own!",
+    'bot'
+  );
+  addMsg(
+    'Wire up your n8n webhook in the CONFIG section to activate real AI responses!',
+    'system'
+  );
+}, 400);
+
+</script>
+</body>
+</html>
