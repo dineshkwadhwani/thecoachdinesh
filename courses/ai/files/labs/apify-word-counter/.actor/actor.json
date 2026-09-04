@@ -1,0 +1,42 @@
+{
+    "actorSpecification": 1,
+    "name": "word-counter",
+    "title": "Word Counter",
+    "description": "Counts how many times a specific word appears on any web page. Case-insensitive by default. Returns count, context snippets, and page title.",
+    "version": "1.0",
+    "buildTag": "latest",
+    "environmentVariables": [],
+    "dockerfile": "./Dockerfile",
+    "readme": "./README.md",
+    "input": "./input_schema.json",
+    "storages": {
+        "dataset": {
+            "actorSpecification": 1,
+            "title": "Word count results",
+            "views": {
+                "overview": {
+                    "title": "Overview",
+                    "transformation": {
+                        "fields": [
+                            "wordSearched",
+                            "count",
+                            "caseSensitiveCount",
+                            "pageTitle",
+                            "url"
+                        ]
+                    },
+                    "display": {
+                        "component": "table",
+                        "properties": {
+                            "wordSearched": { "label": "Word", "format": "text" },
+                            "count": { "label": "Count (case-insensitive)", "format": "number" },
+                            "caseSensitiveCount": { "label": "Count (case-sensitive)", "format": "number" },
+                            "pageTitle": { "label": "Page Title", "format": "text" },
+                            "url": { "label": "URL", "format": "link" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

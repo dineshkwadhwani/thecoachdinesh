@@ -1,0 +1,30 @@
+{
+    "title": "Word Counter Input",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "url": {
+            "title": "Page URL",
+            "type": "string",
+            "description": "The URL of the web page to scan for word occurrences.",
+            "default": "https://www.thecoachdinesh.com/courses/ai/reference.html",
+            "prefill": "https://www.thecoachdinesh.com/courses/ai/reference.html",
+            "editor": "textfield"
+        },
+        "word": {
+            "title": "Word to search",
+            "type": "string",
+            "description": "The word you want to count on the page. Case-insensitive by default.",
+            "prefill": "AI",
+            "editor": "textfield"
+        },
+        "caseSensitive": {
+            "title": "Case sensitive",
+            "type": "boolean",
+            "description": "If true, only exact case matches are counted. Default is false (case-insensitive).",
+            "default": false,
+            "editor": "checkbox"
+        }
+    },
+    "required": ["word"]
+}
