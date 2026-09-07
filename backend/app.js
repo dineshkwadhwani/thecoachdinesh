@@ -657,6 +657,21 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Mount the workshop subdomain inside the serverless Express app.
+app.use((req, res, next) => {
+    if (req.hostname !== 'aiworkshop.thecoachdinesh.com') {
+        return next();
+    }
+
+    const [pathname, queryString] = req.url.split('?');
+    const workshopPath = pathname === '/assets' || pathname.startsWith('/assets/')
+        ? `/courses/ai${pathname}`
+        : `/courses/ai/workshop${pathname}`;
+
+    req.url = queryString ? `${workshopPath}?${queryString}` : workshopPath;
+    next();
+});
+
 // Track visitor analytics (must be before static files to capture all requests)
 app.use(trackVisitor);
 
