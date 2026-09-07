@@ -1,0 +1,16 @@
+roll_no,student_name,parent_name,parent_email,classes_held,classes_attended,previous_percentage,last_alert_date
+R001,Aarti Kulkarni,Sunita Kulkarni,parent.r001@example.invalid,40,36,88,
+R002,Bhavesh Patil,Ramesh Patil,parent.r002@example.invalid,40,38,93,
+R003,Chetan Deshmukh,Vaishali Deshmukh,parent.r003@example.invalid,40,19,52,2026-08-12
+R004,Deepa Joshi,Anil Joshi,parent.r004@example.invalid,40,29,91,
+R005,Eshan Rane,Meera Rane,parent.r005@example.invalid,40,34,84,
+R006,Farhan Shaikh,Nasreen Shaikh,parent.r006@example.invalid,40,15,41,2026-08-05
+R007,Gauri Naik,Prakash Naik,parent.r007@example.invalid,40,28,55,2026-08-21
+R008,Harsh Mehta,Kiran Mehta,parent.r008@example.invalid,40,37,90,
+R009,Isha Bhosale,Sanjay Bhosale,parent.r009@example.invalid,40,39,95,
+R010,Jatin Kale,Suresh Kale,parent.r010@example.invalid,40,33,80,
+R011,Kavya Pawar,Nitin Pawar,parent.r011@example.invalid,40,27,69,2026-09-06
+R012,Lalit Gaikwad,Asha Gaikwad,parent.r012@example.invalid,40,35,86,
+R013,Manasi Thorat,Dilip Thorat,parent.r013@example.invalid,40,22,60,2026-08-28
+R014,Nikhil Sawant,Rekha Sawant,parent.r014@example.invalid,40,38,92,
+R015,Omkar Chavan,Vijay Chavan,parent.r015@example.invalid,40,,87,
