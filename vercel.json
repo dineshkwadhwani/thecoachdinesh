@@ -12,6 +12,26 @@
   ],
   "routes": [
     {
+      "src": "/assets/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "aiworkshop.thecoachdinesh.com"
+        }
+      ],
+      "dest": "/courses/ai/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "aiworkshop.thecoachdinesh.com"
+        }
+      ],
+      "dest": "/courses/ai/workshop/$1"
+    },
+    {
       "src": "/(.*)",
       "has": [
         {
