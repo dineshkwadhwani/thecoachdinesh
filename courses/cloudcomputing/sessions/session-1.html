@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Study cloud security fundamentals, CSPM, SSO, SAML, OAuth 2.0, and OpenID Connect with case studies and guided exercises.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../ai/assets/css/style.css">
+  <style>
+    .session-hero { max-width: 1200px; margin: 0 auto; padding: 86px 60px 54px; display: grid; grid-template-columns: 1fr 330px; gap: 42px; align-items: start; }
+    .session-hero h1 { color: var(--white); margin: 8px 0 12px; }
+    .session-subtitle { max-width: 690px; font-size: 1.05rem; margin-bottom: 22px; }
+    .session-meta { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 24px; }
+    .meta-item { padding: 5px 11px; border: 1px solid var(--border); background: var(--card-bg); border-radius: 20px; color: var(--muted); font-size: 0.8rem; }
+    .session-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .resources-panel { padding: 22px; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); }
+    .resources-panel h2 { color: var(--white); font: 600 0.78rem var(--font-body); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+    .resource-link { display: flex; gap: 12px; padding: 13px 10px; border-bottom: 1px solid var(--border); color: var(--off-white); }
+    .resource-link:last-child { border-bottom: 0; }
+    .resource-link:hover { background: rgba(255,255,255,0.04); }
+    .resource-icon { font-size: 1.25rem; }
+    .resource-type { display: block; color: var(--muted); font: 0.65rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+    .resource-name { display: block; margin-top: 3px; font-size: 0.84rem; }
+    .study-layout { max-width: 1200px; margin: 0 auto; padding: 0 60px 76px; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 46px; }
+    .study-content section { padding: 38px 0; border-top: 1px solid var(--border); scroll-margin-top: 86px; }
+    .study-content h2 { color: var(--white); margin-bottom: 14px; font-size: 1.65rem; }
+    .study-content h3 { color: var(--white); margin: 24px 0 10px; font: 600 1rem var(--font-body); }
+    .study-content p { margin-bottom: 12px; font-size: 0.93rem; line-height: 1.8; }
+    .study-content li { margin: 8px 0; color: var(--off-white); font-size: 0.91rem; }
+    .study-content ul, .study-content ol { padding-left: 22px; margin: 8px 0 18px; }
+    .study-aside { position: sticky; top: 92px; align-self: start; }
+    .aside-nav { border: 1px solid var(--border); background: var(--card-bg); padding: 18px; border-radius: var(--radius-sm); }
+    .aside-nav h2 { color: var(--white); font: 600 0.75rem var(--font-body); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+    .aside-nav a { display: block; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+    .aside-nav a:last-child { border-bottom: 0; }
+    .study-table-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+    .study-table { width: 100%; border-collapse: collapse; min-width: 540px; }
+    .study-table th, .study-table td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 0.84rem; }
+    .study-table th { color: var(--accent); font: 600 0.68rem var(--font-mono); text-transform: uppercase; }
+    .study-table td { color: var(--off-white); }
+    .study-table tr:last-child td { border-bottom: 0; }
+    .callout { margin: 16px 0; padding: 15px 17px; border-left: 3px solid var(--accent); background: rgba(245,158,11,0.08); color: var(--off-white); font-size: 0.9rem; }
+    .flow-list { list-style: none; padding: 0 !important; counter-reset: flow; }
+    .flow-list li { counter-increment: flow; display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+    .flow-list li::before { content: counter(flow, decimal-leading-zero); color: var(--accent); font: 0.78rem var(--font-mono); }
+    details { margin: 14px 0; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; background: var(--card-bg); }
+    summary { color: var(--white); cursor: pointer; font-weight: 600; }
+    details p { margin: 12px 0 0; }
+    .session-end { display: flex; justify-content: space-between; gap: 16px; padding: 28px 60px; border-top: 1px solid var(--border); }
+    .session-end a { font-size: 0.9rem; }
+    @media (max-width: 900px) {
+      .session-hero { grid-template-columns: 1fr; padding: 78px 24px 38px; gap: 24px; }
+      .study-layout { grid-template-columns: 1fr; padding: 0 24px 56px; gap: 28px; }
+      .study-aside { position: static; order: -1; }
+      .session-end { padding: 24px; }
+    }
+  </style>
+  <title>Session 1: Cloud Security, CSPM &amp; SSO | The Coach Dinesh</title>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand"><span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span><span class="course-badge">Cloud Computing</span></a>
+  <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  <ul class="navbar-nav" id="navbar-nav"><li><a href="../index.html">Course Home</a></li><li><a href="../curriculum.html">Curriculum</a></li><li><a href="/courses/" class="navbar-cta">All Courses ↗</a></li></ul>
+</nav>
+<main>
+  <header class="session-hero">
+    <div>
+      <span class="section-eyebrow">Session 01 · Two Lectures</span>
+      <h1>Cloud Security, CSPM &amp; Single Sign-On</h1>
+      <p class="session-subtitle">Understand who secures each layer of the cloud, how posture management catches configuration drift, and how trusted identity enables secure access across applications.</p>
+      <div class="session-meta"><span class="meta-item">4 hours</span><span class="meta-item">29 slides</span><span class="meta-item">4 classroom exercises</span><span class="meta-item">Foundational</span></div>
+      <div class="session-actions">
+        <a href="../files/Cloud_Security_CSPM_SSO_Slides.pptx" class="btn btn-primary" target="_blank" rel="noopener">Open Presentation ↗</a>
+        <a href="../files/Cloud_Security_CSPM_SSO_Course_Material.pdf" class="btn btn-outline" target="_blank" rel="noopener">Open Study PDF ↗</a>
+      </div>
+    </div>
+    <aside class="resources-panel" aria-label="Session resources">
+      <h2>Session Resources</h2>
+      <a href="../files/Cloud_Security_CSPM_SSO_Slides.pptx" class="resource-link" target="_blank" rel="noopener"><span class="resource-icon">📊</span><span><span class="resource-type">Presentation</span><span class="resource-name">Cloud Security Slides (.pptx)</span></span></a>
+      <a href="../files/Cloud_Security_CSPM_SSO_Course_Material.pdf" class="resource-link" target="_blank" rel="noopener"><span class="resource-icon">📄</span><span><span class="resource-type">Course Material</span><span class="resource-name">Participant Study Material (.pdf)</span></span></a>
+      <a href="../files/Cloud_Security_CSPM_SSO_Speaker_Notes.docx" class="resource-link" target="_blank" rel="noopener"><span class="resource-icon">📝</span><span><span class="resource-type">Instructor Notes</span><span class="resource-name">Slide-by-slide Speaker Notes (.docx)</span></span></a>
+      <a href="../curriculum.html" class="resource-link"><span class="resource-icon">📋</span><span><span class="resource-type">Course Overview</span><span class="resource-name">Curriculum &amp; Learning Objectives</span></span></a>
+    </aside>
+  </header>
+  <div class="study-layout">
+    <article class="study-content">
+      <section id="overview">
+        <span class="section-eyebrow">Study Guide</span><h2>Start with the cloud model</h2>
+        <p>Cloud security is different because organizations consume infrastructure and platforms they do not physically operate, while teams can create and change resources at software speed. The cloud provider secures parts of the underlying service; the customer remains accountable for its data, identities, access policies, and configuration.</p>
+        <p>Service model matters. With <strong>IaaS</strong>, the customer manages more of the stack, including guest operating systems and workloads. With <strong>PaaS</strong>, the provider also operates much of the platform and runtime. With <strong>SaaS</strong>, the provider operates the application, while the customer still manages users, data, and settings. The exact boundary varies by provider and service.</p>
+      </section>
+
+      <section id="shared-responsibility">
+        <span class="section-eyebrow">Lecture 1 · Foundations</span><h2>The shared responsibility model</h2>
+        <p>The provider is responsible for security <em>of</em> the cloud; customers are responsible for security <em>in</em> the cloud. Managed services move operational work to the provider, but do not make customer configuration and identity controls disappear.</p>
+        <div class="study-table-wrap"><table class="study-table"><thead><tr><th>Control area</th><th>Provider responsibility</th><th>Customer responsibility</th></tr></thead><tbody>
+          <tr><td>Physical facilities</td><td>Data-center access, physical protection, and underlying hardware.</td><td>Select appropriate services and manage account access.</td></tr>
+          <tr><td>Compute and platform</td><td>Underlying infrastructure; more platform/runtime operation in managed services.</td><td>Guest OS, application code, workload settings, and patching where the chosen service assigns them to the customer.</td></tr>
+          <tr><td>Identity and access</td><td>Provide identity and access capabilities.</td><td>Configure accounts, least-privilege permissions, authentication, and MFA.</td></tr>
+          <tr><td>Data and configuration</td><td>Provide storage and security features.</td><td>Classify and protect data; set access policies, encryption options, and retention appropriately.</td></tr>
+        </tbody></table></div>
+        <div class="callout"><strong>Case study · Capital One, 2019:</strong> The course uses this breach to show how a customer-side WAF configuration and excessive permissions can expose cloud data. The lesson is not that the provider has no role; it is that using a secure cloud does not remove customer responsibility for configuration and identity.</div>
+        <h3>Five cloud security pillars</h3><ul><li><strong>Identity and access management:</strong> least privilege and strong authentication.</li><li><strong>Data protection:</strong> classification, encryption at rest and in transit, and tokenization.</li><li><strong>Network security:</strong> segmentation, VPCs, and security-group rules.</li><li><strong>Compliance and governance:</strong> controls, policy ownership, and evidence.</li><li><strong>Monitoring, detection, and response:</strong> logs, alerts, and continuous posture checks.</li></ul>
+      </section>
+
+      <section id="cspm">
+        <span class="section-eyebrow">Lecture 1 · Continuous Posture</span><h2>CSPM: find configuration risk continuously</h2>
+        <p>Cloud Security Posture Management (CSPM) tooling discovers cloud resources, checks configurations against policy and security baselines, and surfaces or helps remediate risk across accounts. It addresses three conditions that make manual review hard to sustain: high resource volume, rapid infrastructure changes, and configuration drift.</p>
+        <ol class="flow-list"><li><span><strong>Discover</strong> cloud resources and accounts so the inventory is current.</span></li><li><span><strong>Assess</strong> configurations against best practices, policy, and compliance requirements.</span></li><li><span><strong>Prioritize</strong> findings by exposure, impact, and context.</span></li><li><span><strong>Remediate</strong> through an owner, a change, or an approved automated fix.</span></li><li><span><strong>Monitor</strong> for drift and verify that the fix remains in place.</span></li></ol>
+        <p>This is a loop, not a one-time audit. A resource that passed review yesterday may become exposed after a later deployment or manual change.</p>
+        <h3>Know the neighboring tools</h3>
+        <div class="study-table-wrap"><table class="study-table"><thead><tr><th>Capability</th><th>Question it answers</th><th>Typical focus</th></tr></thead><tbody>
+          <tr><td>CSPM</td><td>Is this cloud resource configured securely?</td><td>Cloud configuration and posture.</td></tr>
+          <tr><td>CWPP</td><td>Is this running workload behaving securely?</td><td>Protection of workloads such as VMs and containers.</td></tr>
+          <tr><td>CIEM</td><td>Does this identity have more access than it needs?</td><td>Permissions and cloud entitlements.</td></tr>
+          <tr><td>KSPM</td><td>Are Kubernetes clusters and their settings secure?</td><td>Kubernetes configuration and access controls.</td></tr>
+          <tr><td>CNAPP</td><td>Can these cloud-native protections be brought together?</td><td>Umbrella platform combining capabilities.</td></tr>
+        </tbody></table></div>
+        <p>Common frameworks represented in CSPM policy libraries include CIS Benchmarks, PCI-DSS, ISO/IEC 27001, the RBI IT Framework, and India's DPDP Act, 2023. The mapping helps teams assess controls; it does not by itself guarantee compliance.</p>
+      </section>
+
+      <section id="sso">
+        <span class="section-eyebrow">Lecture 2 · Identity</span><h2>Single Sign-On and its three actors</h2>
+        <p>Single Sign-On (SSO) lets a user authenticate once with a trusted Identity Provider and access multiple connected applications without independently signing in to each one. This can reduce password reuse and simplify account lifecycle management, while making protection of the identity provider especially important.</p>
+        <ul><li><strong>User:</strong> the person seeking access.</li><li><strong>Identity Provider (IdP):</strong> verifies the user and issues a trusted identity signal.</li><li><strong>Service Provider (SP), or relying party:</strong> the application that accepts that signal and creates an application session.</li></ul>
+        <div class="callout"><strong>Keep these questions separate:</strong> Authentication asks “Who are you?” Authorization asks “What are you allowed to do?” OAuth 2.0 is fundamentally an authorization framework; OpenID Connect adds an identity layer for sign-in.</div>
+        <h3>SAML 2.0 · enterprise sign-in</h3><p>SAML is an XML-based protocol commonly used for enterprise SSO. Its core artifact is a signed <strong>assertion</strong> describing the authenticated user and relevant attributes.</p>
+        <ol class="flow-list"><li><span>The user opens a service provider such as an HR application.</span></li><li><span>The service provider redirects the browser to the organization’s IdP.</span></li><li><span>The user authenticates at the IdP, with MFA when configured.</span></li><li><span>The IdP returns a signed SAML assertion through the browser.</span></li><li><span>The service provider validates the assertion and starts its session.</span></li></ol>
+        <h3>OAuth 2.0 · delegated, limited access</h3><p>OAuth lets a user grant an application limited access to a resource held by another service without sharing the user’s password. In the authorization-code flow, the app receives a short-lived, single-use code, then exchanges it for tokens over a back-channel. Requested scopes should be limited to the access the app actually needs. PKCE protects public clients that cannot safely hold a client secret.</p>
+        <h3>OpenID Connect · sign-in identity over OAuth</h3><p>OpenID Connect (OIDC) builds on OAuth 2.0 and adds a signed ID token, commonly a JWT, for the client to establish the user’s identity. A JWT contains a header, claims payload, and signature. The client validates the token and its claims using the IdP’s published verification keys and protocol rules.</p>
+        <div class="study-table-wrap"><table class="study-table"><thead><tr><th>Protocol</th><th>Primary purpose</th><th>Useful rule of thumb</th></tr></thead><tbody><tr><td>SAML 2.0</td><td>Federated enterprise authentication</td><td>Workforce access to internal and SaaS applications.</td></tr><tr><td>OAuth 2.0</td><td>Delegated authorization</td><td>Grant an app limited access to an API or resource.</td></tr><tr><td>OpenID Connect</td><td>Authentication and identity on OAuth 2.0</td><td>“Sign in with…” experiences and modern application login.</td></tr></tbody></table></div>
+      </section>
+
+      <section id="risks">
+        <span class="section-eyebrow">Risk &amp; Controls</span><h2>Protect the identity path</h2>
+        <div class="study-table-wrap"><table class="study-table"><thead><tr><th>Risk</th><th>Why it matters</th><th>Mitigation from the course</th></tr></thead><tbody><tr><td>Token theft or replay</td><td>A stolen session token may be reused to impersonate a user.</td><td>Short token lifetimes, device binding, and secure token storage.</td></tr><tr><td>Phishing through consent screens</td><td>A malicious app may request more OAuth access than its task needs.</td><td>Vet IdP applications, request minimal scopes, and review consent.</td></tr><tr><td>Over-privileged identity</td><td>A compromised workload or user can reach more data and services.</td><td>Least privilege, scoped permissions, and regular entitlement review.</td></tr></tbody></table></div>
+        <p>MFA and SSO are complementary. SSO centralizes authentication and policy; MFA adds an additional verification factor. Banking examples in the course use step-up checks such as a UPI PIN or biometrics for sensitive transactions.</p>
+      </section>
+
+      <section id="exercises">
+        <span class="section-eyebrow">Practice &amp; Review</span><h2>Four classroom exercises</h2>
+        <h3>1 · Whose responsibility is it?</h3><p>Classify physical server firmware, storage bucket access, admin MFA, customer-data encryption, and data-center physical protection as provider, customer, or shared responsibility. Explain which service model could change the boundary.</p>
+        <h3>2 · Spot the misconfiguration</h3><p>Review a customer-export bucket with public read/list access, encryption and logging disabled, versioning disabled, and an AdministratorAccess role. Identify the immediate exposure, a control that reduces impact, and the excessive permission.</p>
+        <details><summary>Review the expected reasoning for Exercise 2</summary><p>Block public access first because the data is actively exposed. Encryption at rest reduces impact if data is accessed, but does not make a public bucket private. The broad administrator role should be replaced with the minimum permissions the workload needs; logging and versioning improve detection and recovery.</p></details>
+        <h3>3 · Map the OAuth authorization-code flow</h3><p>Fill in the key steps: the user starts in the client app/service provider; the IdP returns a short-lived authorization code; the client exchanges it over a back-channel; OIDC adds the ID token that identifies the user.</p>
+        <details><summary>Check the Exercise 3 answers</summary><p>Client App / Service Provider; authorization code; back-channel; OpenID Connect ID token (JWT).</p></details>
+        <h3>4 · True or false?</h3><p>Is OAuth 2.0 alone the right protocol for user login? Can a JWT signature be verified without calling the IdP for every request? Are MFA and SSO redundant?</p>
+        <details><summary>Check the Exercise 4 answers</summary><p>OAuth alone for login: false; OIDC adds the identity layer. JWT signature verification without a per-request IdP call: true when the token is validated correctly using trusted keys and claims. MFA and SSO redundant: false; they address different parts of the access flow.</p></details>
+        <h3>Before you leave</h3><ul><li>Draw the shared responsibility model from memory.</li><li>Explain CSPM, CWPP, and CIEM in one sentence each.</li><li>Whiteboard the OAuth authorization-code flow.</li><li>Explain why OAuth alone does not establish a user’s identity.</li></ul>
+      </section>
+    </article>
+    <aside class="study-aside"><nav class="aside-nav" aria-label="Session sections"><h2>On this page</h2><a href="#overview">Cloud model</a><a href="#shared-responsibility">Shared responsibility</a><a href="#cspm">CSPM &amp; security tools</a><a href="#sso">SSO protocols</a><a href="#risks">Identity risks</a><a href="#exercises">Exercises &amp; review</a><a href="../curriculum.html">Course curriculum ↗</a></nav></aside>
+  </div>
+  <nav class="session-end" aria-label="Course navigation"><a href="../curriculum.html">← Course Curriculum</a><a href="../index.html">Cloud Computing Home ↗</a></nav>
+</main>
+<footer class="site-footer"><p>© 2025 The Coach Dinesh · <a href="/" style="color:var(--muted);">thecoachdinesh.com</a></p><nav class="footer-links"><a href="../index.html">Cloud Course Home</a><a href="../curriculum.html">Curriculum</a><a href="/courses/">All Courses</a></nav></footer>
+<script>
+  const menuButton = document.getElementById('hamburger');
+  const menu = document.getElementById('navbar-nav');
+  menuButton.addEventListener('click', () => {
+    const isOpen = menu.classList.toggle('open');
+    menuButton.setAttribute('aria-expanded', String(isOpen));
+  });
+</script>
+</body>
+</html>

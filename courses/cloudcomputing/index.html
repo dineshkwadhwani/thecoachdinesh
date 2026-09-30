@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Study cloud security, shared responsibility, CSPM, SSO, SAML, OAuth 2.0, and OpenID Connect through practical cases and guided exercises.">
+  <meta name="author" content="Coach Dinesh">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.thecoachdinesh.com/courses/cloudcomputing/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cloud Computing Fundamentals | The Coach Dinesh">
+  <meta property="og:description" content="A practical study portal for cloud security, CSPM, and Single Sign-On.">
+  <meta property="og:url" content="https://www.thecoachdinesh.com/courses/cloudcomputing/">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../ai/assets/css/style.css">
+  <style>
+    .course-hero { max-width: 1200px; margin: 0 auto; padding: 88px 60px 64px; display: grid; grid-template-columns: 1fr 0.82fr; gap: 56px; align-items: center; }
+    .course-hero h1 { color: var(--white); margin-bottom: 18px; }
+    .course-hero h1 em { color: var(--blue-lt); font-style: normal; }
+    .hero-desc { max-width: 620px; font-size: 1.05rem; line-height: 1.8; margin-bottom: 28px; }
+    .hero-actions, .resource-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-stats { display: flex; flex-wrap: wrap; gap: 30px; margin-top: 38px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .stat-num { color: var(--white); font: 600 1.6rem var(--font-display); }
+    .stat-label { color: var(--muted); font-size: 0.78rem; }
+    .course-map { border: 1px solid var(--border); background: var(--card-bg); padding: 26px; border-radius: var(--radius); }
+    .map-kicker, .phase-label { color: var(--accent); font: 600 0.7rem var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+    .map-link { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); color: var(--off-white); }
+    .map-link:last-of-type { border-bottom: 0; }
+    .map-num { color: var(--accent); font: 0.8rem var(--font-mono); }
+    .map-link strong { display: block; color: var(--white); font-size: 0.9rem; }
+    .map-link small { color: var(--muted); }
+    .outcomes-grid, .resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+    .outcome, .resource-card { padding: 22px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--card-bg); }
+    .outcome h3, .resource-card h3 { color: var(--white); font: 600 0.98rem var(--font-body); margin-bottom: 8px; }
+    .outcome p, .resource-card p { font-size: 0.86rem; }
+    .journey { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .phase { padding: 26px 0; border-top: 1px solid var(--border); }
+    .phase h3 { color: var(--white); margin: 8px 0; }
+    .phase p { font-size: 0.9rem; }
+    .resource-card { display: flex; flex-direction: column; gap: 12px; }
+    .resource-card .btn { margin-top: auto; align-self: flex-start; }
+    .back-link { color: var(--muted); font-size: 0.85rem; }
+    @media (max-width: 900px) {
+      .course-hero { grid-template-columns: 1fr; padding: 78px 24px 44px; gap: 32px; }
+      .outcomes-grid, .resource-grid, .journey { grid-template-columns: 1fr; }
+      .hero-stats { gap: 20px; }
+    }
+  </style>
+  <title>Cloud Computing Fundamentals | The Coach Dinesh</title>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand"><span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span><span class="course-badge">Cloud Computing</span></a>
+  <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  <ul class="navbar-nav" id="navbar-nav">
+    <li><a href="curriculum.html">Curriculum</a></li>
+    <li><a href="sessions/session-1.html">Session 1 · Cloud Security</a></li>
+    <li><a href="/courses/" class="navbar-cta">All Courses ↗</a></li>
+  </ul>
+</nav>
+<main>
+  <header class="course-hero">
+    <div>
+      <span class="section-eyebrow">Cloud Security · CSPM · SSO</span>
+      <h1>Cloud Computing<br><em>Fundamentals</em></h1>
+      <p class="hero-desc">Learn how cloud responsibility is shared, how teams continuously find configuration risk, and how people safely access many applications through one trusted identity.</p>
+      <div class="hero-actions">
+        <a href="sessions/session-1.html" class="btn btn-primary">Start the Study Session →</a>
+        <a href="curriculum.html" class="btn btn-outline">View Course Outline</a>
+      </div>
+      <div class="hero-stats" aria-label="Course facts">
+        <div><div class="stat-num">2</div><div class="stat-label">Two-hour lectures</div></div>
+        <div><div class="stat-num">29</div><div class="stat-label">Presentation slides</div></div>
+        <div><div class="stat-num">4</div><div class="stat-label">Guided exercises</div></div>
+      </div>
+    </div>
+    <aside class="course-map" aria-label="Course modules">
+      <div class="map-kicker">Your course path</div>
+      <a class="map-link" href="sessions/session-1.html#shared-responsibility"><span class="map-num">01</span><span><strong>Cloud security foundations</strong><small>Service models · shared responsibility</small></span></a>
+      <a class="map-link" href="sessions/session-1.html#cspm"><span class="map-num">02</span><span><strong>Cloud Security Posture Management</strong><small>Discover · assess · prioritize · remediate</small></span></a>
+      <a class="map-link" href="sessions/session-1.html#sso"><span class="map-num">03</span><span><strong>Identity and Single Sign-On</strong><small>SAML · OAuth 2.0 · OpenID Connect</small></span></a>
+      <a href="sessions/session-1.html" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;margin-top:16px;">Open Session 1 →</a>
+    </aside>
+  </header>
+
+  <div class="divider"></div>
+  <section>
+    <span class="section-eyebrow">Learning Outcomes</span>
+    <h2 class="section-title">What you will understand</h2>
+    <p class="section-subtitle">A practical foundation in the controls that keep cloud infrastructure configured safely and users authenticated appropriately.</p>
+    <div class="outcomes-grid">
+      <article class="outcome"><h3>Shared responsibility</h3><p>Separate provider responsibilities from customer responsibilities across IaaS, PaaS, and SaaS.</p></article>
+      <article class="outcome"><h3>Cloud security pillars</h3><p>Relate identity, data protection, network controls, governance, and monitoring to real cloud systems.</p></article>
+      <article class="outcome"><h3>CSPM operations</h3><p>Explain how continuous discovery and assessment turn configuration findings into prioritized remediation.</p></article>
+      <article class="outcome"><h3>Security tool boundaries</h3><p>Distinguish CSPM from CWPP, CIEM, and KSPM, and understand CNAPP as an umbrella platform.</p></article>
+      <article class="outcome"><h3>SSO protocols</h3><p>Choose between SAML, OAuth 2.0, and OpenID Connect by understanding what each is designed to do.</p></article>
+      <article class="outcome"><h3>Identity risk controls</h3><p>Connect MFA, short-lived tokens, minimal permissions, and secure session handling to common risks.</p></article>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+  <section>
+    <span class="section-eyebrow">Course Architecture</span>
+    <h2 class="section-title">One session, two connected lectures</h2>
+    <p class="section-subtitle">The first lecture protects the cloud environment behind the login. The second explains how that login works across trusted services.</p>
+    <div class="journey">
+      <article class="phase"><span class="phase-label">Lecture 1 · 2 hours</span><h3>Cloud Security &amp; CSPM</h3><p>Cloud service and deployment models, the shared responsibility model, cloud security pillars, real-world cases, configuration risk, compliance, CSPM operations, and the cloud-native security landscape.</p><a href="sessions/session-1.html#cspm" class="btn btn-outline btn-sm" style="margin-top:16px;">Study Lecture 1 →</a></article>
+      <article class="phase"><span class="phase-label">Lecture 2 · 2 hours</span><h3>Single Sign-On &amp; Identity</h3><p>SSO actors, authentication versus authorization, SAML enterprise sign-in, OAuth delegated access, OIDC identity tokens, real-world cases, MFA, and security risks.</p><a href="sessions/session-1.html#sso" class="btn btn-outline btn-sm" style="margin-top:16px;">Study Lecture 2 →</a></article>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+  <section>
+    <span class="section-eyebrow">Course Library</span>
+    <h2 class="section-title">Study, present, and review</h2>
+    <p class="section-subtitle">Use the online session guide as your path through the material, then open the original course files for deeper reading and classroom delivery.</p>
+    <div class="resource-grid">
+      <article class="resource-card"><div><span class="phase-label">Online guide</span><h3 style="margin-top:10px;">Cloud Security Study Session</h3><p>Topic notes, protocol comparisons, case studies, review prompts, and exercises.</p></div><a href="sessions/session-1.html" class="btn btn-primary btn-sm">Open Study Session →</a></article>
+      <article class="resource-card"><div><span class="phase-label">Course outline</span><h3 style="margin-top:10px;">Curriculum &amp; Resources</h3><p>Review the learning objectives, two-lecture sequence, and all supporting materials.</p></div><a href="curriculum.html" class="btn btn-outline btn-sm">View Curriculum →</a></article>
+      <article class="resource-card"><div><span class="phase-label">Presentation</span><h3 style="margin-top:10px;">29-slide Instructor Deck</h3><p>The original presentation for both two-hour lectures.</p></div><a href="files/Cloud_Security_CSPM_SSO_Slides.pptx" class="btn btn-outline btn-sm" target="_blank" rel="noopener">Open Presentation ↗</a></article>
+    </div>
+  </section>
+</main>
+<footer class="site-footer"><p>© 2025 The Coach Dinesh · <a href="/" style="color:var(--muted);">thecoachdinesh.com</a></p><nav class="footer-links"><a href="index.html">Cloud Course Home</a><a href="curriculum.html">Curriculum</a><a href="sessions/session-1.html">Session 1</a><a href="/courses/">All Courses</a></nav></footer>
+<script>
+  const menuButton = document.getElementById('hamburger');
+  const menu = document.getElementById('navbar-nav');
+  menuButton.addEventListener('click', () => {
+    const isOpen = menu.classList.toggle('open');
+    menuButton.setAttribute('aria-expanded', String(isOpen));
+  });
+</script>
+</body>
+</html>

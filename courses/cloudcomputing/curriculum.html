@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cloud Computing Fundamentals curriculum: a two-lecture course on cloud security, CSPM, and SSO.">
+  <link rel="canonical" href="https://www.thecoachdinesh.com/courses/cloudcomputing/curriculum.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../ai/assets/css/style.css">
+  <style>
+    .page-hero, .curriculum-block { max-width: 1200px; margin: 0 auto; padding: 92px 60px 48px; }
+    .page-hero h1 { color: var(--white); margin-bottom: 14px; }
+    .curriculum-block { padding-top: 12px; padding-bottom: 60px; }
+    .lecture-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .lecture-heading .phase-label { color: var(--accent); font: 600 0.72rem var(--font-mono); text-transform: uppercase; }
+    .lecture-heading h2 { color: var(--white); font-size: 1.35rem; }
+    .topic-list { list-style: none; margin: 8px 0 32px; }
+    .topic-list li { padding: 14px 12px 14px 42px; border-bottom: 1px solid var(--border); position: relative; color: var(--off-white); }
+    .topic-list li::before { content: '→'; position: absolute; left: 12px; color: var(--accent); }
+    .objectives { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+    .objective { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--card-bg); color: var(--off-white); font-size: 0.9rem; }
+    .resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+    .resource-card { display: flex; flex-direction: column; gap: 10px; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--card-bg); }
+    .resource-card h3 { color: var(--white); font: 600 0.98rem var(--font-body); }
+    .resource-card p { font-size: 0.85rem; }
+    .resource-card .btn { margin-top: auto; align-self: flex-start; }
+    @media (max-width: 900px) { .page-hero, .curriculum-block { padding-left: 24px; padding-right: 24px; } .objectives, .resource-grid { grid-template-columns: 1fr; } }
+  </style>
+  <title>Curriculum | Cloud Computing Fundamentals | The Coach Dinesh</title>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand"><span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span><span class="course-badge">Cloud Computing</span></a>
+  <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  <ul class="navbar-nav" id="navbar-nav"><li><a href="index.html">Course Home</a></li><li><a href="sessions/session-1.html">Session 1</a></li><li><a href="/courses/" class="navbar-cta">All Courses ↗</a></li></ul>
+</nav>
+<main>
+  <header class="page-hero"><span class="section-eyebrow">Course Curriculum</span><h1>Cloud Security, CSPM &amp; SSO</h1><p class="section-subtitle" style="margin-bottom:0;">Two lectures · Four hours · One connected view of cloud configuration security and identity access.</p></header>
+  <div class="divider" style="margin:0 60px 34px;"></div>
+  <section class="curriculum-block">
+    <div class="lecture-heading"><span class="phase-label">Lecture 1 · 2 hours · Slides 1–15</span><h2>Foundations of Cloud Security &amp; CSPM</h2></div>
+    <ul class="topic-list">
+      <li>Cloud recap: IaaS, PaaS, SaaS, and public, private, and hybrid deployment models.</li>
+      <li>The shared responsibility model: how responsibility shifts across service models.</li>
+      <li>The Capital One breach as a case study in customer-side misconfiguration and excessive permissions.</li>
+      <li>Five cloud security pillars and common cloud threat patterns.</li>
+      <li>Cloud Security Posture Management: continuous discovery, assessment, prioritization, remediation, and monitoring.</li>
+      <li>Compliance frameworks including CIS Benchmarks, PCI-DSS, ISO/IEC 27001, RBI IT Framework, and India's DPDP Act.</li>
+      <li>CSPM, CWPP, CIEM, KSPM, and CNAPP: where each capability fits.</li>
+    </ul>
+    <div class="lecture-heading"><span class="phase-label">Lecture 2 · 2 hours · Slides 16–29</span><h2>Single Sign-On &amp; Authentication</h2></div>
+    <ul class="topic-list">
+      <li>Why SSO reduces password fatigue; the User, Identity Provider (IdP), and Service Provider (SP).</li>
+      <li>Authentication (who you are) versus authorization (what you may access).</li>
+      <li>SAML 2.0 assertions and the SP-initiated enterprise sign-in flow.</li>
+      <li>OAuth 2.0 delegated access, authorization codes, scopes, back-channel token exchange, and PKCE.</li>
+      <li>OpenID Connect as an identity layer over OAuth 2.0, including signed ID tokens and JWT claims.</li>
+      <li>Banking and Lenskart identity examples, token and consent risks, MFA, and protocol selection.</li>
+    </ul>
+    <span class="section-eyebrow">Learning Objectives</span>
+    <h2 class="section-title">By the end of the course</h2>
+    <div class="objectives">
+      <div class="objective">Explain who secures what in IaaS, PaaS, and SaaS.</div>
+      <div class="objective">Describe why CSPM is a continuous operational cycle, not a one-time audit.</div>
+      <div class="objective">Differentiate CSPM, CWPP, CIEM, and KSPM in practical terms.</div>
+      <div class="objective">Trace a SAML flow and an OAuth authorization-code flow.</div>
+      <div class="objective">Explain why OAuth alone is not an authentication protocol and what OIDC adds.</div>
+      <div class="objective">Identify SSO risks and select mitigations such as MFA, short token lifetimes, and least privilege.</div>
+    </div>
+  </section>
+  <div class="divider"></div>
+  <section class="curriculum-block">
+    <span class="section-eyebrow">Session 01</span><h2 class="section-title">Cloud Security, CSPM &amp; SSO</h2>
+    <p class="section-subtitle" style="margin-bottom:0;">Follow the online study guide, then use the original teaching materials for the complete diagrams and instructor delivery notes.</p>
+    <div class="resource-grid">
+      <article class="resource-card"><h3>Online study guide</h3><p>Read topic explanations, review protocol flows, and work through all four exercises.</p><a href="sessions/session-1.html" class="btn btn-primary btn-sm">Study Session 1 →</a></article>
+      <article class="resource-card"><h3>Presentation · PPTX</h3><p>29-slide deck covering both two-hour lectures.</p><a href="files/Cloud_Security_CSPM_SSO_Slides.pptx" class="btn btn-outline btn-sm" target="_blank" rel="noopener">Open Presentation ↗</a></article>
+      <article class="resource-card"><h3>Course material · PDF</h3><p>Participant reference material supplied with the course.</p><a href="files/Cloud_Security_CSPM_SSO_Course_Material.pdf" class="btn btn-outline btn-sm" target="_blank" rel="noopener">Open Study PDF ↗</a></article>
+      <article class="resource-card"><h3>Speaker notes · DOCX</h3><p>Slide-by-slide instructor script and facilitation guidance.</p><a href="files/Cloud_Security_CSPM_SSO_Speaker_Notes.docx" class="btn btn-outline btn-sm" target="_blank" rel="noopener">Open Speaker Notes ↗</a></article>
+    </div>
+  </section>
+</main>
+<footer class="site-footer"><p>© 2025 The Coach Dinesh · <a href="/" style="color:var(--muted);">thecoachdinesh.com</a></p><nav class="footer-links"><a href="index.html">Cloud Course Home</a><a href="curriculum.html">Curriculum</a><a href="sessions/session-1.html">Session 1</a><a href="/courses/">All Courses</a></nav></footer>
+<script>
+  const menuButton = document.getElementById('hamburger');
+  const menu = document.getElementById('navbar-nav');
+  menuButton.addEventListener('click', () => {
+    const isOpen = menu.classList.toggle('open');
+    menuButton.setAttribute('aria-expanded', String(isOpen));
+  });
+</script>
+</body>
+</html>
