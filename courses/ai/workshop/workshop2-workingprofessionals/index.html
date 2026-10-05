@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI for Working Professionals workshop by The Coach Dinesh." />
+  <title>AI for Working Professionals | Workshop 2</title>
+  <link rel="stylesheet" href="../../course/assets/css/style.css" />
+  <style>
+    body { padding-top: 84px; }
+    .page-shell { max-width: 1200px; margin: 0 auto; padding: 52px 24px 100px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px;
+      background: rgba(59,130,246,0.12); color: var(--blue-lt);
+      border: 1px solid rgba(59,130,246,0.25);
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      font-weight: 700;
+    }
+    .hero {
+      display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: end;
+      margin: 26px 0 52px;
+    }
+    .hero h1 {
+      color: var(--white); font-size: clamp(2.7rem, 5vw, 4rem); line-height: 1.05; margin: 18px 0 18px;
+    }
+    .hero p { font-size: 1.08rem; line-height: 1.8; max-width: 700px; }
+    .meta-card {
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 18px;
+      padding: 22px 22px 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    }
+    .meta-card strong { display:block; color: var(--white); margin-bottom: 10px; font-size: 1.05rem; }
+    .meta-card p { margin-bottom: 14px; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 24px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15);
+      text-decoration: none; font-weight: 700; transition: 0.2s ease;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-lt)); color: var(--white); }
+    .btn-outline { background: rgba(255,255,255,0.02); color: var(--white); }
+    .section-block {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 18px;
+      padding: 28px; margin-bottom: 30px;
+    }
+    .section-block h2 { color: var(--white); margin-bottom: 10px; }
+    .module-grid, .resource-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin-top: 26px;
+    }
+    .module-card, .resource-card {
+      background: rgba(10, 22, 40, 0.4); border: 1px solid var(--border); border-radius: 14px; padding: 22px;
+    }
+    .module-card h3, .resource-card h3 { color: var(--white); margin-bottom: 10px; }
+    .module-card p, .resource-card p { color: var(--muted); line-height: 1.7; }
+    .resource-list { list-style: none; margin-top: 12px; }
+    .resource-list li { margin-bottom: 10px; }
+    .resource-list a { color: var(--off-white); }
+    .action-links { display:flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; }
+    @media (max-width: 900px) { .hero, .module-grid, .resource-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar" aria-label="Main navigation">
+    <a href="../../course/index.html" class="navbar-brand"><span class="logo-text">The Coach Dinesh<span class="logo-dot">.</span></span><span class="course-badge">AI Workshop</span></a>
+    <ul class="navbar-nav">
+      <li><a href="index.html" class="active">Workshop 2</a></li>
+      <li><a href="overview.html">Overview</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="../index.html">All Workshops</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-shell">
+    <header class="hero">
+      <div>
+        <span class="eyebrow">Workshop 2</span>
+        <h1>AI for Working Professionals</h1>
+        <p>Build practical AI capability for daily work: faster research, sharper writing, smarter decision support, stronger communication, and safer use of automation in professional environments.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="overview.html">Explore the workshop</a>
+          <a class="btn btn-outline" href="AI_for_Working_Professionals_Overview.pdf" target="_blank" rel="noopener">Download overview PDF</a>
+          <a class="btn btn-outline" href="AI_for_Working_Professionals_Presentation.pptx" download>Download slides</a>
+        </div>
+      </div>
+      <aside class="meta-card">
+        <strong>What professionals learn</strong>
+        <p>How to use AI for workflow design, content creation, research synthesis, meeting productivity, and problem solving.</p>
+        <strong>Format</strong>
+        <p>Practical workshop with guided activities, live examples, and hands-on prompts.</p>
+        <strong>Best for</strong>
+        <p>Managers, consultants, educators, analysts, and knowledge workers seeking real-world AI leverage.</p>
+      </aside>
+    </header>
+
+    <section class="section-block">
+      <span class="eyebrow">Workshop outcomes</span>
+      <h2>Practical outcomes for work life</h2>
+      <div class="module-grid">
+        <a class="module-card" href="module-1-foundations.html">
+          <h3>1. AI for daily productivity</h3>
+          <p>Use AI for summarization, drafting, faster review cycles, and improved communication quality.</p>
+        </a>
+        <a class="module-card" href="module-2-prompting-for-work.html">
+          <h3>2. AI for delegated thinking</h3>
+          <p>Turn repeated work into clear prompts, templates, and structured workflows that save time and reduce friction.</p>
+        </a>
+        <a class="module-card" href="module-3-workflow-automation.html">
+          <h3>3. AI for decision support</h3>
+          <p>Compare options, synthesize information, and create decision-ready briefs with evidence and trade-offs.</p>
+        </a>
+        <a class="module-card" href="module-4-responsible-use.html">
+          <h3>4. AI with responsibility</h3>
+          <p>Learn guardrails, accuracy checks, privacy awareness, and how to keep human judgment in the loop.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <span class="eyebrow">Learning tracks</span>
+      <h2>Workshop structure</h2>
+      <div class="resource-grid">
+        <a class="resource-card" href="module-1-foundations.html">
+          <h3>Module 1 · Foundations</h3>
+          <p>How AI works in work contexts, what it is good at, and where it can fail.</p>
+        </a>
+        <a class="resource-card" href="module-2-prompting-for-work.html">
+          <h3>Module 2 · Prompting for work</h3>
+          <p>Prompt patterns for research, drafting, analysis, review, and communication.</p>
+        </a>
+        <a class="resource-card" href="module-3-workflow-automation.html">
+          <h3>Module 3 · Workflow automation</h3>
+          <p>Build repeatable AI-enabled workflows for emails, summaries, reports, and support tasks.</p>
+        </a>
+        <a class="resource-card" href="module-4-responsible-use.html">
+          <h3>Module 4 · Responsible use</h3>
+          <p>Use AI responsibly with verification, governance, privacy, and quality checks.</p>
+        </a>
+      </div>
+      <div class="action-links">
+        <a class="btn btn-primary" href="overview.html">Read full overview</a>
+        <a class="btn btn-outline" href="resources.html">Open materials</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
